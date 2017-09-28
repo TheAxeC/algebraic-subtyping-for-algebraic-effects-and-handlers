@@ -2,24 +2,22 @@
 
 This is my main log file for my masterthesis. Progress will be recorded in the log directory.
 
-| Config        |          |
-| ------------- |:--------:|
-
 ## Meetings
 
 | Thesis meetings        |          |
 | ------------- |:--------:|
 | 26 September 2017  |  Thesis meeting with daily advisor  |
+| 28 September 2017  |  Thesis meeting with daily advisor  |
 
 | Project meetings        |          |
 | ------------- |:--------:|
 
 | Seminars        |          |
 | ------------- |:--------:|
+| 3 October 2017 | Info session |
 
 | Administrative        |          |
 | ------------- |:--------:|
-| 3 October 2017 | Info session |
 
 ## Summary
 This topic is situated in the area of Programming Language Theory, the formal study of programming language features and their properties. Specifically, a novel type system will be designed and its formal properties studied. This type system will be focused on algebraic effects and handlers.
@@ -39,9 +37,37 @@ I would like to publish my results. Either in the Student Research Competition o
 ## Research questions
 - How can Dolan's elegant type system be extended with effect information?
 - Which properties are preserved and which aren't preserved?
-  - Working out the metatheory.
+  * Instantiation
+  * Weakening
+  * Substitution
+  * Soundness
+  * Type preservation
 - What advantages are there to an type-&-effect system based on Dolan's elegant type system?
-  - Does the system lend itself to optimisations?
+  * Does the system lend itself to optimisations?
+  * Runtime performance of the type system
+  * Better type-&-effect information given by the system to the programmer
+- Separation of type and effect system
+  * What type system should we use?
+  * We can use union/intersection types by annotating with effect sets
+  * Use union/intersection only for effects
+    + Effects become a tree-like structure
+    + Independent type and effect systems
+    + This makes the effect system modular
+    + Requires more proofs to be written
+    + Effect system looks like row-based type system with intersection and union types
+
+
+## Steps
+- Step 1: Type system
+- Step 2: Proofs
+- Step 2: Implementation
+- Step 4: Testing
+- Step 5: Implement optimization
+- Step 6: Benchmarking
+- Step 7: Write thesis
+
+## Quote Dolan (p. 137)
+... but merely to point out that the machinery developed in this thesis for type inference with subtyping can also be used to infer effects.
 
 ## Approach
 - Study of the relevant literature and theoretical background.
