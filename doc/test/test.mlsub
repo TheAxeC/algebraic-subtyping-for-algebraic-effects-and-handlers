@@ -1,0 +1,3 @@
+let id = <p> <v> <d> if p (v) then v else d end
+
+let twice = < f > (< x > f (f (x)))
