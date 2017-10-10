@@ -1,5 +1,4 @@
 \subsection{Types and terms}
-The proposed type system uses type application and type abstractions in order to attain explicit typing information. The subtyping approach is replaced by polymorphism. Aside from this, the type system remains as close as possible to the source language of Eff in order to maximise compatability.
 
 \begin{figure}[h]
 \begin{center}
@@ -8,14 +7,13 @@ The proposed type system uses type application and type abstractions in order to
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{value}~v & \bnfis {} & x & \text{variable} \\
     & \bnfor & \const & \text{constant} \\
-    & \bnfor & \lambda (x : A). c & \text{\textbf{function}} \\
-    & \bnfor & \Lambda \alpha . c & \text{\textbf{type abstraction}} \\
+    & \bnfor & \lambda x. c & \text{function} \\
     & \bnfor & \{ & \text{handler} \\
     & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
     & & \quad \shortcases & \quad\text{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
-    & \bnfor & v \, A & \text{\textbf{type application}} \\
+    & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
     & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
     & \bnfor & \ret v  & \text{returned val} \\
     & \bnfor & \op \, v & \text{operation call} \\
@@ -25,7 +23,7 @@ The proposed type system uses type application and type abstractions in order to
 \end{minipage}
 }
 \end{center}
-\caption{Terms of the explicitly typed core language}\label{fig:terms:explicit}
+\caption{Terms of the core language}\label{fig:terms:explicit}
 \end{figure}
 
 \begin{figure}
@@ -34,19 +32,25 @@ The proposed type system uses type application and type abstractions in order to
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{(pure) type}~A, B & \bnfis {}
-    & A \to \C & \text{function type} \\
+    & \boolty \bnfor \intty & \text{basic types} \\
+    & \bnfor & A \to \C & \text{function type} \\
     & \bnfor & \C \hto \D & \text{handler type} \\
-    & \bnfor & \alpha & \text{\textbf{type variable}} \\
-    & \bnfor & \forall \alpha . \C & \text{\textbf{polytype}} \\
+    % & \bnfor & \alpha & \text{type variable} \\
+    & \bnfor & \top & \text{top} \\
+    & \bnfor & \bot & \text{bottom} \\
+    & \bnfor & A \sqcap B & \text{intersection} \\
+    & \bnfor & A \sqcup B & \text{union} \\
   \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\
   \text{dirt}~\dirt & \bnfis {} & \{\text{R}\} \\
   \text{R} & \bnfis {}
     & \op \row & \text{row} \\
     & \bnfor & \delta & \text{row variable} \\
-    & \bnfor & . & \text{end of row}
+    & \bnfor & . & \text{closed row} \\
+    & \bnfor & R_1 \sqcap R_2 & \text{intersection} \\
+    & \bnfor & R_1 \sqcup R_2 & \text{union}
 \end{array}\]
 \end{minipage}
 }
 \end{center}
-\caption{Types of the explicitly type core language}\label{fig:types:explicit}
+\caption{Types of the core language}\label{fig:types:explicit}
 \end{figure}

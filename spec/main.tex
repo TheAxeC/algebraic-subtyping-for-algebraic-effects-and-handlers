@@ -1,5 +1,5 @@
-%\documentclass[acmsmall,10pt]{acmart}\settopmatter{printfolios=true}
-\documentclass[acmsmall,10pt]{acmart}\settopmatter{printfolios=true}
+\documentclass[sigplan,10pt]{acmart}\settopmatter{printfolios=true}
+% \documentclass[acmsmall,10pt]{acmart}\settopmatter{printfolios=true}
 %% For final camera-ready submission
 %\documentclass[sigplan,10pt]{acmart}\settopmatter{}
 
@@ -77,7 +77,7 @@
 
 \begin{document}
 
-\title{A core language with row-based effects for optimised compilation}
+\title{Algebraic subtyping for algebraic effects and handlers}
 
 \author{Axel Faes}
 \affiliation{
@@ -87,9 +87,17 @@
 }
 \email{axel.faes@student.kuleuven.be}
 
+\author{Amr Hany Saleh}
+\affiliation{
+  \position{daily advisor}
+  \department{Department of Computer Science}
+  \institution{KU Leuven}
+}
+\email{amrhanyshehata.saleh@kuleuven.be }
+
 \author{Tom Schrijvers}
 \affiliation{
-  \position{advisor}
+  \position{promotor}
   \department{Department of Computer Science}
   \institution{KU Leuven}
 }
@@ -97,13 +105,13 @@
 
 %% Keywords
 %% comma separated list
-\keywords{algebraic effect handler, row based effect, optimised compilation}  %% \keywords is optional
+\keywords{algebraic effect handler, algebraic subtyping, effects, optimised compilation}  %% \keywords is optional
 
 %% Abstract
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
 \begin{abstract}
-Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. \eff is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, \eff does not offer explicit typing, which makes it easy for type checking bugs to be introduced during the construction of optimised compilation. This work presents a new core language with row-based effects. The core language is explicitly typed in order to reduce bugs in the optimised compilation.
+
 \end{abstract}
 
 \maketitle
@@ -124,15 +132,15 @@ Algebraic effects and handlers are a very active area of research. An important 
 \section{Elaboration}
 \input{tex/elaboration}
 
-% \section{Proofs}
-% \input{tex/proofs}
+\section{Proofs}
+\input{tex/proofs}
 
 \section{Conclusion}
 \input{tex/conclusion}
 
 %% Acknowledgments
 \begin{acks}
-  I would like to thank Amr Hany Saleh for his continuous guidance and help. I would also like to thank Matija Pretnar for his support during my research.
+  I would like to thank Amr Hany Saleh for his continuous guidance and help.
 \end{acks}
 
 \bibliography{bib/main}

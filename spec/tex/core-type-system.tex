@@ -1,5 +1,121 @@
-\subsection{Typing rules}
-There are no surprises in the typing rules either. The typing rules are standard rules. It is important to note the row polymorphism in the \textit{Hand} rule. 
+\subsection{Type system}
+
+\subsubsection{Subtyping}
+
+\begin{figure}[t!]
+\begin{center}
+\framebox{
+\begin{minipage}{0.95\columnwidth}
+\textbf{Subtyping}
+\begin{mathpar}
+  \inferrule[Sub-$\boolty$]{
+  }{
+    \boolty \le \boolty
+  }
+
+  \inferrule[Sub-$\intty$]{
+  }{
+    \intty \le \intty
+  }
+
+  \inferrule[Sub-$\to$]{
+    A' \le A \\
+    \C \le \C'
+  }{
+    A \to \C \le A' \to \C'
+  }
+
+  \inferrule[Sub-$\hto$]{
+    \C' \le \C \\
+    \D \le \D'
+  }{
+    \C \hto \D \le \C' \hto \D'
+  }
+
+  \inferrule[Sub-$\E$]{
+    A \le A' \\
+    \dirt \subseteq \dirt'
+  }{
+    A \E \dirt \le A' \E \dirt'
+  }
+
+  \inferrule[Sub-Inter-G]{
+    A \le B \\
+    A \le B' \\
+  }{
+    A \le B \sqcap B'
+  }
+
+  \inferrule[Sub-Inter-LB]{
+  }{
+    A_1 \sqcap A_2 \le A_i
+  }
+
+  \inferrule[Sub-Union-L]{
+    B \le A \\
+    B' \le A \\
+  }{
+    B \sqcup B' \le A
+  }
+
+  \inferrule[Sub-Inter-UB]{
+  }{
+    A_i \le A_1 \sqcup A_2
+  }
+
+  \inferrule[Sub-Dist-Func-Inter]{
+  }{
+    (A \to \C) \sqcap (A \to \D) \le A \to (\C \sqcap \D)
+  }
+
+  \inferrule[Sub-Dist-Func-Union]{
+  }{
+    (A \to \C) \sqcap (B \to \C) \le (A \sqcup B) \to \C
+  }
+
+  \inferrule[Sub-Dist-Hand-Inter]{
+  }{
+    (A \hto \C) \sqcap (A \hto \D) \le A \hto (\C \sqcap \D)
+  }
+
+  \inferrule[Sub-Dist-Hand-Union]{
+  }{
+    (A \hto \C) \sqcap (B \hto \C) \le (A \sqcup B) \hto \C
+  }
+
+  \inferrule[Sub-Inter-G-$\E$]{
+    \dirt \subseteq \dirt' \\
+    \dirt \subseteq \dirt''
+  }{
+    \dirt \subseteq (\dirt' \sqcap \dirt'')
+  }
+
+  \inferrule[Sub-Inter-LB-$\E$]{
+  }{
+    (\dirt_1 \sqcap \dirt_2) \subseteq \dirt_i
+  }
+
+  \inferrule[Sub-Union-L-$\E$]{
+    \dirt' \subseteq \dirt \\
+    \dirt'' \subseteq \dirt
+  }{
+    (\dirt' \sqcup \dirt'') \subseteq \dirt
+  }
+
+  \inferrule[Sub-Union-UB-$\E$]{
+  }{
+    \dirt_i \subseteq (\dirt_1 \sqcup \dirt_2)
+  }
+
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Subtyping for pure and dirty types of the core language}\label{fig:core-subtyping}
+\end{figure}
+
+
+\subsubsection{Typing rules}
 
 \begin{figure}
 \begin{center}
@@ -30,14 +146,14 @@ There are no surprises in the typing rules either. The typing rules are standard
   \inferrule[Fun]{
     \ctx, x \T A \ent c \T \C
   }{
-    \ctx \ent \lambda(x \T A). c \T A \to \C
+    \ctx \ent \lambda x. c \T A \to \C
   }
 
-  \inferrule[Type Abstraction]{
-    \ctx, \alpha \ent c \T \C
-  }{
-    \ctx \ent \Lambda \alpha . c \T \forall \alpha . \C
-  }
+  % \inferrule[Type Abstraction]{
+  %   \ctx, \alpha \ent c \T \C
+  % }{
+  %   \ctx \ent \Lambda \alpha . c \T \forall \alpha . \C
+  % }
 
   \inferrule[Hand]{
   	\C = A \E \{Op_i \row\} \\
@@ -49,6 +165,33 @@ There are no surprises in the typing rules either. The typing rules are standard
   }{
   	\ctx \ent h \T \C \hto \D
   }
+
+  % \inferrule[Inter-Abs]{
+  %   (v \T A) \in \ctx \\
+  %   (v \T B) \in \ctx
+  % }{
+  %   \ctx \ent v \T A \sqcap B
+  % }
+  %
+  % \inferrule[Inter-Inst]{
+  %   (v \T A_1 \sqcap A_2) \in \ctx
+  % }{
+  %   \ctx \ent v \T A_i
+  % }
+  %
+  % \inferrule[Union-Abs]{
+  %   (v \T A) \in \ctx \\
+  %   (v \T B) \in \ctx
+  % }{
+  %   \ctx \ent v \T A \sqcap B
+  % }
+  %
+  % \inferrule[Union-Inst]{
+  %   (v \T A_i) \in \ctx
+  % }{
+  %   \ctx \ent v \T A_1 \sqcup A_2
+  % }
+
 \end{mathpar}
 \textbf{Computations}
 \begin{mathpar}
@@ -64,11 +207,19 @@ There are no surprises in the typing rules either. The typing rules are standard
     \ctx \ent v_1 \, v_2 \T \C
   }
 
-  \inferrule[Type App]{
-    \ctx \ent v \T \forall \alpha . \C
+  \inferrule[Cond]{
+    \ctx \ent v \T A \\
+    \ctx \ent c_1 \T \C \\
+    \ctx \ent c_2 \T \D \\
   }{
-    \ctx \ent v \, A \T \C[A/\alpha]
+    \ctx \ent \conditional{v}{c_1}{c_2} \T (\C \sqcap \D)
   }
+
+  % \inferrule[Type App]{
+  %   \ctx \ent v \T \forall \alpha . \C
+  % }{
+  %   \ctx \ent v \, A \T \C[A/\alpha]
+  % }
 
  \inferrule[LetRec]{
     \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
@@ -103,6 +254,20 @@ There are no surprises in the typing rules either. The typing rules are standard
     \ctx \ent c \T \C
   }{
     \ctx \ent \withhandle{v}{c} \T \D
+  }
+
+  \inferrule[Dirt-Inter]{
+    \dirt_1 = \{\op_{a1}, ..., \op_{an} \row\} \\
+    \dirt_2 = \{\op_{b1}, ..., \op_{bm} \row\}
+  }{
+    \dirt_1 \sqcup \dirt_2 = \{\op_{a1}, ..., \op_{an}, \op_{b1}, ..., \op_{bm}  \row\}
+  }
+
+  \inferrule[Dirt-Union]{
+    \dirt_1 = \{\op_{a1}, ..., \op_{an} \row\} \\
+    \dirt_2 = \{\op_{b1}, ..., \op_{bm} \row\}
+  }{
+    \dirt_1 \sqcup \dirt_2 = \{(\op_i | \forall i: \op_i \in \dirt_1 \land  \op_i \in \dirt_2)  \row\}
   }
 \end{mathpar}
 \end{minipage}
