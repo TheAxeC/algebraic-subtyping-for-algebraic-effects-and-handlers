@@ -107,6 +107,16 @@
     \dirt_i \subseteq (\dirt_1 \sqcup \dirt_2)
   }
 
+  \inferrule[Sub-Top]{
+  }{
+    A \le \top
+  }
+
+  \inferrule[Sub-Bottom]{
+  }{
+    \bot \le A
+  }
+
 \end{mathpar}
 \end{minipage}
 }
@@ -127,8 +137,10 @@
 \textbf{Expressions}
 \begin{mathpar}
   \inferrule[Val]{
+    \ctx \ent v \T A \\
+    A \le B
   }{
-    \ctx \ent v \T A
+    \ctx \ent v \T B
   }
 
   \inferrule[Var]{
@@ -149,11 +161,11 @@
     \ctx \ent \lambda x. c \T A \to \C
   }
 
-  % \inferrule[Type Abstraction]{
-  %   \ctx, \alpha \ent c \T \C
-  % }{
-  %   \ctx \ent \Lambda \alpha . c \T \forall \alpha . \C
-  % }
+  \inferrule[Type Abstraction]{
+    \ctx, \alpha \ent c \T \C
+  }{
+    \ctx \ent \Lambda \alpha . c \T \forall \alpha . \C
+  }
 
   \inferrule[Hand]{
   	\C = A \E \{Op_i \row\} \\
@@ -196,8 +208,10 @@
 \textbf{Computations}
 \begin{mathpar}
   \inferrule[Comp]{
+    \ctx \ent c \T \C \\
+    \C \le \D
   }{
-    \ctx \ent c \T \C
+    \ctx \ent c \T \D
   }
 
   \inferrule[App]{
@@ -212,14 +226,14 @@
     \ctx \ent c_1 \T \C \\
     \ctx \ent c_2 \T \D \\
   }{
-    \ctx \ent \conditional{v}{c_1}{c_2} \T (\C \sqcap \D)
+    \ctx \ent \conditional{v}{c_1}{c_2} \T (\C \sqcup \D)
   }
 
-  % \inferrule[Type App]{
-  %   \ctx \ent v \T \forall \alpha . \C
-  % }{
-  %   \ctx \ent v \, A \T \C[A/\alpha]
-  % }
+  \inferrule[Type App]{
+    \ctx \ent v \T \forall \alpha . \C
+  }{
+    \ctx \ent v \, A \T \C[A/\alpha]
+  }
 
  \inferrule[LetRec]{
     \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
@@ -256,19 +270,20 @@
     \ctx \ent \withhandle{v}{c} \T \D
   }
 
-  \inferrule[Dirt-Inter]{
-    \dirt_1 = \{\op_{a1}, ..., \op_{an} \row\} \\
-    \dirt_2 = \{\op_{b1}, ..., \op_{bm} \row\}
-  }{
-    \dirt_1 \sqcup \dirt_2 = \{\op_{a1}, ..., \op_{an}, \op_{b1}, ..., \op_{bm}  \row\}
-  }
-
-  \inferrule[Dirt-Union]{
-    \dirt_1 = \{\op_{a1}, ..., \op_{an} \row\} \\
-    \dirt_2 = \{\op_{b1}, ..., \op_{bm} \row\}
-  }{
-    \dirt_1 \sqcup \dirt_2 = \{(\op_i | \forall i: \op_i \in \dirt_1 \land  \op_i \in \dirt_2)  \row\}
-  }
+  % \inferrule[Dirt-Inter]{
+  %   \dirt_1 = \{\op_{a1}, ..., \op_{an} \row\} \\
+  %   \dirt_2 = \{\op_{b1}, ..., \op_{bm} \row\}
+  % }{
+  %   \dirt_1 \sqcup \dirt_2 = \{\op_{a1}, ..., \op_{an}, \op_{b1}, ..., \op_{bm}  \row\}
+  % }
+  %
+  % \inferrule[Dirt-Union]{
+  %   \dirt_1 = \{\op_{a1}, ..., \op_{an} \row\} \\
+  %   \dirt_2 = \{\op_{b1}, ..., \op_{bm} \row\}
+  % }{
+  %   \dirt_1 \sqcup \dirt_2 = \{(\op_i | \forall i: \op_i \in \dirt_1 \land  \op_i \in \dirt_2)  \row\}
+  % }
+  
 \end{mathpar}
 \end{minipage}
 }

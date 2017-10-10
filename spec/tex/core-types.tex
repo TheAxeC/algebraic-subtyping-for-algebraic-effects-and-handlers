@@ -8,12 +8,14 @@
   \text{value}~v & \bnfis {} & x & \text{variable} \\
     & \bnfor & \const & \text{constant} \\
     & \bnfor & \lambda x. c & \text{function} \\
+    & \bnfor & \Lambda \alpha . c & \text{type abstraction} \\
     & \bnfor & \{ & \text{handler} \\
     & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
     & & \quad \shortcases & \quad\text{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
     & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
+    & \bnfor & v \, A & \text{type application} \\
     & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
     & \bnfor & \ret v  & \text{returned val} \\
     & \bnfor & \op \, v & \text{operation call} \\
@@ -35,7 +37,8 @@
     & \boolty \bnfor \intty & \text{basic types} \\
     & \bnfor & A \to \C & \text{function type} \\
     & \bnfor & \C \hto \D & \text{handler type} \\
-    % & \bnfor & \alpha & \text{type variable} \\
+    & \bnfor & \alpha & \text{type variable} \\
+    & \bnfor & \forall \alpha . \C & \text{polytype} \\
     & \bnfor & \top & \text{top} \\
     & \bnfor & \bot & \text{bottom} \\
     & \bnfor & A \sqcap B & \text{intersection} \\
