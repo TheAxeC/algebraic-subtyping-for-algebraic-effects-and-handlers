@@ -18,6 +18,13 @@
     \intty \le \intty
   }
 
+  \inferrule[Sub-Trans]{
+    A \le A' \\
+    A' \le A''
+  }{
+    A \le A''
+  }
+
   \inferrule[Sub-$\to$]{
     A' \le A \\
     \C \le \C'
@@ -283,7 +290,7 @@
   % }{
   %   \dirt_1 \sqcup \dirt_2 = \{(\op_i | \forall i: \op_i \in \dirt_1 \land  \op_i \in \dirt_2)  \row\}
   % }
-  
+
 \end{mathpar}
 \end{minipage}
 }
