@@ -6,15 +6,19 @@ This is my main log file for my masterthesis. Progress will be recorded in the l
 
 | Thesis meetings        |          |
 | ------------- |:--------:|
-| 26 September 2017  |  Thesis meeting with daily advisor  |
-| 28 September 2017  |  Thesis meeting with daily advisor  |
+| 26 September 2017  |  daily advisor: discuss literature study  |
+| 28 September 2017  |  daily advisor: discuss goals  |
+| 03 October 2017  |  daily advisor: discuss possible type systems (2 possibilities)  |
+| 06 October 2017  |  daily advisor and promotor: select type system  |
+| 10 October 2017  |  daily advisor: discuss types, terms, subtyping rules and typing rules |
 
 | Project meetings        |          |
 | ------------- |:--------:|
 
 | Seminars        |          |
 | ------------- |:--------:|
-| 3 October 2017 | Info session |
+| 02 October 2017 | Information Session for Master Thesis Students |
+| 06 October 2017 | Coherent Nested Composition with Disjoint Intersection Types  |
 
 | Administrative        |          |
 | ------------- |:--------:|
@@ -24,10 +28,10 @@ This topic is situated in the area of Programming Language Theory, the formal st
 
 ## Background
 This thesis builds on two very recent developments in the area of programming language theory:
-- In his December 2016 PhD thesis, Stephen Dolan (University of Cambridge, UK), has presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect.
+- In his December 2016 PhD thesis, Stephen Dolan (University of Cambridge, UK), has presented a novel type system that combines subtyping and parametric polymorphism in a particularly attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect.
 -  "Algebraic effects and handlers" are a new formalism for formally modelling side-effects (e.g. mutable state or non-determinism) in programming languages, developed by Matija Pretnar (University of Ljubjana) and Gordon Plotkin (University of Edinburgh). This approach is gaining a lot of traction, not only as a formalism but also as a practical feature in actual programming languages (e.g. the Koka language developed by Microsoft Research). We are collaborating with Matija Pretnar on the efficient implementation of one such language, called Eff. Axel Faes has contributed to this collaboration during a project he did for the Honoursprogramme of the Faculty of Engineering Science.
 
-Algebraic effects and handlers benefit from a custom type-&-effect system, a type system that also tracks which effects can happen in a program. Several such type-&-effect systems have been proposed in the literature, but all are unsatisfactory. We attribute this to the lack of the elegant properties of Dolan's type system. Indeed the existing type-&-effect systems are not only theoretically unsatisfactory, but they are also akward to implement and use in practice.
+Algebraic effects and handlers benefit from a custom type-&-effect system, a type system that also tracks which effects can happen in a program. Several such type-&-effect systems have been proposed in the literature, but all are unsatisfactory. We attribute this to the lack of the elegant properties of Dolan's type system. Indeed the existing type-&-effect systems are not only theoretically unsatisfactory, but they are also awkward to implement and use in practice.
 
 ## Goals
 The goal of this thesis is to derive a type-&-effect system that extends Dolan's elegant type system with effect information. This type-&-effect system should inherit Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserve all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types).
@@ -56,13 +60,12 @@ I would like to publish my results. Either in the Student Research Competition o
     + Requires more proofs to be written
     + Effect system looks like row-based type system with intersection and union types
 
-
 ## Steps
 - Step 1: Type system
 - Step 2: Proofs
 - Step 2: Implementation
 - Step 4: Testing
-- Step 5: Implement optimization
+- Step 5: Implement optimisation
 - Step 6: Benchmarking
 - Step 7: Write thesis
 
@@ -114,7 +117,7 @@ I would like to publish my results. Either in the Student Research Competition o
 18. *Benjamin Pierce, 1991. Programming with intersection types, union types, and polymorphism.*
 
 ### August
-[1], [6] and [7] were read during my honoursprogramme. These papers and others from Matija Pretnar, Daan Leijen, Daniel Hillerström and Sam Lindley describe algebraic effects and handlers. I have worked through this material during my honourprojects. During these projects, I designed and implemented a new type-&-effect system based on row polymorphism.
+[1], [6] and [7] were read during my Honoursprogramme. These papers and others from Matija Pretnar, Daan Leijen, Daniel Hillerström and Sam Lindley describe algebraic effects and handlers. I have worked through this material during my honourprojects. During these projects, I designed and implemented a new type-&-effect system based on row polymorphism.
 
 [8] is Types and Programming Languages, a book written by Benjamin Pierce. This books provides an excellent background for type systems, polymorphism and subtyping.
 

@@ -1,1 +1,1 @@
-# masterthesis-cs-algebraic-subtyping-for-algebraic-effects-and-handlers
+# Algebraic Subtyping for Algebraic Effects and Handlers

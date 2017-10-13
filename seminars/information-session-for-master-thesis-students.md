@@ -1,4 +1,5 @@
-# Feedback
+# Information Session for Master Thesis Students
+## 02 October 2017
 ## Was the level of presentation appropriate for the audience (e.g., was sufficient background information given)?
 The presentation didn't require any previous knowledge about what the Master's thesis entailed (or what kind of intermediary work is required). All necessary information was also given.
 

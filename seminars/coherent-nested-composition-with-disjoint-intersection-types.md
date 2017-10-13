@@ -1,4 +1,5 @@
-# Feedback
+# Coherent Nested Composition with Disjoint Intersection Types
+## 06 October 2017
 ## Was the level of presentation appropriate for the audience (e.g., was sufficient background information given)?
 The presentation was appropriate for the audience. The presentation assumed knowledge about subtyping and typing rules. Some comparisons were made towards algebraic data types, object-oriented language concepts (such as interfaces and classes). All these concepts can be assumed to be known by the audience, those doing a master's thesis or PhD with professor Schrijvers.
 
