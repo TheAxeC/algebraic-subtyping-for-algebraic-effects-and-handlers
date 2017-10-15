@@ -1,5 +1,6 @@
 \newcommand{\lang}{\textsc{Effy}\xspace}
 \newcommand{\eff}{\textsc{Eff}\xspace}
+\newcommand{\core}{\textsc{EffCore}\xspace}
 \newcommand{\ocaml}{\textsc{OCaml}\xspace}
 
 % Meta-syntax
@@ -22,10 +23,16 @@
 \renewcommand{\C}{\underline{C}}
 \newcommand{\D}{\underline{D}}
 \newcommand{\dirt}{\Delta}
+\newcommand{\dirtend}{. (\textsc{dot})}
 \newcommand{\sig}{\Sigma}
 
 % Expressions and computations
-\newcommand{\funtyped}[2]{\kpre{fun} #1 \T #2 \mapsto}
+\newcommand{\funtyped}[3]{\kpre{fun} #1 \T #2 \mapsto #3}
+
+\newcommand{\union}{\sqcup}
+\newcommand{\intersection}{\sqcap}
+\newcommand{\emptyrow}{\{.\}}
+\newcommand{\polytype}[1]{\forall \alpha . #1}
 
 \newcommand{\call}[3]{{{#1}\,{#2}\,{#3}}}
 \newcommand{\case}{\mathop{\text{\texttt{|}}}}

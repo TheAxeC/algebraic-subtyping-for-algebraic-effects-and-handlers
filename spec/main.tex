@@ -111,7 +111,7 @@
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
 \begin{abstract}
-
+Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. \eff is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, the type-\&-effect system of \eff is unsatisfactory. This is due to the lack of some elegant properties. It is also awkward to implement and use in practice.
 \end{abstract}
 
 \maketitle
@@ -124,10 +124,13 @@
 \input{tex/eff-types}
 \input{tex/eff-type-system}
 
-\section{Core language}
+\section{Core language (\core)}
 \input{tex/core-intro}
 \input{tex/core-types}
 \input{tex/core-type-system}
+
+\section{Semantics}
+\input{tex/semantics}
 
 \section{Elaboration}
 \input{tex/elaboration}

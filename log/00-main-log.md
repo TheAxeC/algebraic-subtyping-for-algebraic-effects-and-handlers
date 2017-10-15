@@ -2,6 +2,8 @@
 
 This is my main log file for my masterthesis. Progress will be recorded in the log directory.
 
+Saturday: 10 hours worked
+
 ## Meetings
 
 | Thesis meetings        |          |
