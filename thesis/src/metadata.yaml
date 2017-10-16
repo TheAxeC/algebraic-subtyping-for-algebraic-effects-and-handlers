@@ -1,0 +1,60 @@
+---
+title: Algebraic Subtyping for Algebraic Effects and Handlers
+author: Axel Faes
+promotor: Prof. dr. ir. Tom Schrijvers
+assessor: people
+advisor: Amr Hany Saleh
+
+translatedtitle:
+udc:
+shortabstract:
+
+language: english
+master: cws
+masteroption: ai
+documentclass: kulemt
+
+font: lm
+
+list-of-figures: true
+list-of-tables: true
+list-of-tables-and-figures: false
+
+coverpageonly: false
+frontpagesonly: false
+
+package:
+- name: hyperref
+  options: pdfusetitle,colorlinks,plainpages=false
+
+bibstyle: abbrv
+
+preface: |
+  stuff
+
+abstract: |
+  This is the abstract.
+
+  It consists of two paragraphs.
+
+symbols: |
+  \chapter{List of Abbreviations and Symbols}
+  \section*{Abbreviations}
+  \begin{flushleft}
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+      LoG   & Laplacian-of-Gaussian \\
+      MSE   & Mean Square error \\
+      PSNR  & Peak Signal-to-Noise ratio \\
+    \end{tabularx}
+  \end{flushleft}
+  \section*{Symbols}
+  \begin{flushleft}
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+      LoG   & Laplacian-of-Gaussian \\
+      MSE   & Mean Square error \\
+      PSNR  & Peak Signal-to-Noise ratio \\
+    \end{tabularx}
+  \end{flushleft}
+---

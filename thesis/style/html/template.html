@@ -38,25 +38,16 @@
         $for(include-before)$
             $include-before$
         $endfor$
-        <!--
         $if(title)$
-            <div id="$idprefix$header">
+            <div id="title-page">
                 <h1 class="title">$title$</h1>
-                $if(subtitle)$
-                <h1 class="subtitle">$subtitle$</h1>
-                $endif$
-                $for(author)$
                 <h2 class="author">$author$</h2>
-                $endfor$
-                $if(date)$
-                <h3 class="date">$date$</h3>
-                $endif$
+                <h3 class="promotor">Promotor: $promotor$ <br/> Advisor: $advisor$</h3>
             </div>
         $endif$
-        -->
-        <div id="title-page">
-            <h1>This is the title of the thesis</h1>
-            <h2>Firstname Surname</h2>
+        <h1>Abstract</h1>
+        <div>
+          $abstract$
         </div>
         $if(toc)$
             <div id="$idprefix$TOC">
@@ -73,6 +64,7 @@
                 $lot$
             </div>
         $endif$
+
         $body$
         $for(include-after)$
             $include-after$

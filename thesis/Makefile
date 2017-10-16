@@ -29,12 +29,13 @@ CSS=css
 THESIS_NAME=thesis
 
 ALL_MD=$(wildcard $(INPUTDIR)/*.md)
+METADATA=$(INPUTDIR)/metadata.yaml
 
-EXCLUDES_PDF=title_page statement
+EXCLUDES_PDF=
 EXCLUDES_PDF_WILDCARD=$(foreach EXL,$(EXCLUDES_PDF),$(wildcard $(INPUTDIR)/*$(EXL)*))
 INPUT_PDF=$(filter-out $(EXCLUDES_PDF_WILDCARD), $(ALL_MD))
 
-EXCLUDES_TEX=title_page statement
+EXCLUDES_TEX=
 EXCLUDES_TEX_WILDCARD=$(foreach EXL,$(EXCLUDES_TEX),$(wildcard $(INPUTDIR)/*$(EXL)*))
 INPUT_TEX=$(filter-out $(EXCLUDES_TEX_WILDCARD), $(ALL_MD))
 
@@ -67,7 +68,7 @@ setup:
 
 pdf: setup
 	cp $(KUL_FILES_TEX) $(STYLE_OUTPUT_KUL)
-	pandoc $(INPUT_PDF) \
+	pandoc $(INPUT_PDF) $(METADATA) \
 	--filter pandoc-eqnos \
 	-o "$(OUTPUTDIR)/$(THESIS_NAME).$(PDF)" \
 	-H "$(STYLETEX)/$(PREAMBLE).$(TEX)" \
@@ -75,16 +76,14 @@ pdf: setup
 	--bibliography="$(BIBFILE)" \
 	--csl="$(STYLETEX)/$(REF_FORMAT).$(CSL)" \
 	--highlight-style pygments \
-	-V fontsize=12pt \
-	-V papersize=a4paper \
-	-V documentclass:report \
+	--chapters \
 	-N \
 	--latex-engine=xelatex \
 	 2>pandoc.log
 	 rm $(KUL_FILES_COPY)
 
 tex: setup
-	pandoc $(INPUT_TEX) \
+	pandoc $(INPUT_TEX) $(METADATA) \
 	--filter pandoc-eqnos \
 	-o "$(OUTPUTDIR)/$(THESIS_NAME).$(TEX)" \
 	-H "$(STYLETEX)/$(PREAMBLE).$(TEX)" \
@@ -92,15 +91,12 @@ tex: setup
 	--bibliography="$(BIBFILE)" \
 	--csl="$(STYLETEX)/$(REF_FORMAT).$(CSL)" \
 	--highlight-style pygments \
-	-V fontsize=12pt \
-	-V papersize=a4paper \
-	-V documentclass:report \
 	-N \
 	--latex-engine=xelatex \
 	 2>pandoc.log
 
 html: setup
-	pandoc $(INPUT_HTML) \
+	pandoc $(INPUT_HTML) $(METADATA) \
 	-o "$(OUTPUTDIR)/$(THESIS_NAME).$(HTML)" \
 	--filter pandoc-eqnos \
 	--standalone \

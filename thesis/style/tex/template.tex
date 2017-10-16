@@ -1,97 +1,69 @@
-\documentclass[master=cws,masteroption=ai]{kulemt}
-\setup{title={Algebraic Subtyping for Algebraic Effects and Handlers},
-  author={Axel Faes},
-  promotor={Prof.\,dr.\,ir.\ Tom Schrijvers},
-  assessor={Ir.\,Kn. Owsmuch\and K. Nowsrest},
-  assistant={Amr Hany Saleh}}
+\documentclass[master=$master$,masteroption=$masteroption$, $language$]{$documentclass$}
+
+\setup{title={$title$},
+  author={$author$},
+  promotor={$promotor$},
+  assessor={$assessor$},
+  assistant={$advisor$}}
 % The following \setup may be removed entirely if no filing card is wanted
 \setup{filingcard,
-  translatedtitle=,
-  udc=,
-  shortabstract={Here comes a very short abstract, containing no more than 500
-    words. \LaTeX\ commands can be used here. Blank lines (or the command
-    \texttt{\string\pa r}) are not allowed!
-    \endgraf}}
-% Uncomment the next line for generating the cover page
-%\setup{coverpageonly}
-% Uncomment the next \setup to generate only the first pages (e.g., if you
-% are a Word user.
-%\setup{frontpagesonly}
+  translatedtitle=$translatedtitle$,
+  udc=$udc$,
+  shortabstract={$shortabstract$}}
 
-% Choose the main text font (e.g., Latin Modern)
-\setup{font=lm}
+$if(coverpageonly)$
+\setup{coverpageonly}
+$endif$
 
-% If you want to include other LaTeX packages, do it here.
+$if(frontpagesonly)$
+\setup{frontpagesonly}
+$endif$
 
-% Finally the hyperref package is used for pdf files.
-% This can be commented out for printed versions.
-\usepackage[pdfusetitle,colorlinks,plainpages=false]{hyperref}
+\setup{font=$font$}
 
-%\includeonly{chap-n}
+$for(package)$
+\usepackage[$package.options$]{$package.name$}
+$endfor$
+
 \begin{document}
 
+$if(preface)$
 \begin{preface}
-  I would like to thank everybody who kept me busy the last year,
-  especially my promoter and my assistants. I would also like to thank the
-  jury for reading the text. My sincere gratitude also goes to my wive and
-  the rest of my family.
+  $preface$
 \end{preface}
+$endif$
 
 \tableofcontents*
 
+$if(abstract)$
 \begin{abstract}
-  The \texttt{abstract} environment contains a more extensive overview of
-  the work. But it should be limited to one page.
+  $abstract$
 \end{abstract}
+$endif$
 
-% A list of figures and tables is optional
-%\listoffigures
-%\listoftables
-% If you only have a few figures and tables you can use the following instead
-\listoffiguresandtables
-% The list of symbols is also optional.
-% This list must be created manually, e.g., as follows:
-\chapter{List of Abbreviations and Symbols}
-\section*{Abbreviations}
-\begin{flushleft}
-  \renewcommand{\arraystretch}{1.1}
-  \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
-    LoG   & Laplacian-of-Gaussian \\
-    MSE   & Mean Square error \\
-    PSNR  & Peak Signal-to-Noise ratio \\
-  \end{tabularx}
-\end{flushleft}
-\section*{Symbols}
+$if(list-of-figures)$
+\listoffigures
+$endif$
+$if(list-of-tables)$
+\listoftables
+$endif$
+$if(list-of-tables-and-figures)$
+\listoftables
+$endif$
 
+$symbols$
 
-% Now comes the main text
 \mainmatter
 
-% \include{intro}
-% \include{chap-1}
-% \include{chap-2}
-% % ... and so on until
-% \include{chap-n}
-% \include{conclusion}
-%
-% % If you have appendices:
-% \appendixpage*          % if wanted
-% \appendix
-% \include{app-A}
-% % ... and so on until
-% \include{app-n}
 $body$
 
 \backmatter
 
-% The bibliography comes after the appendices.
-% You can replace the standard "abbrv" bibliography style by another one.
-\bibliographystyle{abbrv}
-\bibliography{references}
+\bibliographystyle{$bibstyle$}
+\bibliography{$bibliography$}
+
+$for(include-after)$
+$include-after$
+$endfor$
 
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
