@@ -63,12 +63,12 @@ I would like to publish my results. Either in the Student Research Competition o
     + Effect system looks like row-based type system with intersection and union types
 
 ## Steps
-- Step 1: Type system
-- Step 2: Proofs
-- Step 2: Implementation
-- Step 4: Testing
-- Step 5: Implement optimisation
-- Step 6: Benchmarking
+- Step 1: Literature study
+- Step 2: Type system
+- Step 3: Proofs
+- Step 3: Implementation
+- Step 5: Testing
+- Step 6: Implement optimisation + benchmarking
 - Step 7: Write thesis
 
 ## Quote Dolan (p. 137)
