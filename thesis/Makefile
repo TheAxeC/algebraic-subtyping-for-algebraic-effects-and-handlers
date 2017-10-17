@@ -11,6 +11,7 @@ RESDIR=$(BASEDIR)/res
 STYLEHTML=$(STYLEDIR)/html
 STYLETEX=$(STYLEDIR)/tex
 STYLEKUL=$(STYLEDIR)/kul
+STYLESPEC=$(STYLEDIR)/spec
 
 BIBDIR=$(BASEDIR)/bib
 BIBFILE=$(BIBDIR)/references.bib
@@ -18,7 +19,7 @@ BIBFILE=$(BIBDIR)/references.bib
 TEMPLATE=template
 PREAMBLE=preamble
 STYLE=style
-REF_FORMAT=ref_format
+REF_FORMAT=acm-sig-proceedings
 
 PDF=pdf
 TEX=tex
@@ -27,6 +28,7 @@ CSL=csl
 CSS=css
 
 THESIS_NAME=thesis
+SPEC_NAME=spec
 
 ALL_MD=$(wildcard $(INPUTDIR)/*.md)
 METADATA=$(INPUTDIR)/metadata.yaml
@@ -61,10 +63,38 @@ help:
 	@echo '    pandoc-citeproc'
 	@echo '    pandoc-eqnos'
 
-all: setup pdf tex html
+all: setup spec spec-tex pdf tex html
 
 setup:
 	mkdir -p $(OUTPUTDIR)
+
+spec: setup
+	pandoc $(INPUT_PDF) $(METADATA) \
+	--filter pandoc-eqnos \
+	-o "$(OUTPUTDIR)/$(SPEC_NAME).$(PDF)" \
+	-H "$(STYLESPEC)/$(PREAMBLE).$(TEX)" \
+	--template="$(STYLESPEC)/$(TEMPLATE).$(TEX)" \
+	--bibliography="$(BIBFILE)" \
+	--csl="$(STYLESPEC)/$(REF_FORMAT).$(CSL)" \
+	--highlight-style pygments \
+	# --top-level-division=chapter \
+	-N \
+	--latex-engine=xelatex \
+	 2>pandoc.log
+
+spec-tex: setup
+	pandoc $(INPUT_PDF) $(METADATA) \
+	--filter pandoc-eqnos \
+	-o "$(OUTPUTDIR)/$(SPEC_NAME).$(TEX)" \
+	-H "$(STYLESPEC)/$(PREAMBLE).$(TEX)" \
+	--template="$(STYLESPEC)/$(TEMPLATE).$(TEX)" \
+	--bibliography="$(BIBFILE)" \
+	--csl="$(STYLESPEC)/$(REF_FORMAT).$(CSL)" \
+	--highlight-style pygments \
+	# --top-level-division=chapter \
+	-N \
+	--latex-engine=xelatex \
+	 2>pandoc.log
 
 pdf: setup
 	cp $(KUL_FILES_TEX) $(STYLE_OUTPUT_KUL)
@@ -76,11 +106,12 @@ pdf: setup
 	--bibliography="$(BIBFILE)" \
 	--csl="$(STYLETEX)/$(REF_FORMAT).$(CSL)" \
 	--highlight-style pygments \
-	--chapters \
+	--top-level-division=chapter \
 	-N \
 	--latex-engine=xelatex \
 	 2>pandoc.log
 	 rm $(KUL_FILES_COPY)
+	#  rm logokuleng-eps-converted-to.pdf
 
 tex: setup
 	pandoc $(INPUT_TEX) $(METADATA) \
@@ -91,24 +122,25 @@ tex: setup
 	--bibliography="$(BIBFILE)" \
 	--csl="$(STYLETEX)/$(REF_FORMAT).$(CSL)" \
 	--highlight-style pygments \
+	--top-level-division=chapter \
 	-N \
 	--latex-engine=xelatex \
 	 2>pandoc.log
 
 html: setup
-	pandoc $(INPUT_HTML) $(METADATA) \
-	-o "$(OUTPUTDIR)/$(THESIS_NAME).$(HTML)" \
-	--filter pandoc-eqnos \
-	--standalone \
-	--template="$(STYLEHTML)/$(TEMPLATE).$(HTML)" \
-	--bibliography="$(BIBFILE)" \
-	--csl="$(STYLEHTML)/$(REF_FORMAT).$(CSL)" \
-	--include-in-header="$(STYLEHTML)/$(STYLE).$(CSS)" \
-	--toc \
-	--mathjax \
-	--number-sections
-	rm -rf "$(OUTPUTDIRRES)"
-	mkdir "$(OUTPUTDIRRES)"
-	cp -r "$(RESDIR)" "$(OUTPUTDIR)"
+# 	pandoc $(INPUT_HTML) $(METADATA) \
+# 	-o "$(OUTPUTDIR)/$(THESIS_NAME).$(HTML)" \
+# 	--filter pandoc-eqnos \
+# 	--standalone \
+# 	--template="$(STYLEHTML)/$(TEMPLATE).$(HTML)" \
+# 	--bibliography="$(BIBFILE)" \
+# 	--csl="$(STYLEHTML)/$(REF_FORMAT).$(CSL)" \
+# 	--include-in-header="$(STYLEHTML)/$(STYLE).$(CSS)" \
+# 	--toc \
+# 	--mathjax \
+# 	--number-sections
+# 	rm -rf "$(OUTPUTDIRRES)"
+# 	mkdir "$(OUTPUTDIRRES)"
+# 	cp -r "$(RESDIR)" "$(OUTPUTDIR)"
 
 .PHONY: help pdf docx html tex

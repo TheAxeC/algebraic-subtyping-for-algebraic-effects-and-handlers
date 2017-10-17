@@ -26,6 +26,16 @@ frontpagesonly: false
 package:
 - name: hyperref
   options: pdfusetitle,colorlinks,plainpages=false
+- name: mathpartir
+- name: xspace
+- name: stmaryrd
+- name: listings
+- name: newtxmath
+
+bibliography: bib/references.bib
+
+include:
+- src/macros
 
 bibstyle: abbrv
 
@@ -33,9 +43,7 @@ preface: |
   stuff
 
 abstract: |
-  This is the abstract.
-
-  It consists of two paragraphs.
+  Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. \eff is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, the type-&-effect system of \eff is unsatisfactory. This is due to the lack of some elegant properties. It is also awkward to implement and use in practice. This thesis proposes a new type-&-effect system using intersections and unions for both types and effects. The type-&-effect system and the type-&-effect inference algorithm are given and are critically discussed. Several aspects of the system are formally proven. Finally, the system is experimentally validated using an implementation which is compared to several existing type-&-effect systems.
 
 symbols: |
   \chapter{List of Abbreviations and Symbols}
@@ -57,4 +65,5 @@ symbols: |
       PSNR  & Peak Signal-to-Noise ratio \\
     \end{tabularx}
   \end{flushleft}
+
 ---
