@@ -2,8 +2,6 @@
 
 This is my main log file for my masterthesis. Progress will be recorded in the log directory.
 
-Saturday: 10 hours worked
-
 ## Meetings
 
 | Thesis meetings        |          |
@@ -13,6 +11,7 @@ Saturday: 10 hours worked
 | 03 October 2017  |  daily advisor: discuss possible type systems (2 possibilities)  |
 | 06 October 2017  |  daily advisor and promotor: select type system  |
 | 10 October 2017  |  daily advisor: discuss types, terms, subtyping rules and typing rules |
+| 17 October 2017  |  daily advisor: discuss type elaboration |
 
 | Project meetings        |          |
 | ------------- |:--------:|
