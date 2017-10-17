@@ -20,6 +20,7 @@ This is my main log file for my masterthesis. Progress will be recorded in the l
 | ------------- |:--------:|
 | 02 October 2017 | Information Session for Master Thesis Students |
 | 06 October 2017 | Coherent Nested Composition with Disjoint Intersection Types  |
+| 16 October 2017 | Assessing binary classifiers using only positive and unlabelled data  |
 
 | Administrative        |          |
 | ------------- |:--------:|
