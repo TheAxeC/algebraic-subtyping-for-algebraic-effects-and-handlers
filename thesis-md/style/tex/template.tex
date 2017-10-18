@@ -1,0 +1,73 @@
+\documentclass[master=$master$,masteroption=$masteroption$, $language$]{$documentclass$}
+
+\setup{title={$title$},
+  author={$author$},
+  promotor={$promotor$},
+  assessor={$assessor$},
+  assistant={$advisor$}}
+% The following \setup may be removed entirely if no filing card is wanted
+\setup{filingcard,
+  translatedtitle=$translatedtitle$,
+  udc=$udc$,
+  shortabstract={$shortabstract$}}
+
+$if(coverpageonly)$
+\setup{coverpageonly}
+$endif$
+
+$if(frontpagesonly)$
+\setup{frontpagesonly}
+$endif$
+
+\setup{font=$font$}
+
+$for(package)$
+\usepackage[$package.options$]{$package.name$}
+$endfor$
+
+$for(include)$
+\input{$include$}
+$endfor$
+
+\begin{document}
+
+$if(preface)$
+\begin{preface}
+  $preface$
+\end{preface}
+$endif$
+
+\tableofcontents*
+
+$if(abstract)$
+\begin{abstract}
+  $abstract$
+\end{abstract}
+$endif$
+
+$if(list-of-figures)$
+\listoffigures
+$endif$
+$if(list-of-tables)$
+\listoftables
+$endif$
+$if(list-of-tables-and-figures)$
+\listoftables
+$endif$
+
+$symbols$
+
+\mainmatter
+
+$body$
+
+\backmatter
+
+\bibliographystyle{$bibstyle$}
+\bibliography{$bibliography$}
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+\end{document}

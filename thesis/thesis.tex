@@ -1,0 +1,108 @@
+\documentclass[master=cws,masteroption=ai]{kulemt}
+\setup{title={Algebraic Subtyping for Algebraic Types and Effects},
+  author={Axel Faes},
+  promotor={Prof.\,dr.\,ir.\ Tom Schrijvers},
+  assessor={assesors},
+  assistant={Amr Hany Saleh}}
+% The following \setup may be removed entirely if no filing card is wanted
+\setup{filingcard,
+  translatedtitle=,
+  udc=,
+  shortabstract={}}
+
+% Choose the main text font (e.g., Latin Modern)
+\setup{font=lm}
+
+%% Some recommended packages.
+\usepackage{booktabs}   %% For formal tables:
+                        %% http://ctan.org/pkg/booktabs
+\usepackage{subcaption} %% For complex figures with subfigures/subcaptions
+                        %% http://ctan.org/pkg/subcaption
+
+\usepackage{array}
+\usepackage{mathpartir}
+\usepackage{xspace}
+\usepackage{stmaryrd}
+\usepackage{listings}
+\usepackage{newtxmath}
+
+%% Tikz Needed packages
+\usepackage{pgfplots}
+\pgfplotsset{width=7cm,compat=1.8}
+\usepackage{pgfplotstable}
+\renewcommand*{\familydefault}{\sfdefault}
+
+% Finally the hyperref package is used for pdf files.
+% This can be commented out for printed versions.
+\usepackage[pdfusetitle,colorlinks,plainpages=false]{hyperref}
+
+\input{tex/macros}
+\newcommand{\todo}[1]{\textcolor{red}{\textsc{Todo:} #1}}
+
+\begin{document}
+
+\begin{preface}
+  I would like to thank everybody who kept me busy the last year,
+  especially my promoter and my assistants. I would also like to thank the
+  jury for reading the text.
+\end{preface}
+
+\tableofcontents*
+
+\begin{abstract}
+  Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. \eff is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, the type-\&-effect system of \eff is unsatisfactory. This is due to the lack of some elegant properties. It is also awkward to implement and use in practice.
+\end{abstract}
+
+\listoffigures
+\listoftables
+
+% Now comes the main text
+\mainmatter
+
+\chapter{Introduction}
+\input{tex/introduction}
+
+\chapter{Background}
+\input{tex/background}
+
+\chapter{Related Work (\eff)}
+\input{tex/eff-intro}
+\input{tex/eff-types}
+\input{tex/eff-type-system}
+
+\chapter{Core language (\core)}
+\input{tex/core-intro}
+\input{tex/core-types}
+\input{tex/core-type-system}
+
+\chapter{Semantics}
+\input{tex/semantics}
+
+\chapter{Elaboration}
+\input{tex/elaboration}
+
+\chapter{Proofs}
+\input{tex/proofs}
+
+\chapter{Implementation}
+\input{tex/background}
+
+\chapter{Evaluation}
+\input{tex/background}
+
+\chapter{Conclusion}
+\input{tex/conclusion}
+
+\appendixpage*          % if wanted
+\appendix
+\chapter{Appendix A}
+\input{tex/appendix}
+
+\backmatter
+
+% The bibliography comes after the appendices.
+% You can replace the standard "abbrv" bibliography style by another one.
+\bibliographystyle{abbrv}
+\bibliography{bib/main}
+
+\end{document}

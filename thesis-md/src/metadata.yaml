@@ -1,0 +1,69 @@
+---
+title: Algebraic Subtyping for Algebraic Effects and Handlers
+author: Axel Faes
+promotor: Prof. dr. ir. Tom Schrijvers
+assessor: people
+advisor: Amr Hany Saleh
+
+translatedtitle:
+udc:
+shortabstract:
+
+language: english
+master: cws
+masteroption: ai
+documentclass: kulemt
+
+font: lm
+
+list-of-figures: true
+list-of-tables: true
+list-of-tables-and-figures: false
+
+coverpageonly: false
+frontpagesonly: false
+
+package:
+- name: hyperref
+  options: pdfusetitle,colorlinks,plainpages=false
+- name: mathpartir
+- name: xspace
+- name: stmaryrd
+- name: listings
+- name: newtxmath
+
+bibliography: bib/references.bib
+
+include:
+- src/macros
+
+bibstyle: abbrv
+
+preface: |
+  stuff
+
+abstract: |
+  Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. \eff is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, the type-&-effect system of \eff is unsatisfactory. This is due to the lack of some elegant properties. It is also awkward to implement and use in practice. This thesis proposes a new type-&-effect system using intersections and unions for both types and effects. The type-&-effect system and the type-&-effect inference algorithm are given and are critically discussed. Several aspects of the system are formally proven. Finally, the system is experimentally validated using an implementation which is compared to several existing type-&-effect systems.
+
+symbols: |
+  \chapter{List of Abbreviations and Symbols}
+  \section*{Abbreviations}
+  \begin{flushleft}
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+      LoG   & Laplacian-of-Gaussian \\
+      MSE   & Mean Square error \\
+      PSNR  & Peak Signal-to-Noise ratio \\
+    \end{tabularx}
+  \end{flushleft}
+  \section*{Symbols}
+  \begin{flushleft}
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+      LoG   & Laplacian-of-Gaussian \\
+      MSE   & Mean Square error \\
+      PSNR  & Peak Signal-to-Noise ratio \\
+    \end{tabularx}
+  \end{flushleft}
+
+---

@@ -420,7 +420,7 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 \framebox{
 \begin{minipage}{0.95\columnwidth}
 \[\begin{array}{r@{~}c@{~}l}
-  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A\\
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A, x : \polytype{B}\\
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
@@ -460,17 +460,6 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
   }{
     \ctx \ent \funtyped{x}{A}{c} \T A \to \C
   }
-
-  % \inferrule[Hand]{
-  % 	\C = A \E \{Op_i \row\} \\
-  % 	\D = B \E \{Op_i \row\} \\
-  % 	(\op_i \T A_\op \to B_\op) \in \sig \qquad \\
-  % 	h = \shorthand \\
-  % 	\ctx, x \T A_\op \ent c_r \T \D \\
-  % 	\ctx, y \T A_\op, k \T B_\op \to \D \ent c_{op} \T \D \\
-  % }{
-  % 	\ctx \ent h \T \C \hto \D
-  % }
 
   \inferrule[Hand]{
     \ctx, x \T A \ent c_r \T B \E \dirt \\

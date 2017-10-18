@@ -1,0 +1,69 @@
+\subsection{Types and terms}
+
+\paragraph{Terms}
+Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are values $v$ and computations $c$. Computations are terms that can contain effects. Effects are denoted as operations $Op$ which can be called. The function term is explicitly annotated with a type and type abstraction and type application has been added to the language. These terms only work on pure types.
+
+\paragraph{Types}
+Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. It can also be an union or intersection of dirty types. In further sections, the relations between dirty intersections or unions and pure intersections or unions are explained. The finite set $\dirt$ is an over-approximation of the operations that are actually called. Row variables are introduced as well as intersection and unions. The $\dirtend$ is used to close rows that do not end with a row variable. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result.
+
+\begin{figure}[h]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{value}~v & \bnfis {} & x & \text{variable} \\
+    & \bnfor & \const & \text{constant} \\
+    & \bnfor & \funtyped{x}{A}{c} & \text{function} \\
+    & \bnfor & \Lambda \alpha . v & \text{type abstraction} \\
+    & \bnfor & v \, A & \text{type application} \\
+    & \bnfor & \{ & \text{handler} \\
+    & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
+    & & \quad \shortcases & \quad\text{operation cases} \\
+    & & \} & \\
+  \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
+    & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
+    & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
+    & \bnfor & \ret v  & \text{returned val} \\
+    & \bnfor & \op \, v & \text{operation call} \\
+    & \bnfor & \doin{x \leftarrow c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \withhandle{v}{c} & \text{handling}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Terms of \core}\label{fig:terms:core}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{(pure) type}~A, B & \bnfis {}
+    & \boolty \bnfor \intty & \text{basic types} \\
+    & \bnfor & A \to \C & \text{function type} \\
+    & \bnfor & \C \hto \D & \text{handler type} \\
+    & \bnfor & \alpha & \text{type variable} \\
+    & \bnfor & \polytype{A} & \text{polytype} \\
+    & \bnfor & \top & \text{top} \\
+    & \bnfor & \bot & \text{bottom} \\
+    & \bnfor & A \intersection B & \text{intersection} \\
+    & \bnfor & A \union B & \text{union} \\
+  \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\
+    & \bnfor & \C \intersection \D & \text{intersection} \\
+    & \bnfor & \C \union \D & \text{union} \\
+  \text{dirt}~\dirt & \bnfis {} & \{\text{R}\} \\
+  \text{R} & \bnfis {}
+    & \op \row & \text{row} \\
+    & \bnfor & \delta & \text{row variable} \\
+    & \bnfor & . & \text{closed row} \\
+    & \bnfor & \delta_1 \intersection \delta_2 & \text{\textbf{row intersection}} \\
+    & \bnfor & \delta_1 \union \delta_2 & \text{\textbf{row union}} \\
+    & \bnfor & R_1 \intersection R_2 & \text{intersection} \\
+    & \bnfor & R_1 \union R_2 & \text{union}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Types of \core}\label{fig:types:core}
+\end{figure}

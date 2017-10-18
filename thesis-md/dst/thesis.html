@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        <meta name="generator" content="pandoc" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+                    <meta name="author" content="Axel Faes" />
+                        <title>Algebraic Subtyping for Algebraic Effects and Handlers</title>
+        <style type="text/css">code{white-space: pre;}</style>
+                                            <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+                            <style>
+            body {
+                font-family: Georgia;
+                max-width: 800px;
+                margin: 0 auto;
+                line-height: 30px;
+                font-size: 18px;
+                padding-left: 350px;
+                padding-right: 50px;
+                color: #111;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                font-family: Arial;
+            }
+            
+            h1 {
+                padding-top: 200px;
+                line-height: 50px;
+            }
+            h2 {
+                padding-top: 30px;
+            }
+            h3 {
+                padding-top: 20px;
+            }
+            h4 {
+                padding-top: 10px;
+            }
+            p {
+                text-align: justify;
+            }
+            p a {
+                word-wrap: break-word;
+                white-space: pre;
+            }
+            code {
+                word-wrap: break-word;
+            }
+            blockquote {
+                border-left: 3px solid #eee;
+                margin-left: 20px;
+                padding-left: 20px;
+            }
+            
+            ::selection {
+                background-color: #E4E4E4;
+            }
+            
+            table {
+                width: 100%;
+            }
+            table caption {
+                font-weight: bold;
+            }
+            table tr {
+                padding: 0;
+                margin: 0;
+                background-color: #f0f0f0;
+            }
+            table tr.even {
+                background-color: #fafafa;
+            }
+            table td {
+                margin: 0;
+                padding: 3px 5px;
+            }
+            
+            p span.added {
+                color: green;
+                background-color: #FFF3C5;
+            }
+            p span.removed {
+                color: red;
+                background-color: #FFF3C5;
+            }
+            
+            #title-page {
+                padding: 80px 0;
+            }
+            
+            #TOC {
+                position: fixed;
+                left: 0;
+                top: 0;
+                overflow-y: scroll;
+                height: 100%;
+                background: #fafafa;
+                max-width: 300px;
+                font-family: Arial;
+                font-size: 15px;
+                line-height: 30px;
+            }
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background-color: #ECECEC;
+            }
+            ::-webkit-scrollbar-thumb {
+                background-color: #B0B0B0;
+                border-radius: 8px;
+            }
+            #TOC > ul {
+                padding-right: 10px;
+            }
+            #TOC ul {
+                list-style: none;
+                padding-left: 20px;
+            }
+            #TOC ul li a {
+                text-decoration: none;
+                color: #364149;
+                text-overflow: ellipsis;
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+            #TOC ul li a:hover {
+                color: #008cff;
+            }
+            
+            .figure {
+                text-align: center;
+            }
+            .figure p {
+                text-align: center;
+                font-style: italic;
+            }
+            .figure img {
+                  width: 100%;
+            }
+            </style>
+                <script src="js/jquery.js"></script>
+        <script src="js/diff.js"></script>
+        <script src="js/main.js"></script>
+    </head>
+    <body>
+                            <div id="title-page">
+                <h1 class="title">Algebraic Subtyping for Algebraic Effects and Handlers</h1>
+                <h2 class="author">Axel Faes</h2>
+                <h3 class="promotor">Promotor: Prof. dr. ir. Tom Schrijvers <br/> Advisor: Amr Hany Saleh</h3>
+            </div>
+                <h1>Abstract</h1>
+        <div>
+          <p>Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, the type-&amp;-effect system of is unsatisfactory. This is due to the lack of some elegant properties. It is also awkward to implement and use in practice. This thesis proposes a new type-&amp;-effect system using intersections and unions for both types and effects. The type-&amp;-effect system and the type-&amp;-effect inference algorithm are given and are critically discussed. Several aspects of the system are formally proven. Finally, the system is experimentally validated using an implementation which is compared to several existing type-&amp;-effect systems.</p>
+        </div>
+                    <div id="TOC">
+                <ul>
+                <li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a><ul>
+                <li><a href="#motivation"><span class="toc-section-number">1.1</span> Motivation</a></li>
+                <li><a href="#research-questions"><span class="toc-section-number">1.2</span> Research questions</a></li>
+                <li><a href="#goals"><span class="toc-section-number">1.3</span> Goals</a></li>
+                </ul></li>
+                <li><a href="#background"><span class="toc-section-number">2</span> Background</a></li>
+                <li><a href="#related-work"><span class="toc-section-number">3</span> Related Work ()</a><ul>
+                <li><a href="#types-and-terms"><span class="toc-section-number">3.1</span> Types and terms</a></li>
+                <li><a href="#type-system"><span class="toc-section-number">3.2</span> Type System</a><ul>
+                <li><a href="#subtyping"><span class="toc-section-number">3.2.1</span> Subtyping</a></li>
+                <li><a href="#typing-rules"><span class="toc-section-number">3.2.2</span> Typing rules</a></li>
+                </ul></li>
+                </ul></li>
+                <li><a href="#problem-statement"><span class="toc-section-number">4</span> Problem Statement</a></li>
+                <li><a href="#planning"><span class="toc-section-number">5</span> Planning</a></li>
+                <li><a href="#core-language"><span class="toc-section-number">6</span> Core language ()</a><ul>
+                <li><a href="#types-and-terms-1"><span class="toc-section-number">6.1</span> Types and terms</a></li>
+                <li><a href="#type-system-1"><span class="toc-section-number">6.2</span> Type system</a><ul>
+                <li><a href="#subtyping-1"><span class="toc-section-number">6.2.1</span> Subtyping</a></li>
+                <li><a href="#typing-rules-1"><span class="toc-section-number">6.2.2</span> Typing rules</a></li>
+                </ul></li>
+                </ul></li>
+                <li><a href="#type-inference"><span class="toc-section-number">7</span> Type Inference</a></li>
+                <li><a href="#semantics"><span class="toc-section-number">8</span> Semantics</a></li>
+                <li><a href="#proofs"><span class="toc-section-number">9</span> Proofs</a></li>
+                <li><a href="#implementation"><span class="toc-section-number">10</span> Implementation</a></li>
+                <li><a href="#evaluation"><span class="toc-section-number">11</span> Evaluation</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+                </ul>
+            </div>
+                        
+        <h1 id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+        <p>The specification for a type-&amp;-effect system with algebraic subtyping for algebraic effects and handlers is given in this document. The formal properties of this system are studied in order to find which properties are satisfied compared to other type-&amp;-effect systems. The proposed type-&amp;-effect system builds on two very recent developments in the area of programming language theory.</p>
+        
+        <p>In his December 2016 PhD thesis, Stephen Dolan (University of Cambridge, UK), has presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect.</p>
+        
+        <p>These are a new formalism for formally modelling side-effects (e.g. mutable state or non-determinism) in programming languages, developed by Matija Pretnar (University of Ljubjana) and Gordon Plotkin (University of Edinburgh). This approach is gaining a lot of traction, not only as a formalism but also as a practical feature in actual programming languages (e.g. the Koka language developed by Microsoft Research). We are collaborating with Matija Pretnar on the efficient implementation of one such language, called Eff. Axel Faes has contributed to this collaboration during a project he did for the Honoursprogramme of the Faculty of Engineering Science.</p>
+        <h2 id="motivation"><span class="header-section-number">1.1</span> Motivation</h2>
+        <p>Algebraic effects and handlers benefit from a custom type-&amp;-effect system, a type system that also tracks which effects can happen in a program. Several such type-&amp;-effect systems have been proposed in the literature, but all are unsatisfactory. We attribute this to the lack of the elegant properties of Dolan's type system. Indeed the existing type-&amp;-effect systems are not only theoretically unsatisfactory, but they are also awkward to implement and use in practice.</p>
+        <h2 id="research-questions"><span class="header-section-number">1.2</span> Research questions</h2>
+        
+        <h2 id="goals"><span class="header-section-number">1.3</span> Goals</h2>
+        The goal of this thesis is to derive a type-&amp;-effect system that extends Dolan's elegant type system with effect information. This type-&amp;-effect system should inherit Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserve all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types). Afterwards this type-&amp;-effect system The following approach is taken:
+        
+        <h1 id="background"><span class="header-section-number">2</span> Background</h1>
+        <h1 id="related-work"><span class="header-section-number">3</span> Related Work ()</h1>
+        <p>The type-&amp;-effect system that is used in is based on subtyping and dirty types <span class="citation">[1]</span>. <!-- \cite{effectsystem} --></p>
+        <h2 id="types-and-terms"><span class="header-section-number">3.1</span> Types and terms</h2>
+        
+        <p>Figure~ shows the two types of terms in . There are values <span class="math inline">\(v\)</span> and computations <span class="math inline">\(c\)</span>. Computations are terms that can contain effects. Effects are denoted as operations <span class="math inline">\(Op\)</span> which can be called.</p>
+        
+        <p>Figure~ shows the types of . There are two main sorts of types. There are (pure) types <span class="math inline">\(A, B\)</span> and dirty types <span class="math inline">\(\C, \D\)</span>. A dirty type is a pure type <span class="math inline">\(A\)</span> tagged with a finite set of operations <span class="math inline">\(\dirt\)</span>, which we call dirt, that can be called. This finite set <span class="math inline">\(\dirt\)</span> is an over-approximation of the operations that are actually called. The type <span class="math inline">\(\C \hto \D\)</span> is used for handlers because a handler takes an input computation <span class="math inline">\(\C\)</span>, handles the effects in this computation and outputs computation <span class="math inline">\(\D\)</span> as the result.</p>
+        
+        
+        <h2 id="type-system"><span class="header-section-number">3.2</span> Type System</h2>
+        <h3 id="subtyping"><span class="header-section-number">3.2.1</span> Subtyping</h3>
+        <p>The dirty type <span class="math inline">\(A \E \dirt\)</span> is assigned to a computation returning values of type <span class="math inline">\(A\)</span> and potentially calling operations from the set <span class="math inline">\(\dirt\)</span>. This set <span class="math inline">\(\dirt\)</span> is always an over-approximation of the actually called operations, and may safely be increased, inducing a natural subtyping judgement <span class="math inline">\(A \E \dirt \leq A \E \dirt&#39;\)</span> on dirty types. As dirty types can occur inside pure types, we also get a derived subtyping judgement on pure types. Both judgements are defined in Figure~. Observe that, as usual, subtyping is contravariant in the argument types of functions and handlers, and covariant in their return types.</p>
+        
+        <h3 id="typing-rules"><span class="header-section-number">3.2.2</span> Typing rules</h3>
+        <p>Figure~ defines the typing judgements for values and computations with respect to a standard typing context <span class="math inline">\(\ctx\)</span>.</p>
+        
+        <p>The rules for subtyping, variables, and functions are entirely standard. For constants we assume a signature <span class="math inline">\(\sig\)</span> that assigns a type~<span class="math inline">\(A\)</span> to each constant~<span class="math inline">\(\const\)</span>, which we write as <span class="math inline">\((\const \T A) \in \sig\)</span>.</p>
+        <p>A handler expression has type <span class="math inline">\(A \E \dirt \cup \ops \hto B \E \dirt\)</span> iff all branches (both the operation cases and the return case) have dirty type <span class="math inline">\(B \E \dirt\)</span> and the operation cases cover the set of operations <span class="math inline">\(\ops\)</span>. Note that the intersection <span class="math inline">\(\dirt \cap \ops\)</span> is not necessarily empty. The handler deals with the operations <span class="math inline">\(\ops\)</span>, but in the process may re-issue some of them (i.e., <span class="math inline">\(\dirt \cap \ops\)</span>).</p>
+        <p>When typing operation cases, the given signature for the operation <span class="math inline">\((\op \T A_\op \to B_\op) \in \sig\)</span> determines the type <span class="math inline">\(A_\op\)</span> of the parameter <span class="math inline">\(x\)</span> and the domain <span class="math inline">\(B_\op\)</span> of the continuation <span class="math inline">\(k\)</span>. As our handlers are deep, the codomain of <span class="math inline">\(k\)</span> should be the same as the type <span class="math inline">\(B \E \dirt\)</span> of the cases.</p>
+        
+        <p>With the following exceptions, the typing judgement <span class="math inline">\(\ctx \ent c : \C\)</span> has a straightforward definition. The <span class="math inline">\(\ret\)</span> construct renders a value <span class="math inline">\(v\)</span> as a pure computation, i.e., with empty dirt. An operation invocation <span class="math inline">\(\op\,v\)</span> is typed according to the operation's signature, with the operation itself as its only operation. Finally, rule  shows that a handler with type <span class="math inline">\(\C \hto \D\)</span> transforms a computation with type <span class="math inline">\(\C\)</span> into a computation with type <span class="math inline">\(\D\)</span>.</p>
+        
+        <h1 id="problem-statement"><span class="header-section-number">4</span> Problem Statement</h1>
+        <h1 id="planning"><span class="header-section-number">5</span> Planning</h1>
+        <h1 id="core-language"><span class="header-section-number">6</span> Core language ()</h1>
+        <p>is a language with row-based effects, intersection and union types and effects and is subtyping based.</p>
+        <h2 id="types-and-terms-1"><span class="header-section-number">6.1</span> Types and terms</h2>
+        
+        <p>Figure~ shows the two types of terms in . There are values <span class="math inline">\(v\)</span> and computations <span class="math inline">\(c\)</span>. Computations are terms that can contain effects. Effects are denoted as operations <span class="math inline">\(Op\)</span> which can be called. The function term is explicitly annotated with a type and type abstraction and type application has been added to the language. These terms only work on pure types.</p>
+        
+        <p>Figure~ shows the types of . There are two main sorts of types. There are (pure) types <span class="math inline">\(A, B\)</span> and dirty types <span class="math inline">\(\C, \D\)</span>. A dirty type is a pure type <span class="math inline">\(A\)</span> tagged with a finite set of operations <span class="math inline">\(\dirt\)</span>, which we call dirt, that can be called. It can also be an union or intersection of dirty types. In further sections, the relations between dirty intersections or unions and pure intersections or unions are explained. The finite set <span class="math inline">\(\dirt\)</span> is an over-approximation of the operations that are actually called. Row variables are introduced as well as intersection and unions. The <span class="math inline">\(\dirtend\)</span> is used to close rows that do not end with a row variable. The type <span class="math inline">\(\C \hto \D\)</span> is used for handlers because a handler takes an input computation <span class="math inline">\(\C\)</span>, handles the effects in this computation and outputs computation <span class="math inline">\(\D\)</span> as the result.</p>
+        
+        
+        <h2 id="type-system-1"><span class="header-section-number">6.2</span> Type system</h2>
+        <h3 id="subtyping-1"><span class="header-section-number">6.2.1</span> Subtyping</h3>
+        <p>The subtyping rules are given in Figure~, Figure~ and Figure~. Figure~ contains all subtyping rules related to types. Figure~ contains the distributative subtyping rules. Finally Figure~ contains the subtyping rules that govern the dirts.</p>
+        <p>The dirty type <span class="math inline">\(A \E \dirt\)</span> is assigned to a computation returning values of type <span class="math inline">\(A\)</span> and potentially calling operations from the set <span class="math inline">\(\dirt\)</span>. This set <span class="math inline">\(\dirt\)</span> is always an over-approximation of the actually called operations, and may safely be increased, inducing a natural subtyping judgement <span class="math inline">\(A \E \dirt \leq A \E \dirt&#39;\)</span> on dirty types. As dirty types can occur inside pure types, we also get a derived subtyping judgement on pure types. Observe that, as usual, subtyping is contravariant in the argument types of functions and handlers, and covariant in their return types.</p>
+        
+        <p>There are several possible methods to compute the dirt intersection and union. If row variables were to be disregarded, dirt union and intersection could be defined as set union and intersection. This methods allows unions and intersections to be eliminated. This has an advantage, eliminating unions and intersections simplifies the effect system. However, we cannot disregard row variables.</p>
+        <p>Thus, set union and intersection cannot simply be used. It would be possible to define two extra types, namely <span class="math inline">\(\delta_1 \union \delta_2\)</span> and <span class="math inline">\(\delta_1 \intersection \delta_2\)</span>. Using these types, it is possible to use a form of set union and intersection. The following union <span class="math inline">\(\{Op_1, ..., Op_n, \delta_1\} \union \{Op_{n+1}, ..., Op_{n+m}, \delta_2\}\)</span> could be defined as <span class="math inline">\(\{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, (\delta_1 \union \delta_2)\}\)</span>. A similar construction can be used for intersection. This simplifies the subtyping rules since the more complicated aspects are enclosed within the row variables.</p>
+        
+        
+        
+        
+        <h3 id="typing-rules-1"><span class="header-section-number">6.2.2</span> Typing rules</h3>
+        <p>Figure~ defines the typing judgements for values and computations with respect to a standard typing context <span class="math inline">\(\ctx\)</span>.</p>
+        
+        <p>The rules for subtyping, variables, type abstraction, type application and functions are entirely standard. For constants we assume a signature <span class="math inline">\(\sig\)</span> that assigns a type~<span class="math inline">\(A\)</span> to each constant~<span class="math inline">\(\const\)</span>, which we write as <span class="math inline">\((\const \T A) \in \sig\)</span>.</p>
+        <p>A handler expression has type <span class="math inline">\(A \E \dirt \cup \ops \hto B \E \dirt\)</span> iff all branches (both the operation cases and the return case) have dirty type <span class="math inline">\(B \E \dirt\)</span> and the operation cases cover the set of operations <span class="math inline">\(\ops\)</span>. Note that the intersection <span class="math inline">\(\dirt \cap \ops\)</span> is not necessarily empty (with <span class="math inline">\(\cap\)</span> being the intersection of the operations, not to be confused with the <span class="math inline">\(\intersection\)</span> type). The handler deals with the operations <span class="math inline">\(\ops\)</span>, but in the process may re-issue some of them (i.e., <span class="math inline">\(\dirt \cap \ops\)</span>).</p>
+        <p>When typing operation cases, the given signature for the operation <span class="math inline">\((\op \T A_\op \to B_\op) \in \sig\)</span> determines the type <span class="math inline">\(A_\op\)</span> of the parameter <span class="math inline">\(x\)</span> and the domain <span class="math inline">\(B_\op\)</span> of the continuation <span class="math inline">\(k\)</span>. As our handlers are deep, the codomain of <span class="math inline">\(k\)</span> should be the same as the type <span class="math inline">\(B \E \dirt\)</span> of the cases.</p>
+        
+        <p>With the following exceptions, the typing judgement <span class="math inline">\(\ctx \ent c : \C\)</span> has a straightforward definition. The <span class="math inline">\(\ret\)</span> construct renders a value <span class="math inline">\(v\)</span> as a pure computation, i.e., with empty dirt. In this case, this is defined as a set with the <span class="math inline">\(\dirtend\)</span> as the only element. An operation invocation <span class="math inline">\(\op\,v\)</span> is typed according to the operation's signature, with the operation itself as its only operation. Finally, rule  shows that a handler with type <span class="math inline">\(\C \hto \D\)</span> transforms a computation with type <span class="math inline">\(\C\)</span> into a computation with type <span class="math inline">\(\D\)</span>.</p>
+        
+        <h1 id="type-inference"><span class="header-section-number">7</span> Type Inference</h1>
+        <p>The elaboration show how the source language can be transformed into .</p>
+        
+        
+        <h1 id="semantics"><span class="header-section-number">8</span> Semantics</h1>
+        <h1 id="proofs"><span class="header-section-number">9</span> Proofs</h1>
+        <h1 id="implementation"><span class="header-section-number">10</span> Implementation</h1>
+        <h1 id="evaluation"><span class="header-section-number">11</span> Evaluation</h1>
+        <h1 id="conclusion" class="unnumbered">Conclusion</h1>
+        <div id="refs" class="references">
+        <div id="ref-effectsystem">
+        <p>[1] Bauer, A. and Pretnar, M. 2014. An effect system for algebraic effects and handlers. <em>Logical Methods in Computer Science</em>. 10, 4 (2014). DOI:<a href="https://doi.org/10.2168/LMCS-10(4:9)2014" class="uri">https://doi.org/10.2168/LMCS-10(4:9)2014</a>.</p>
+        </div>
+        </div>
+            </body>
+</html>

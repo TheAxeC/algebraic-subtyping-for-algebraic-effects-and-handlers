@@ -1,24 +1,26 @@
-The elaboration show how the source language can be transformed into the core language. 
+The elaboration show how the source language can be transformed into \core.
 
 \begin{figure}
 \begin{center}
 \framebox{
 \begin{minipage}{0.95\columnwidth}
 \[\begin{array}{r@{~}c@{~}l}
-  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A\\
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A, x : \polytype{B}\\
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
   \inferrule[Val]{
+    \ctx \ent v \T A \leadsto v'\\
+    A \le B
   }{
-    \ctx \ent v \T A \leadsto v'
+    \ctx \ent v \T B \leadsto v'
   }
 
   \inferrule[Var]{
     (x \T S) \in \ctx \\
     S = \forall \bar{\alpha} . A
   }{
-    \ctx \ent x \T A[\bar{S}/\bar{\alpha}] \leadsto x \, \bar{S'}
+    \ctx \ent x \T A[\bar{S}/\bar{\alpha}] \leadsto x \, \bar{S}
   }
 
   \inferrule[Const]{
@@ -30,29 +32,19 @@ The elaboration show how the source language can be transformed into the core la
   \inferrule[Fun]{
     \ctx, x \T A \ent c \T \C \leadsto c'
   }{
-    \ctx \ent \fun{x} c \T A \to \C \leadsto \lambda (x \T A) . c' \T A \to \C
+    \ctx \ent \fun{x} c \T A \to \C \leadsto \funtyped{x}{A}{c'} \T A \to \C
   }
-
-  % \inferrule[Hand]{
-  %   \ctx, x \T A \ent c_r \T B \E \dirt \\
-  %   \Big[
-  %     (\op \T A_\op \to B_\op) \in \sig \qquad \\
-  %     \ctx, x \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
-  %   \Big]_{\op \in \ops}
-  % }{
-  %   \ctx \ent \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt
-  % }
 
   \inferrule[Hand]{
-  	\C = A \E \{Op_i \row\} \\
-  	\D = B \E \{Op_i \row\} \\
-  	(\op_i \T A_\op \to B_\op) \in \sig \qquad \\
-  	h = \shorthand \\ \leadsto h' = \shorthandelab \\
-  	\ctx, x \T A_\op \ent c_r \T \D \leadsto c'_r \T \D \\
-  	\ctx, y \T A_\op, k \T B_\op \to \D \ent c_{op} \T \D \leadsto c'_{op} \T \D\\
+    \ctx, x \T A \ent c_r \T B \E \dirt \\
+    \Big[
+      (\op \T A_\op \to B_\op) \in \sig \qquad \\
+      \ctx, x \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
+    \Big]_{\op \in \ops}
   }{
-  	\ctx \ent h \T \C \hto \D \leadsto h' \T \C \hto \D
+    \ctx \ent \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt \\ \leadsto \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt
   }
+
 \end{mathpar}
 \end{minipage}
 }
@@ -66,13 +58,15 @@ The elaboration show how the source language can be transformed into the core la
 \framebox{
 \begin{minipage}{0.95\columnwidth}
 \[\begin{array}{r@{~}c@{~}l}
-  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A\\
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A, x : \polytype{B}\\
 \end{array}\]
 \textbf{Computations}
 \begin{mathpar}
   \inferrule[Comp]{
+    \ctx \ent c \T \C \leadsto c'\\
+    \C \le \D
   }{
-    \ctx \ent c \T \C' \leadsto c'
+    \ctx \ent c \T \D \leadsto c'
   }
 
   \inferrule[App]{
@@ -92,24 +86,23 @@ The elaboration show how the source language can be transformed into the core la
   \inferrule[Ret]{
     \ctx \ent v \T A \leadsto v'
   }{
-    \ctx \ent \ret v \T A \E \emptyset \leadsto \ret v' \T A \E \emptyset
+    \ctx \ent \ret v \T A \E \emptyset \leadsto \ret v' \T A \E \emptyrow
   }
 
   \inferrule[Op]{
     (\op \T A \to B) \in \sig \\
-    \C = B \E \{\op \row \} \\
     \ctx \ent v \T A \leadsto v'
   }{
-    \ctx \ent \op \, v \T \C \leadsto \op \, v' \T \C
+    \ctx \ent \op \, v \T B \E \{\op\} \leadsto \op \, v' \T B \E \{\op, .\}
   }
 
   \inferrule[Do]{
     \ctx \ent c_1 \T \C \leadsto c'_1 \\
     S = \forall \bar{\alpha} . A \\
     \bar{\alpha} = FTV(A) - TV(\ctx) \\
-    \ctx, x \T S \ent \D \leadsto c'_2
+    \ctx, x \T S \ent c_2 \T \D \leadsto c'_2
   }{
-    \ctx \ent \doin{x \leftarrow c_1} c_2 \T \D \leadsto (\lambda (x \T A) . c'_2) (\Lambda \bar{\alpha} . c'_1)
+    \ctx \ent \doin{x \leftarrow c_1} c_2 \T \D \leadsto (\funtyped{x}{A}{c'_2})(\Lambda \bar{\alpha} . c'_1)
   }
 
   \inferrule[With]{

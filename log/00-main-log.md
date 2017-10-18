@@ -25,6 +25,15 @@ This is my main log file for my masterthesis. Progress will be recorded in the l
 | Administrative        |          |
 | ------------- |:--------:|
 
+| Hours worked (estimated hours)       |          |
+| ------------- |:--------:|
+| 25/09/2017 | 30    |
+| 02/10/2017 | 20    |
+| 09/10/2017 | 30    |
+| 16/10/2017 | 11    |
+| total      | 80    |
+| estimate   | ~700  |
+
 ## Summary
 This topic is situated in the area of Programming Language Theory, the formal study of programming language features and their properties. Specifically, a novel type system will be designed and its formal properties studied. This type system will be focused on algebraic effects and handlers.
 
