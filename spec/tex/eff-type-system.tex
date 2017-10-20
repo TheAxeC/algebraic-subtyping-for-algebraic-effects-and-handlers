@@ -1,7 +1,8 @@
 \subsection{Type System}
 \subsubsection{Subtyping}
 The dirty type $A \E \dirt$ is assigned to a computation returning values of type $A$ and potentially calling operations from the set $\dirt$. This set $\dirt$ is always an over-approximation of the actually called operations, and may safely be increased, inducing a natural subtyping judgement $A \E \dirt \leq A \E \dirt'$ on dirty types. As dirty types can occur inside pure types, we also get a derived subtyping judgement on pure types. Both judgements are defined in Figure~\ref{fig:subtyping}. Observe that, as usual, subtyping is contravariant in the argument types of functions and handlers, and covariant in their return types.
-\begin{figure}[h]
+
+\begin{figure}[!htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.95\columnwidth}
@@ -43,6 +44,7 @@ The dirty type $A \E \dirt$ is assigned to a computation returning values of typ
 \end{center}
 \caption{Subtyping for pure and dirty types of \eff}\label{fig:subtyping}
 \end{figure}
+
 \subsubsection{Typing rules}
 Figure~\ref{fig:eff-typing} defines the typing judgements for values and computations with respect to a standard typing context $\ctx$.
 
@@ -56,7 +58,7 @@ When typing operation cases, the given signature for the operation $(\op \T A_\o
 \paragraph{Computations}
 With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a straightforward definition. The $\ret$ construct renders a value $v$ as a pure computation, i.e., with empty dirt. An operation invocation $\op\,v$ is typed according to the operation's signature, with the operation itself as its only operation. Finally, rule \textsc{With} shows that a handler with type $\C \hto \D$ transforms a computation with type $\C$ into a computation with type $\D$.
 
-\begin{figure}[h]
+\begin{figure}[!htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.95\columnwidth}

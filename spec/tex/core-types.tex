@@ -3,10 +3,7 @@
 \paragraph{Terms}
 Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are values $v$ and computations $c$. Computations are terms that can contain effects. Effects are denoted as operations $Op$ which can be called. The function term is explicitly annotated with a type and type abstraction and type application has been added to the language. These terms only work on pure types.
 
-\paragraph{Types}
-Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. It can also be an union or intersection of dirty types. In further sections, the relations between dirty intersections or unions and pure intersections or unions are explained. The finite set $\dirt$ is an over-approximation of the operations that are actually called. Row variables are introduced as well as intersection and unions. The $\dirtend$ is used to close rows that do not end with a row variable. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result.
-
-\begin{figure}[h]
+\begin{figure}[!htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.98\columnwidth}
@@ -34,7 +31,10 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
 \caption{Terms of \core}\label{fig:terms:core}
 \end{figure}
 
-\begin{figure}[h]
+\paragraph{Types}
+Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. It can also be an union or intersection of dirty types. In further sections, the relations between dirty intersections or unions and pure intersections or unions are explained. The finite set $\dirt$ is an over-approximation of the operations that are actually called. Row variables are introduced as well as intersection and unions. The $\dirtend$ is used to close rows that do not end with a row variable. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result.
+
+\begin{figure}[!htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.98\columnwidth}
@@ -57,10 +57,9 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
     & \op \row & \text{row} \\
     & \bnfor & \delta & \text{row variable} \\
     & \bnfor & . & \text{closed row} \\
-    & \bnfor & \delta_1 \intersection \delta_2 & \text{\textbf{row intersection}} \\
-    & \bnfor & \delta_1 \union \delta_2 & \text{\textbf{row union}} \\
     & \bnfor & R_1 \intersection R_2 & \text{intersection} \\
-    & \bnfor & R_1 \union R_2 & \text{union}
+    & \bnfor & R_1 \union R_2 & \text{union} \\
+  \text{All operations}~\allops & \bnfis {} & \{\op_i | \op_i \in \sig \}
 \end{array}\]
 \end{minipage}
 }

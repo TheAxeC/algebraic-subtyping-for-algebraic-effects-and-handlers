@@ -14,7 +14,9 @@
                         %% http://ctan.org/pkg/subcaption
 
 \usepackage{array}
+\usepackage[section]{placeins}
 \usepackage{mathpartir}
+\usepackage{xcolor}
 \usepackage{xspace}
 \usepackage{stmaryrd}
 \usepackage{listings}
@@ -137,12 +139,18 @@ Algebraic effects and handlers are a very active area of research. An important 
 \input{tex/core-intro}
 \input{tex/core-types}
 \input{tex/core-type-system}
+\input{tex/core-subtyping}
+\input{tex/core-equivalence}
+\input{tex/core-typing-rules}
 
 \section{Semantics}
 \input{tex/semantics}
 
 \section{Elaboration}
 \input{tex/elaboration}
+
+\section{Constraint Generation}
+\input{tex/constraints}
 
 \section{Proofs}
 \input{tex/proofs}
@@ -166,5 +174,6 @@ Algebraic effects and handlers are a very active area of research. An important 
 \end{acks}
 
 \bibliography{bib/main}
+\nocite{*}
 
 \end{document}
