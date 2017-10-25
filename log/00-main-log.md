@@ -30,8 +30,9 @@ This is my main log file for my masterthesis. Progress will be recorded in the l
 | 25/09/2017 | 30    |
 | 02/10/2017 | 20    |
 | 09/10/2017 | 30    |
-| 16/10/2017 | 11    |
-| total      | 80    |
+| 16/10/2017 | 15    |
+| 23/10/2017 | 10    |
+| total      | 105   |
 | estimate   | ~700  |
 
 ## Summary

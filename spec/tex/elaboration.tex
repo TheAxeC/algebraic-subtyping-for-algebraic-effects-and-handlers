@@ -5,13 +5,13 @@ The elaboration show how the source language can be transformed into \core.
 \framebox{
 \begin{minipage}{0.95\columnwidth}
 \[\begin{array}{r@{~}c@{~}l}
-  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A, x : \polytype{B}\\
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx,  x : \polytype{B}\\
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
   \inferrule[Val]{
     \ctx \ent v \T A \leadsto v'\\
-    A \le B
+    \ent_c A \le B
   }{
     \ctx \ent v \T B \leadsto v'
   }
