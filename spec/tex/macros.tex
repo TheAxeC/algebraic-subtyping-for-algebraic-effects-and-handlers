@@ -30,6 +30,7 @@
 % Expressions and computations
 \newcommand{\funtyped}[3]{\kpre{fun} #1 \T #2 \mapsto #3}
 
+\newcommand{\letvar}{\textbf{\^{x}}}
 \newcommand{\union}{\sqcup}
 \newcommand{\intersection}{\sqcap}
 \newcommand{\emptyrow}{\{.\}}
@@ -40,7 +41,7 @@
 \newcommand{\cont}[2]{(#1.\,#2)}
 \newcommand{\const}{\kord{k}}
 \newcommand{\fls}{\kord{false}}
-\newcommand{\fun}[1]{\kpre{fun} #1 \mapsto}
+\newcommand{\fun}[1]{\lambda #1 .} %\kpre{fun} #1 \mapsto}
 \newcommand{\handler}[1]{\{ #1 \}}
 \newcommand{\conditional}[3]{\kpre{if} #1 \kop{then} #2 \kop{else} #3}
 \newcommand{\letin}[1]{\kpre{let} #1 \kop{in}}

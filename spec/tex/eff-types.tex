@@ -9,7 +9,9 @@ Figure~\ref{fig:terms:eff} shows the two types of terms in \eff. There are value
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{value}~v & \bnfis {} & x & \text{variable} \\
-    & \bnfor & \const & \text{constant} \\
+    % & \bnfor & \const & \text{constant} \\
+    & \bnfor & \tru & \text{true} \\
+    & \bnfor & \fls & \text{false} \\
     & \bnfor & \fun{x} c & \text{function} \\
     & \bnfor & \{ & \text{handler} \\
     & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
@@ -37,7 +39,8 @@ Figure~\ref{fig:types:eff} shows the types of \eff. There are two main sorts of 
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{(pure) type}~A, B & \bnfis {}
-    & \boolty \bnfor \intty & \text{basic types} \\
+    % & \boolty \bnfor \intty & \text{basic types} \\
+    & \boolty & \text{bool type} \\
     & \bnfor & A \to \C & \text{function type} \\
     & \bnfor & \C \hto \D & \text{handler type} \\
   \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\

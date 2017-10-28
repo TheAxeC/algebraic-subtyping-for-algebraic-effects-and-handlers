@@ -17,7 +17,7 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 \framebox{
 \begin{minipage}{0.95\columnwidth}
 \[\begin{array}{r@{~}c@{~}l}
-  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx, x : \polytype{B}\\
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx, \letvar : \polytype{B}\\
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
@@ -34,28 +34,38 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent x \T A
   }
 
-  \inferrule[Const]{
-    (\const \T A) \in \sig
+  \inferrule[True]{
   }{
-    \ctx \ent \const \T A
+    \ctx \ent \tru \T bool
   }
 
-  \inferrule[Type Abs]{
-    \ctx, \alpha \ent v \T A
+  \inferrule[False]{
   }{
-    \ctx \ent \Lambda \alpha . v \T \polytype{A}
+    \ctx \ent \fls \T bool
   }
 
-  \inferrule[Type App]{
-    \ctx \ent v \T \polytype{B}
-  }{
-    \ctx \ent v \, A \T B[A/\alpha]
-  }
+  % \inferrule[Const]{
+  %   (\const \T A) \in \sig
+  % }{
+  %   \ctx \ent \const \T A
+  % }
+
+  % \inferrule[Type Abs]{
+  %   \ctx, \alpha \ent v \T A
+  % }{
+  %   \ctx \ent \Lambda \alpha . v \T \polytype{A}
+  % }
+
+  % \inferrule[Type App]{
+  %   \ctx \ent v \T \polytype{B}
+  % }{
+  %   \ctx \ent v \, A \T B[A/\alpha]
+  % }
 
   \inferrule[Fun]{
     \ctx, x \T A \ent c \T \C
   }{
-    \ctx \ent \funtyped{x}{A}{c} \T A \to \C
+    \ctx \ent \fun{x}c \T A \to \C
   }
 
   \inferrule[Hand]{
@@ -93,12 +103,12 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent \conditional{v}{c_1}{c_2} \T (\C \union \D)
   }
 
- \inferrule[LetRec]{
-    \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
-    \ctx, f \T A \to \C \ent c_2 \T \D
-  }{
-    \ctx \ent \letrecin{f \, x = c_1} c_2 \T \D
-  }
+%  \inferrule[LetRec]{
+%     \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
+%     \ctx, f \T A \to \C \ent c_2 \T \D
+%   }{
+%     \ctx \ent \letrecin{f \, x = c_1} c_2 \T \D
+%   }
 
   \inferrule[Ret]{
     \ctx \ent v \T A
@@ -114,11 +124,19 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent \op \, v \T \C
   }
 
-  \inferrule[Do]{
+  % \inferrule[Do]{
+  %   \ctx \ent c_1 \T A \E \dirt \\
+  %   \ctx, x \T A \ent c_2 \T B \E \dirt
+  % }{
+  %   \ctx \ent \doin{x \leftarrow c_1} c_2 \T B \E \dirt
+  % }
+
+  \inferrule[Let]{
     \ctx \ent c_1 \T A \E \dirt \\
-    \ctx, x \T A \ent c_2 \T B \E \dirt
+    \ctx, x \T \polytype{A} \ent c_2 \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
   }{
-    \ctx \ent \doin{x \leftarrow c_1} c_2 \T B \E \dirt
+    \ctx \ent \letin{\letvar = c_1} c_2 \T B \E \dirt
   }
 
   \inferrule[With]{

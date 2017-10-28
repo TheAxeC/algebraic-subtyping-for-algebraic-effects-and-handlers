@@ -13,10 +13,10 @@ The dirty type $A \E \dirt$ is assigned to a computation returning values of typ
     \boolty \le \boolty
   }
 
-  \inferrule[Sub-$\intty$]{
-  }{
-    \intty \le \intty
-  }
+  % \inferrule[Sub-$\intty$]{
+  % }{
+  %   \intty \le \intty
+  % }
 
   \inferrule[Sub-$\to$]{
     A' \le A \\
@@ -80,12 +80,22 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent x \T A
   }
 
-  \inferrule[Const]{
-    (\const \T A) \in \sig
+  % \inferrule[Const]{
+  %   (\const \T A) \in \sig
+  % }{
+  %   \ctx \ent \const \T A
+  % }
+
+  \inferrule[True]{
   }{
-    \ctx \ent \const \T A
+    \ctx \ent \tru \T bool
   }
 
+  \inferrule[False]{
+  }{
+    \ctx \ent \fls \T bool
+  }
+  
   \inferrule[Fun]{
     \ctx, x \T A \ent c \T \C
   }{

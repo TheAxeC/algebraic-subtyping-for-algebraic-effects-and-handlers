@@ -8,22 +8,26 @@ Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are val
 \framebox{
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
-  \text{value}~v & \bnfis {} & x & \text{variable} \\
-    & \bnfor & \const & \text{constant} \\
-    & \bnfor & \funtyped{x}{A}{c} & \text{function} \\
-    & \bnfor & \Lambda \alpha . v & \text{type abstraction} \\
-    & \bnfor & v \, A & \text{type application} \\
-    & \bnfor & \{ & \text{handler} \\
+  \text{value}~v & \bnfis {} & x & \lambda\text{-variable} \\
+    & \bnfor & \letvar & \text{let-variable} \\
+    % & \bnfor & \const & \text{constant} \\
+    & \bnfor & \tru & \text{true} \\
+    & \bnfor & \fls & \text{false} \\
+    & \bnfor & \fun{x}c & \text{function} \\
+    % & \bnfor & \Lambda \alpha . v & \text{type abstraction} \\
+    % & \bnfor & v \, A & \text{type application} \\
+    & \bnfor & \{ & \textbf{handler} \\
     & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
     & & \quad \shortcases & \quad\text{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
+    & \bnfor & \letin{\letvar = c_1} c_2 & \text{let} \\
     & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
-    & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
-    & \bnfor & \ret v  & \text{returned val} \\
-    & \bnfor & \op \, v & \text{operation call} \\
-    & \bnfor & \doin{x \leftarrow c_1} c_2 & \text{sequencing} \\
-    & \bnfor & \withhandle{v}{c} & \text{handling}
+    % & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
+    & \bnfor & \ret v  & \textbf{returned val} \\
+    & \bnfor & \op \, v & \textbf{operation call} \\
+    % & \bnfor & \doin{x \leftarrow c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \withhandle{v}{c} & \textbf{handling}
 \end{array}\]
 \end{minipage}
 }
@@ -40,26 +44,27 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{(pure) type}~A, B & \bnfis {}
-    & \boolty \bnfor \intty & \text{basic types} \\
+    % & \boolty \bnfor \intty & \text{basic types} \\
+    & \boolty & \text{bool type} \\
     & \bnfor & A \to \C & \text{function type} \\
-    & \bnfor & \C \hto \D & \text{handler type} \\
+    & \bnfor & \C \hto \D & \textbf{handler type} \\
     & \bnfor & \alpha & \text{type variable} \\
-    & \bnfor & \polytype{A} & \text{polytype} \\
+    % & \bnfor & \polytype{A} & \text{polytype} \\
+    & \bnfor & \mu \alpha . A & \text{rec type} \\
     & \bnfor & \top & \text{top} \\
     & \bnfor & \bot & \text{bottom} \\
     & \bnfor & A \intersection B & \text{intersection} \\
     & \bnfor & A \union B & \text{union} \\
   \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\
-    & \bnfor & \C \intersection \D & \text{intersection} \\
-    & \bnfor & \C \union \D & \text{union} \\
+    
   \text{dirt}~\dirt & \bnfis {} & \{\text{R}\} \\
   \text{R} & \bnfis {}
-    & \op \row & \text{row} \\
+    & \op & \text{operation} \\
     & \bnfor & \delta & \text{row variable} \\
     & \bnfor & . & \text{closed row} \\
     & \bnfor & R_1 \intersection R_2 & \text{intersection} \\
     & \bnfor & R_1 \union R_2 & \text{union} \\
-  \text{All operations}~\allops & \bnfis {} & \{\op_i | \op_i \in \sig \}
+  \text{All operations}~\allops & \bnfis {} & \{\op_i | \op_i \in \sig \} \\
 \end{array}\]
 \end{minipage}
 }
