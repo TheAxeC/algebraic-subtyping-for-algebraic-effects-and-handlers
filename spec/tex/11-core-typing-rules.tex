@@ -21,7 +21,7 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
-  \inferrule[Val]{
+  \inferrule[Sub-Val]{
     \ctx \ent v \T A \\
     A \le B
   }{
@@ -44,24 +44,6 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent \fls \T bool
   }
 
-  % \inferrule[Const]{
-  %   (\const \T A) \in \sig
-  % }{
-  %   \ctx \ent \const \T A
-  % }
-
-  % \inferrule[Type Abs]{
-  %   \ctx, \alpha \ent v \T A
-  % }{
-  %   \ctx \ent \Lambda \alpha . v \T \polytype{A}
-  % }
-
-  % \inferrule[Type App]{
-  %   \ctx \ent v \T \polytype{B}
-  % }{
-  %   \ctx \ent v \, A \T B[A/\alpha]
-  % }
-
   \inferrule[Fun]{
     \ctx, x \T A \ent c \T \C
   }{
@@ -81,7 +63,7 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 \end{mathpar}
 \textbf{Computations}
 \begin{mathpar}
-  \inferrule[Comp]{
+  \inferrule[Sub-Comp]{
     \ctx \ent c \T \C \\
     \C \le \D
   }{
@@ -103,13 +85,6 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent \conditional{v}{c_1}{c_2} \T (\C \union \D)
   }
 
-%  \inferrule[LetRec]{
-%     \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
-%     \ctx, f \T A \to \C \ent c_2 \T \D
-%   }{
-%     \ctx \ent \letrecin{f \, x = c_1} c_2 \T \D
-%   }
-
   \inferrule[Ret]{
     \ctx \ent v \T A
   }{
@@ -123,13 +98,6 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
   }{
     \ctx \ent \op \, v \T \C
   }
-
-  % \inferrule[Do]{
-  %   \ctx \ent c_1 \T A \E \dirt \\
-  %   \ctx, x \T A \ent c_2 \T B \E \dirt
-  % }{
-  %   \ctx \ent \doin{x \leftarrow c_1} c_2 \T B \E \dirt
-  % }
 
   \inferrule[Let]{
     \ctx \ent c_1 \T A \E \dirt \\
