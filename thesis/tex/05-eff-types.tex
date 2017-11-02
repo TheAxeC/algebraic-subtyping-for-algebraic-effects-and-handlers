@@ -3,16 +3,15 @@
 \paragraph{Terms}
 Figure~\ref{fig:terms:eff} shows the two types of terms in \eff. There are values $v$ and computations $c$. Computations are terms that can contain effects. Effects are denoted as operations $Op$ which can be called.
 
-\paragraph{Types}
-Figure~\ref{fig:types:eff} shows the types of \eff. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. This finite set $\dirt$ is an over-approximation of the operations that are actually called. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result.
-
-\begin{figure}[h]
+\begin{figure}[!htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{value}~v & \bnfis {} & x & \text{variable} \\
-    & \bnfor & \const & \text{constant} \\
+    % & \bnfor & \const & \text{constant} \\
+    & \bnfor & \tru & \text{true} \\
+    & \bnfor & \fls & \text{false} \\
     & \bnfor & \fun{x} c & \text{function} \\
     & \bnfor & \{ & \text{handler} \\
     & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
@@ -31,13 +30,17 @@ Figure~\ref{fig:types:eff} shows the types of \eff. There are two main sorts of 
 \caption{Terms of \eff}\label{fig:terms:eff}
 \end{figure}
 
-\begin{figure}[h]
+\paragraph{Types}
+Figure~\ref{fig:types:eff} shows the types of \eff. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. This finite set $\dirt$ is an over-approximation of the operations that are actually called. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result.
+
+\begin{figure}[!htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
   \text{(pure) type}~A, B & \bnfis {}
-    & \boolty \bnfor \intty & \text{basic types} \\
+    % & \boolty \bnfor \intty & \text{basic types} \\
+    & \boolty & \text{bool type} \\
     & \bnfor & A \to \C & \text{function type} \\
     & \bnfor & \C \hto \D & \text{handler type} \\
   \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\

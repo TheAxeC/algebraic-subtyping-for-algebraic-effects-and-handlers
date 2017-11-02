@@ -45,13 +45,13 @@
       }
     
       \inferrule[Hand]{
-        \ctxp \entt c_r \T [\ctxm, x \T A]B \E \dirt \\
+        \ctx, x \T A \ent c_r \T B \E \dirt \\
         \Big[
-          (\op \T A_\op \to B_\op) \in \sig \qquad
-          \ctxp \entt c_\op \T [\ctxm, x \T A_\op, k \T B_\op \to B \E \dirt]B \E \dirt
+          (\op \T A_\op \to B_\op) \in \sig \qquad \\
+          \ctx, x \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
         \Big]_{\op \in \ops}
       }{
-        \ctxp \entt \shorthand \T [\ctxm]A \E \dirt \union \ops \hto B \E \dirt
+        \ctx \ent \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt
       }
     
     \end{mathpar}
@@ -97,7 +97,7 @@
         \ctxp \entt c_1 \T [\ctxm_1]A \E \dirt \\
         \ctxp, x \T [\ctxm_1]A \entt c_2 \T [\ctxm_2]B \E \dirt
       }{
-        \ctx \entt \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2]B \E \dirt
+        \ctx \ent \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2]B \E \dirt
       }
     
       \inferrule[With]{

@@ -36,8 +36,15 @@
 % This can be commented out for printed versions.
 \usepackage[pdfusetitle,colorlinks,plainpages=false]{hyperref}
 
-\input{tex/macros}
+\input{tex/00-macros}
 \newcommand{\todo}[1]{\textcolor{red}{\textsc{Todo:} #1}}
+
+% Needed to use the files from spec
+\let\subparagraph\paragraph
+\let\paragraph\subsubsection
+\let\subsubsection\subsection
+\let\subsection\section
+\let\section\chapter
 
 \begin{document}
 
@@ -59,44 +66,51 @@
 % Now comes the main text
 \mainmatter
 
-\chapter{Introduction}
-\input{tex/introduction}
+\section{Introduction}
+\input{tex/01-introduction}
 
-\chapter{Background}
-\input{tex/background}
+\section{Background}
+\input{tex/02-background}
 
-\chapter{Related Work (\eff)}
-\input{tex/eff-intro}
-\input{tex/eff-types}
-\input{tex/eff-type-system}
+\section{Related Work (Algebraic Subtyping)}
+\input{tex/03-algebraic-subtyping}
 
-\chapter{Core language (\core)}
-\input{tex/core-intro}
-\input{tex/core-types}
-\input{tex/core-type-system}
+\section{Related Work (\eff)}
+\input{tex/04-eff-intro}
+\input{tex/05-eff-types}
+\input{tex/06-eff-type-system}
 
-\chapter{Semantics}
-\input{tex/semantics}
+\section{Core Language (\core)}
+\input{tex/07-core-intro}
+\input{tex/08-core-types}
+\input{tex/09-core-type-system}
+\input{tex/10-core-subtyping}
+\input{tex/11-core-typing-rules}
+\input{tex/12-core-reformulated-typing}
+\input{tex/13-core-semantics}
 
-\chapter{Elaboration}
-\input{tex/elaboration}
+\section{Type Inference}
+\input{tex/14-elaboration}
+\input{tex/15-constraints}
+\input{tex/16-polarity}
+\input{tex/17-unification}
 
-\chapter{Proofs}
-\input{tex/proofs}
+\section{Proofs}
+\input{tex/18-proofs}
 
-\chapter{Implementation}
-\input{tex/background}
+\section{Implementation}
+\input{tex/19-implementation}
 
-\chapter{Evaluation}
-\input{tex/background}
+\section{Evaluation}
+\input{tex/20-evaluation}
 
-\chapter{Conclusion}
-\input{tex/conclusion}
+\section{Conclusion}
+\input{tex/21-conclusion}
 
 \appendixpage*          % if wanted
 \appendix
-\chapter{Appendix A}
-\input{tex/appendix}
+% \chapter{Appendix A}
+% \input{tex/appendix}
 
 \backmatter
 

@@ -1,0 +1,223 @@
+\subsection{Type system}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar}    
+    \inferrule[]{}{
+        A_1 \le A_2 \leftrightarrow A_1 \union A_2 \equiv A_2
+    }\\
+
+    \inferrule[]{}{
+        A_1 \le A_2 \leftrightarrow A_1 \equiv A_1 \intersection A_2
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \le \dirt_2 \leftrightarrow \dirt_1 \union \dirt_2 \equiv \dirt_2
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \le \dirt_2 \leftrightarrow \dirt_1 \equiv \dirt_1 \intersection \dirt_2
+    }\\
+
+    \inferrule[]{}{
+        \C_1 \le \C_2 \leftrightarrow \C_1 \union \C_2 \equiv \C_2
+    }\\
+
+    \inferrule[]{}{
+        \C_1 \le \C_2 \leftrightarrow \C_1 \equiv \C_1 \intersection \C_2
+    }
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Relationship between Equivalence and Subtyping}\label{fig:core-relation}
+\end{figure}
+
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+% \framebox{
+\begin{minipage}[t]{0.475\columnwidth}
+% \textbf{Equations of distributive lattices for types}
+\begin{mathpar}
+    \inferrule[]{}{
+      A \union A \equiv A
+    }\\
+    
+    \inferrule[]{}{
+      A_1 \union A_2 \equiv A_2 \union A_1
+    }\\
+
+    \inferrule[]{}{
+      A_1 \union (A_2 \union A_3) \equiv (A_1 \union A_2) \union A_3
+    }\\
+
+    \inferrule[]{}{
+      A_1 \union (A_1 \intersection A_2) \equiv A_1
+    }\\
+
+    \inferrule[]{}{
+      \bot \union A \equiv A
+    }\\
+
+    \inferrule[]{}{
+      \top \union A \equiv \top
+    }
+\end{mathpar}
+\end{minipage}
+\begin{minipage}[t]{0.475\columnwidth}
+\begin{mathpar}    
+    \inferrule[]{}{
+        A \intersection A \equiv A
+    }\\
+
+    \inferrule[]{}{
+        A_1 \intersection A_2 \equiv A_2 \intersection A_1
+    }\\
+
+    \inferrule[]{}{
+        A_1 \intersection (A_2 \intersection A_3) \equiv (A_1 \intersection A_2) \intersection A_3
+    }\\
+
+    \inferrule[]{}{
+        A_1 \intersection (A_1 \union A_2) \equiv A_1
+    }\\
+
+    \inferrule[]{}{
+        \bot \intersection A \equiv \bot
+    }\\
+
+    \inferrule[]{}{
+        \top \intersection A \equiv A
+    }
+\end{mathpar}
+\end{minipage}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar}    
+    \inferrule[]{}{
+        A_1 \union (A_2 \intersection A_3) \equiv (A_1 \union A_2) \intersection (A_1 \union A_3)
+    }\\
+
+    \inferrule[]{}{
+        A_1 \intersection (A_2 \union A_3) \equiv (A_1 \intersection A_2) \union (A_1 \intersection A_3)
+    }
+\end{mathpar}
+\end{minipage}
+% }
+\end{framed}
+\end{center}
+\caption{Equations of distributive lattices for types}\label{fig:core-equations-types}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar}    
+    \inferrule[]{}{
+        (A_1 \to A_2) \union (A_3 \to A_4) \equiv (A_1 \intersection A_3) \to (A_2 \union A_4)
+    }\\
+
+    \inferrule[]{}{
+        (A_1 \to A_2) \intersection (A_3 \to A_4) \equiv (A_1 \union A_3) \to (A_2 \intersection A_4)
+    }\\
+
+    \inferrule[]{}{
+        (A_1 \hto A_2) \union (A_3 \hto A_4) \equiv (A_1 \intersection A_3) \hto (A_2 \union A_4)
+    }\\
+
+    \inferrule[]{}{
+        (A_1 \hto A_2) \intersection (A_3 \hto A_4) \equiv (A_1 \union A_3) \hto (A_2 \intersection A_4)
+    }\\
+    
+    \inferrule[]{}{
+        (\C_1 \union \C_2) \equiv (A_1 \E \dirt_1 \union A_2 \E \dirt_2) \equiv (A_1 \union A_2) \E (\dirt_1 \union \dirt_2)
+    }\\
+
+    \inferrule[]{}{
+        (\C_1 \intersection \C_2) \equiv (A_1 \E \dirt_1 \intersection A_2 \E \dirt_2) \equiv (A_1 \intersection A_2) \E (\dirt_1 \intersection \dirt_2)
+    }
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Equations for function, handler and dirty types}\label{fig:core-equations-other-types}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+% \framebox{
+\begin{minipage}[t]{0.475\columnwidth}
+\begin{mathpar}
+    \inferrule[]{}{
+        \dirt \union \dirt \equiv \dirt
+    }\\
+    
+    \inferrule[]{}{
+        \dirt_1 \union \dirt_2 \equiv \dirt_2 \union \dirt_1
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \union (\dirt_2 \union \dirt_3) \equiv (\dirt_1 \union \dirt_2) \union \dirt_3
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \union (\dirt_1 \intersection \dirt_2) \equiv \dirt_1
+    }\\
+
+    \inferrule[]{}{
+        \emptyrow \union \dirt \equiv \dirt
+    }\\
+
+    \inferrule[]{}{
+        \allops \union \dirt \equiv \allops
+    }
+\end{mathpar}
+\end{minipage}
+\begin{minipage}[t]{0.475\columnwidth}
+\begin{mathpar}    
+    \inferrule[]{}{
+        \dirt \intersection \dirt \equiv \dirt
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \intersection \dirt_2 \equiv \dirt_2 \intersection \dirt_1
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \intersection (\dirt_2 \intersection \dirt_3) \equiv (\dirt_1 \intersection \dirt_2) \intersection \dirt_3
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \intersection (\dirt_1 \union \dirt_2) \equiv \dirt_1
+    }\\
+
+    \inferrule[]{}{
+        \emptyrow \intersection \dirt \equiv \emptyrow
+    }\\
+
+    \inferrule[]{}{
+        \allops \intersection \dirt \equiv \dirt
+    }
+\end{mathpar}
+\end{minipage}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar}    
+    \inferrule[]{}{
+        \dirt_1 \union (\dirt_2 \intersection \dirt_3) \equiv (\dirt_1 \union \dirt_2) \intersection (\dirt_1 \union \dirt_3)
+    }\\
+
+    \inferrule[]{}{
+        \dirt_1 \intersection (\dirt_2 \union \dirt_3) \equiv (\dirt_1 \intersection \dirt_2) \union (\dirt_1 \intersection \dirt_3)
+    }
+\end{mathpar}
+\end{minipage}
+% }
+\end{framed}
+\end{center}
+\caption{Equations of distributive lattices for dirts}\label{fig:core-equations-dirts}
+\end{figure}
