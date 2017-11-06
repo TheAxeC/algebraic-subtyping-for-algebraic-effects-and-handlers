@@ -21,7 +21,7 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
-  \inferrule[Sub-Val]{
+  \inferrule[SubVal]{
     \ctx \ent v \T A \\
     A \le B
   }{
@@ -69,7 +69,7 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 \end{mathpar}
 \textbf{Computations}
 \begin{mathpar}
-  \inferrule[Sub-Comp]{
+  \inferrule[SubComp]{
     \ctx \ent c \T \C \\
     \C \le \D
   }{
@@ -99,15 +99,14 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
 
   \inferrule[Op]{
     (\op \T A \to B) \in \sig \\
-    \ctx \ent v \T A \\
-    \C \T B \E \{\op \row\}
+    \ctx \ent v \T A
   }{
-    \ctx \ent \op \, v \T \C
+    \ctx \ent \op \, v \T B \E \op
   }
 
   \inferrule[Let]{
     \ctx \ent c_1 \T A \E \dirt \\
-    \ctx, x \T \polytype{A} \ent c_2 \T B \E \dirt \\
+    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt \\
     \alpha \not\in FTV(\ctx)
   }{
     \ctx \ent \letin{\letvar = c_1} c_2 \T B \E \dirt

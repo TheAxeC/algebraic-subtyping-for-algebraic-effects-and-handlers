@@ -8,7 +8,8 @@ Figure~\ref{fig:terms:eff} shows the two types of terms in \eff. There are value
 \framebox{
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
-  \text{value}~v & \bnfis {} & x & \text{variable} \\
+  \text{value}~v & \bnfis {} & x & \text{variable} \\ %\lambda\text{-variable} \\
+    % & \bnfor & \letvar & \text{let-variable} \\
     % & \bnfor & \const & \text{constant} \\
     & \bnfor & \tru & \text{true} \\
     & \bnfor & \fls & \text{false} \\
@@ -18,10 +19,11 @@ Figure~\ref{fig:terms:eff} shows the two types of terms in \eff. There are value
     & & \quad \shortcases & \quad\text{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
+    & \bnfor & \doin{x \leftarrow c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
     & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
     & \bnfor & \ret v  & \text{returned val} \\
     & \bnfor & \op \, v & \text{operation call} \\
-    & \bnfor & \doin{x \leftarrow c_1} c_2 & \text{sequencing} \\
     & \bnfor & \withhandle{v}{c} & \text{handling}
 \end{array}\]
 \end{minipage}

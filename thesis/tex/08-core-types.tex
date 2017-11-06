@@ -38,6 +38,9 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
 \framebox{
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx, \letvar : \polytype{B}\\
+  \text{monomorphic typing contexts}~\ctxm & \bnfis {} & \epsilon \bnfor \ctxm, x : A\\
+  \text{polymorphic typing contexts}~\ctxp & \bnfis {} & \epsilon \bnfor \ctxp, \letvar : [\ctxm]A\\
   \text{(pure) type}~A, B & \bnfis {}
     & \boolty & \text{bool type} \\
     & \bnfor & A \to \C & \text{function type} \\
@@ -55,7 +58,7 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
     & \bnfor & \emptyrow & \text{empty dirt} \\
     & \bnfor & \dirt_1 \intersection \dirt_2 & \text{intersection} \\
     & \bnfor & \dirt_1 \union \dirt_2 & \text{union} \\
-  \text{All operations}~\allops & \bnfis {} & \{\op_i | \op_i \in \sig \} \\
+  \text{All operations}~\allops & \bnfis {} & \bigsqcup \op_i | \op_i \in \sig \\
 \end{array}\]
 \end{minipage}
 }

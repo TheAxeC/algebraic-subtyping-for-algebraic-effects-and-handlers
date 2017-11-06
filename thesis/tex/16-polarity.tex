@@ -25,12 +25,15 @@
     & \bnfor & A^- \intersection B^- & \text{intersection} \\
     \text{dirty type}~\C^-, \D^- & \bnfis {} & A^- \E \dirt^- \\
 
-    \text{dirt}~\dirt & \bnfis {} & \op & \text{operation} \\
-    & \bnfor & \delta & \text{row variable} \\
+    \text{dirt}~\dirt^+ & \bnfis {} & \op^+ & \text{operation} \\
+    & \bnfor & \delta^+ & \text{row variable} \\
     & \bnfor & \emptyrow & \text{empty dirt} \\
-    & \bnfor & \dirt_1 \intersection \dirt_2 & \text{intersection} \\
-    & \bnfor & \dirt_1 \union \dirt_2 & \text{union} \\
-    \text{All operations}~\allops & \bnfis {} & \{\op_i | \op_i \in \sig \} \\
+    & \bnfor & \dirt_1^+ \union \dirt_2^+ & \text{union} \\
+
+    \text{dirt}~\dirt^- & \bnfis {} & \op^- & \text{operation} \\
+    & \bnfor & \delta^- & \text{row variable} \\
+    & \bnfor & \emptyrow & \text{empty dirt} \\
+    & \bnfor & \dirt_1^- \intersection \dirt_2^- & \text{intersection}
 \end{array}\]
 \end{minipage}
 }

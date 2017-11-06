@@ -13,6 +13,10 @@
         A_1 \le A_2 \leftrightarrow A_1 \equiv A_1 \intersection A_2
     }\\
 
+    % \inferrule[]{}{
+    %     \op \le \delta_1 \leftrightarrow \delta_2 = \op \union \delta_1, \op \union \delta_2 \equiv \delta_2
+    % }\\
+
     \inferrule[]{}{
         \dirt_1 \le \dirt_2 \leftrightarrow \dirt_1 \union \dirt_2 \equiv \dirt_2
     }\\
@@ -118,19 +122,19 @@
 \begin{minipage}[t]{0.95\columnwidth}
 \begin{mathpar}    
     \inferrule[]{}{
-        (A_1 \to A_2) \union (A_3 \to A_4) \equiv (A_1 \intersection A_3) \to (A_2 \union A_4)
+        (A_1 \to \C_1) \union (A_2 \to \C_2) \equiv (A_1 \intersection A_2) \to (\C_1 \union \C_2)
     }\\
 
     \inferrule[]{}{
-        (A_1 \to A_2) \intersection (A_3 \to A_4) \equiv (A_1 \union A_3) \to (A_2 \intersection A_4)
+        (A_1 \to \C_1) \intersection (A_2 \to \C_2) \equiv (A_1 \union A_2) \to (\C_1 \intersection \C_2)
     }\\
 
     \inferrule[]{}{
-        (A_1 \hto A_2) \union (A_3 \hto A_4) \equiv (A_1 \intersection A_3) \hto (A_2 \union A_4)
+        (A_1 \hto \C_1) \union (A_2 \hto \C_2) \equiv (A_1 \intersection A_2) \hto (\C_1 \union \C_2)
     }\\
 
     \inferrule[]{}{
-        (A_1 \hto A_2) \intersection (A_3 \hto A_4) \equiv (A_1 \union A_3) \hto (A_2 \intersection A_4)
+        (A_1 \hto \C_1) \intersection (A_2 \hto \C_2) \equiv (A_1 \union A_2) \hto (\C_1 \intersection \C_2)
     }\\
     
     \inferrule[]{}{

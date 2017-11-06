@@ -11,40 +11,50 @@ The elaboration show how the source language can be transformed into \core.
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
-  \inferrule[Val]{
-    \ctx \ent v \T A \leadsto v'\\
-    \ent_c A \le B
+  \inferrule[SubVal]{
+    \ctx \ent v \T A \leadsto v' \\
+    A \le B
   }{
     \ctx \ent v \T B \leadsto v'
   }
 
-  \inferrule[Var]{
-    (x \T S) \in \ctx \\
-    S = \forall \bar{\alpha} . A
+  \inferrule[Var-$\lambda$]{
+    (x \T A) \in \ctx
   }{
-    \ctx \ent x \T A[\bar{S}/\bar{\alpha}] \leadsto x \, \bar{S}
+    \ctx \ent x \T A \leadsto x
   }
 
-  \inferrule[Const]{
-    (\const \T A) \in \sig
+  \inferrule[Var-$\forall$]{
+    (\letvar \T \polytype{A}) \in \ctx
   }{
-    \ctx \ent \const \T A \leadsto \const'
+    \ctx \ent \letvar \T A[\bar{A}/\bar{\alpha}] \leadsto \letvar
   }
+
+  \inferrule[True]{
+  }{
+    \ctx \ent \tru \T bool \leadsto \tru
+  }
+
+  \inferrule[False]{
+  }{
+    \ctx \ent \fls \T bool \leadsto \fls
+  }
+  
 
   \inferrule[Fun]{
     \ctx, x \T A \ent c \T \C \leadsto c'
   }{
-    \ctx \ent \fun{x} c \T A \to \C \leadsto \funtyped{x}{A}{c'} \T A \to \C
+    \ctx \ent \fun{x} c \T A \to \C \leadsto \fun{x} c'
   }
 
   \inferrule[Hand]{
     \ctx, x \T A \ent c_r \T B \E \dirt \\
     \Big[
-      (\op \T A_\op \to B_\op) \in \sig \qquad \\
+      (\op \T A_\op \to B_\op) \in \sig \qquad 
       \ctx, x \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
     \Big]_{\op \in \ops}
   }{
-    \ctx \ent \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt \\ \leadsto \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt
+    \ctx \ent \shorthand \T A \E \dirt \cup \ops \hto B \E \dirt \\ \leadsto \shorthand
   }
 
 \end{mathpar}
@@ -64,7 +74,7 @@ The elaboration show how the source language can be transformed into \core.
 \end{array}\]
 \textbf{Computations}
 \begin{mathpar}
-  \inferrule[Comp]{
+  \inferrule[SubComp]{
     \ctx \ent c \T \C \leadsto c'\\
     \C \le \D
   }{
@@ -78,12 +88,13 @@ The elaboration show how the source language can be transformed into \core.
     \ctx \ent v_1 \, v_2 \T \C \leadsto v'_1 \, v'_2 \T \C
   }
 
-%  \inferrule[LetRec]{
-%     \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \leadsto c'_1 s\\
-%     \ctx, f \T A \to \C \ent c_2 \T \D \leadsto c'_2
-%   }{
-%     \ctx \ent \letrecin{f \, x = c_1} c_2 \T \D \\ \leadsto \letrecin{f \, x = c'_1} c'_2 \T \D
-%   }
+  \inferrule[Cond]{
+    \ctx \ent v \T bool \leadsto v' \\
+    \ctx \ent c_1 \T \C \leadsto c_1' \\
+    \ctx \ent c_2 \T \C \leadsto c_2' \\
+  }{
+    \ctx \ent \conditional{v}{c_1}{c_2} \T \C \leadsto \conditional{v'}{c_1'}{c_2'}
+  }
 
   \inferrule[Ret]{
     \ctx \ent v \T A \leadsto v'
@@ -95,18 +106,15 @@ The elaboration show how the source language can be transformed into \core.
     (\op \T A \to B) \in \sig \\
     \ctx \ent v \T A \leadsto v'
   }{
-    \ctx \ent \op \, v \T B \E \{\op\} \leadsto \op \, v' \T B \E \{\op, .\}
+    \ctx \ent \op \, v \T B \E \{\op\} \leadsto \op \, v' \T B \E \op
   }
 
-  \inferrule[Do]{
-    \ctx \ent c_1 \T \C \leadsto c'_1 \\
-    S = \forall \bar{\alpha} . A \\
-    \bar{\alpha} = FTV(A) - TV(\ctx) \\
-    \ctx, x \T S \ent c_2 \T \D \leadsto c'_2
+  \inferrule[Let]{
+    \ctx \ent c_1 \T A \E \dirt \\
+    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
   }{
-    \begingroup\color{red}
-    \ctx \ent \doin{x \leftarrow c_1} c_2 \T \D \leadsto (\funtyped{x}{A}{c'_2})(\Lambda \bar{\alpha} . c'_1)
-    \endgroup
+    \ctx \ent \doin{\letvar \leftarrow c_1} c_2 \T B \E \dirt \leadsto \letin{\letvar = c_1} c_2
   }
 
   \inferrule[With]{

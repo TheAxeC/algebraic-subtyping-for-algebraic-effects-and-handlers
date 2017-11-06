@@ -1,28 +1,56 @@
 \subsection{Reformulated typing rules}
 
 \begin{figure}[!htb]
+  \begin{center}
+  \begin{framed}
+  \begin{minipage}[t]{0.95\columnwidth}
+  \begin{mathpar}    
+      \inferrule[SubScheme]{}{
+        [\ctxm_2]A_2 \le [\ctxm_1]A_1 \leftrightarrow A_2 \le A_1, [\ctxm_1] \le [\ctxm_2]
+      }\\
+      
+  
+      \inferrule[SubInst]{}{
+        [\ctxm_2]A_2 \le^\forall [\ctxm_1]A_1 \leftrightarrow \rho([\ctxm_2]A_2) \le [\ctxm_1]A_1 \text{for some substitution }\rho
+      }
+
+      \inferrule[Eq]{}{
+        [\ctxm_2]A_2 \equiv^\forall [\ctxm_1]A_1 \leftrightarrow [\ctxm_2]A_2 \le^\forall [\ctxm_1]A_1, [\ctxm_1]A_1 \le^\forall [\ctxm_2]A_2
+      }
+
+      \inferrule[Weakening]{}{
+        \ctxp_2 \equiv^\forall \ctxp_1 \leftrightarrow dom(\ctxp_2) \supseteq dom(\ctxp_1), \ctxp_2(\letvar) \equiv^\forall \ctxp_1(\letvar) \text{ | } \letvar \in dom(\ctxp_1)
+      }
+  \end{mathpar}
+  \end{minipage}
+  \end{framed}
+  \end{center}
+  \caption{Definitions for typing schemes and reformulated typing rules}\label{fig:core-scheme}
+  \end{figure}
+
+\begin{figure}[!htb]
     \begin{center}
     \framebox{
     \begin{minipage}{0.95\columnwidth}
     \[\begin{array}{r@{~}c@{~}l}
       \text{monomorphic typing contexts}~\ctxm & \bnfis {} & \epsilon \bnfor \ctxm, x : A\\
-      \text{polymorphic typing contexts}~\ctxp & \bnfis {} & \epsilon \bnfor \ctxp, \letvar : [\ctxm]A \bnfor \ctxp, \letvar : [\ctxm]\C\\
+      \text{polymorphic typing contexts}~\ctxp & \bnfis {} & \epsilon \bnfor \ctxp, \letvar : [\ctxm]A\\
     \end{array}\]
     \textbf{Expressions}
     \begin{mathpar}
-      \inferrule[Sub-Val]{
+      \inferrule[SubVal]{
         \ctxp \entt v \T [\ctxm_1]A_1 \\
         [\ctxm_1]A_1 \le^\forall [\ctxm_2]A_2
       }{
         \ctxp \entt v \T [\ctxm_2]A_2
       }
     
-      \inferrule[Var-$\lambda$]{
+      \inferrule[Var-$\ctxm$]{
       }{
         \ctxp \entt x \T [x : A]A
       }
     
-      \inferrule[Var-$\forall$]{
+      \inferrule[Var-$\ctxp$]{
         (\letvar \T [\ctxm]A) \in \ctxp
       }{
         \ctxp \entt \letvar \T [\ctxm]A
@@ -41,23 +69,23 @@
       \inferrule[Fun]{
         \ctxp \entt c \T [\ctxm, x \T A]\C
       }{
-        \ctxp \entt \fun{x}c \T [\ctxm]A \to \C
+        \ctxp \entt \fun{x}c \T [\ctxm](A \to \C)
       }
     
       \inferrule[Hand]{
-        \ctx, x \T A \ent c_r \T B \E \dirt \\
+        \ctxp \entt c_r \T [\ctxm, x \T A](B \E \dirt) \\
         \Big[
-          (\op \T A_\op \to B_\op) \in \sig \qquad \\
-          \ctx, x \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
+          (\op \T A_\op \to B_\op) \in \sig \qquad
+          \ctxp \entt c_\op \T [\ctxm, x \T A_\op, k \T B_\op \to B \E \dirt](B \E \dirt)
         \Big]_{\op \in \ops}
       }{
-        \ctx \ent \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt
+        \ctxp \entt \shorthand \T [\ctxm](A \E \dirt \union \ops \hto B \E \dirt)
       }
     
     \end{mathpar}
     \textbf{Computations}
     \begin{mathpar}
-      \inferrule[Sub-Comp]{
+      \inferrule[SubComp]{
         \ctxp \entt c \T [\ctxm_1]\C_1 \\
         [\ctxm_1]\C_1 \le^\forall [\ctxm_2]\C_2
       }{
@@ -65,7 +93,7 @@
       }
     
       \inferrule[App]{
-        \ctxp \entt v_1 \T [\ctxm]A \to \C \\
+        \ctxp \entt v_1 \T [\ctxm](A \to \C) \\
         \ctxp \entt v_2 \T [\ctxm]A
       }{
         \ctxp \entt v_1 \, v_2 \T [\ctxm]\C
@@ -82,35 +110,35 @@
       \inferrule[Ret]{
         \ctxp \entt v \T [\ctxm]A
       }{
-        \ctxp \entt \ret v \T [\ctxm]A \E \emptyrow
+        \ctxp \entt \ret v \T [\ctxm](A \E \emptyrow)
       }
     
       \inferrule[Op]{
         (\op \T A \to B) \in \sig \\
         \ctxp \entt v \T [\ctxm]A \\
-        \C \T [\ctxm]B \E \{\op \row\}
+        \C \T [\ctxm](B \E \op)
       }{
         \ctxp \entt \op \, v \T [\ctxm]\C
       }
     
       \inferrule[Let]{
-        \ctxp \entt c_1 \T [\ctxm_1]A \E \dirt \\
-        \ctxp, x \T [\ctxm_1]A \entt c_2 \T [\ctxm_2]B \E \dirt
+        \ctxp \entt c_1 \T [\ctxm_1](A \E \dirt) \\
+        \ctxp, x \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt)
       }{
-        \ctx \ent \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2]B \E \dirt
+        \ctx \entt \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2]B \E \dirt
       }
     
       \inferrule[With]{
-        \ctxp \entt v \T [\ctxm]\C \hto \D \\
+        \ctxp \entt v \T [\ctxm](\C \hto \D) \\
         \ctxp \entt c \T [\ctxm]\C
       }{
         \ctxp \entt \withhandle{v}{c} \T [\ctxm]\D
       }
     
-    \end{mathpar}
-    \end{minipage}
-    }
-    \end{center}
-    \caption{Reformulated typing rules of \core}\label{fig:core-reform-typing}
-    \end{figure}
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Reformulated typing rules of \core}\label{fig:core-reform-typing}
+\end{figure}
     

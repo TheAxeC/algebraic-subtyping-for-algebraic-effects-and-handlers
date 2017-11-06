@@ -128,7 +128,15 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
     \ctx \ent v_1 \, v_2 \T \C
   }
 
- \inferrule[LetRec]{
+  \inferrule[Cond]{
+    \ctx \ent v \T bool \\
+    \ctx \ent c_1 \T \C \\
+    \ctx \ent c_2 \T \C \\
+  }{
+    \ctx \ent \conditional{v}{c_1}{c_2} \T \C
+  }
+
+  \inferrule[LetRec]{
     \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
     \ctx, f \T A \to \C \ent c_2 \T \D
   }{
