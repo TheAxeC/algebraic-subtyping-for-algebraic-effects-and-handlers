@@ -1,1 +1,80 @@
 \subsection{Unification}
+
+\begin{figure}[!htb]
+    \begin{center}
+    \begin{framed}
+    \begin{minipage}[t]{0.95\columnwidth}
+    \begin{mathpar}    
+        \inferrule[Bisubstitution]{}{
+          \xi = [A^+ / \alpha,A^- / \alpha] %\\
+        %   \zeta = [\dirt^+ / \alpha, \dirt^- / \alpha]
+        }\\
+
+        \inferrule[]{}{
+            \xi'(\alpha^+) = \alpha \\
+            \xi'(\alpha^-) = \alpha \\
+            \xi'(\_) = \_
+        }
+
+    \end{mathpar}
+    \end{minipage}
+
+    \begin{minipage}[t]{0.475\columnwidth}
+    \begin{mathpar}
+        \inferrule[]{}{
+            \xi(A_1^+ \union A_2^+) \equiv \xi(A_1^+) \union \xi(A_2^+)
+        }\\
+        
+        \inferrule[]{}{
+            \xi(\bot) \equiv \bot
+        }\\
+    
+        \inferrule[]{}{
+            \xi(bool) \equiv bool
+        }\\
+    
+        \inferrule[]{}{
+            \xi(A^- \to A^+) \equiv \xi(A^-) \to \xi(A^+)
+        }\\
+    
+        \inferrule[]{}{
+            \xi(A^- \hto A^+) \equiv \xi(A^-) \hto \xi(A^+)
+        }\\
+    
+        \inferrule[]{}{
+            \xi(\rectype{A^+}) \equiv \rectype{\xi'(A^+)}
+        }
+    \end{mathpar}
+    \end{minipage}
+    \begin{minipage}[t]{0.475\columnwidth}
+    \begin{mathpar}    
+        \inferrule[]{}{
+            \xi(A_1^- \intersection A_2^-) \equiv \xi(A_1^-) \intersection \xi(A_2^-)
+        }\\
+    
+        \inferrule[]{}{
+            \xi(\top) \equiv \top
+        }\\
+    
+        \inferrule[]{}{
+            \xi(bool) \equiv bool
+        }\\
+    
+        \inferrule[]{}{
+            \xi(A^+ \to A^-) \equiv \xi(A^+) \to \xi(A^-)
+        }\\
+    
+        \inferrule[]{}{
+            \xi(A^+ \hto A^-) \equiv \xi(A^+) \hto \xi(A^-)
+        }\\
+    
+        \inferrule[]{}{
+            \xi(\rectype{A^-}) \equiv \rectype{\xi'(A^-)}
+        }
+    \end{mathpar}
+    \end{minipage}
+
+    \end{framed}
+    \end{center}
+  \caption{Bisubstitutions}\label{fig:bisubstitution}
+  \end{figure}

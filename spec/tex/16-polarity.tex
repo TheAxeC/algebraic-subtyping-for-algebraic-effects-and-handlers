@@ -26,13 +26,13 @@
     \text{dirty type}~\C^-, \D^- & \bnfis {} & A^- \E \dirt^- \\
 
     \text{dirt}~\dirt^+ & \bnfis {} & \op^+ & \text{operation} \\
-    & \bnfor & \delta^+ & \text{row variable} \\
+    & \bnfor & \delta^+ & \text{dirt variable} \\
     & \bnfor & \emptyrow & \text{empty dirt} \\
     & \bnfor & \dirt_1^+ \union \dirt_2^+ & \text{union} \\
 
     \text{dirt}~\dirt^- & \bnfis {} & \op^- & \text{operation} \\
-    & \bnfor & \delta^- & \text{row variable} \\
-    & \bnfor & \emptyrow & \text{empty dirt} \\
+    & \bnfor & \delta^- & \text{dirt variable} \\
+    & \bnfor & \allops & \text{full dirt (all operations, top)} \\
     & \bnfor & \dirt_1^- \intersection \dirt_2^- & \text{intersection}
 \end{array}\]
 \end{minipage}

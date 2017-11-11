@@ -5,28 +5,46 @@
   \begin{framed}
   \begin{minipage}[t]{0.95\columnwidth}
   \begin{mathpar}    
-      \inferrule[SubScheme]{}{
-        [\ctxm_2]A_2 \le [\ctxm_1]A_1 \leftrightarrow A_2 \le A_1, [\ctxm_1] \le [\ctxm_2]
+      \inferrule[$\ctxm$Def]{}{
+        \ctxm \text{ contains free $\lambda$-bound variables}
       }\\
-      
+
+      \inferrule[SubScheme]{}{
+        [\ctxm_2]A_2 \le [\ctxm_1]A_1 \leftrightarrow A_2 \le A_1, \ctxm_1 \le \ctxm_2
+      }\\
   
       \inferrule[SubInst]{}{
-        [\ctxm_2]A_2 \le^\forall [\ctxm_1]A_1 \leftrightarrow \rho([\ctxm_2]A_2) \le [\ctxm_1]A_1 \text{for some substitution }\rho
-      }
+        [\ctxm_2]A_2 \le^\forall [\ctxm_1]A_1 \leftrightarrow \rho([\ctxm_2]A_2) \le [\ctxm_1]A_1 \text{for some substitution }\rho \\\text{ (instantiate type + dirt vars)}
+      }\\
+
+      \inferrule[Inter]{
+        dom(\ctxm_1 \intersection \ctxm_2) = dom(\ctxm_1) \cup dom(\ctxm_2) \\
+        (\ctxm_1 \intersection \ctxm_2)(x) = \ctxm_1(x) \intersection \ctxm_2(x) \text{, interpreting } \ctxm_i(x) = \top \text{ if } x \in dom(\ctxm_i) \text{ (for } i \in \{1, 2\} \text{)}
+      }{
+        \ctxm_1 \text{ and } \ctxm_2 \text{ have greatest lower bound: } \ctxm_1 \intersection \ctxm_2
+      }\\
+
+      \inferrule[SubstEq]{}{
+        \rho([\ctxm]A) \equiv [\rho(\ctxm)]\rho(A)
+      }\\
 
       \inferrule[Eq]{}{
         [\ctxm_2]A_2 \equiv^\forall [\ctxm_1]A_1 \leftrightarrow [\ctxm_2]A_2 \le^\forall [\ctxm_1]A_1, [\ctxm_1]A_1 \le^\forall [\ctxm_2]A_2
-      }
+      }\\
 
-      \inferrule[Weakening]{}{
-        \ctxp_2 \equiv^\forall \ctxp_1 \leftrightarrow dom(\ctxp_2) \supseteq dom(\ctxp_1), \ctxp_2(\letvar) \equiv^\forall \ctxp_1(\letvar) \text{ | } \letvar \in dom(\ctxp_1)
+      \inferrule[WeakeningMono]{}{
+        \ctxm_2 \le^\forall \ctxm_1 \leftrightarrow dom(\ctxm_2) \supseteq dom(\ctxm_1), \ctxm_2(x) \le^\forall \ctxm_1(x) \text{ | } x \in dom(\ctxm_1)
+      }\\
+
+      \inferrule[WeakeningPoly]{}{
+        \ctxp_2 \le^\forall \ctxp_1 \leftrightarrow dom(\ctxp_2) \supseteq dom(\ctxp_1), \ctxp_2(\letvar) \le^\forall \ctxp_1(\letvar) \text{ | } \letvar \in dom(\ctxp_1)
       }
   \end{mathpar}
   \end{minipage}
   \end{framed}
   \end{center}
-  \caption{Definitions for typing schemes and reformulated typing rules}\label{fig:core-scheme}
-  \end{figure}
+\caption{Definitions for typing schemes and reformulated typing rules}\label{fig:core-scheme}
+\end{figure}
 
 \begin{figure}[!htb]
 \begin{center}
@@ -104,7 +122,7 @@
         \ctxp \entt c_1 \T [\ctxm]\C \\
         \ctxp \entt c_2 \T [\ctxm]\C \\
       }{
-        \ctxp \entt \conditional{v}{c_1}{c_2} \T [\ctxm](\C)
+        \ctxp \entt \conditional{v}{c_1}{c_2} \T [\ctxm]\C
       }
     
       \inferrule[Ret]{
@@ -123,9 +141,9 @@
     
       \inferrule[Let]{
         \ctxp \entt c_1 \T [\ctxm_1](A \E \dirt) \\
-        \ctxp, x \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt)
+        \ctxp, \letvar \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt)
       }{
-        \ctx \entt \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2]B \E \dirt
+        \ctx \entt \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
       }
     
       \inferrule[With]{
