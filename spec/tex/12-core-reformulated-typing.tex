@@ -133,10 +133,9 @@
     
       \inferrule[Op]{
         (\op \T A \to B) \in \sig \\
-        \ctxp \entt v \T [\ctxm]A \\
-        \C \T [\ctxm](B \E \op)
+        \ctxp \entt v \T [\ctxm]A
       }{
-        \ctxp \entt \op \, v \T [\ctxm]\C
+        \ctxp \entt \op \, v \T [\ctxm](B \E \op)
       }
     
       \inferrule[Let]{
