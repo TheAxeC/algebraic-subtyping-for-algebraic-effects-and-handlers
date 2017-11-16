@@ -18,7 +18,8 @@ Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are val
     & & \quad \shortcases & \quad\textbf{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
-    & \bnfor & \letin{\letvar = c_1} c_2 & \text{let} \\
+    & \bnfor & \doin{\letvar = c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \letin{\letvar = v} c & \text{let} \\
     & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
     & \bnfor & \ret v  & \textbf{returned val} \\
     & \bnfor & \op \, v & \textbf{operation call} \\

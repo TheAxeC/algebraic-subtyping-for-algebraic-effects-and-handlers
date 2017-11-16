@@ -1,6 +1,6 @@
 \subsection{Principal Type Inference}
 
-We introduce a judgement form $\ctxp \triangleright e : [\ctxm^−]A^+$ , stating that $[\ctxm^−]A^+$  is the principal typing scheme of $e$ under the polar typing context $\ctxp$. 
+We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating that $[\ctxm^-]A^+$  is the principal typing scheme of $e$ under the polar typing context $\ctxp$. 
 
 \begin{figure}[!htb]
 \begin{center}
@@ -36,7 +36,7 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^−]A^+$ , statin
     \inferrule[Fun]{
         \ctxp \prinent c \T [\ctxm^-]\C^+
     }{
-        \ctxp \prinent \fun{x}c \T [\ctxm^-_x](D^-(x) \to \C)
+        \ctxp \prinent \fun{x}c \T [\ctxm^-_x](\ctxm^-(x) \to \C^+)
     }
     
     \inferrule[Hand]{
@@ -57,8 +57,21 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^−]A^+$ , statin
             \forall effect\_clauses . output_handler \le return
         \end{array}
       \right)
-    
-    \end{mathpar}
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Type inference algorithm for expressions}\label{fig:inference:expressions}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\[\begin{array}{r@{~}c@{~}l}
+    \text{monomorphic typing contexts}~\ctxm^- & \bnfis {} & \epsilon \bnfor \ctxm^-, x : A^-\\
+    \text{polymorphic typing contexts}~\ctxp & \bnfis {} & \epsilon \bnfor \ctxp, \letvar : [\ctxm^-]A^+\\
+    \end{array}\]
     \textbf{Computations}
     \begin{mathpar}
     \inferrule[App]{
@@ -96,10 +109,17 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^−]A^+$ , statin
     }
     
     \inferrule[Let]{
+        \ctxp \prinent v \T [\ctxm^-_1]A^+ \\
+        \ctxp, \letvar \T [\ctxm^-_1]A^+ \prinent c \T [\ctxm^-_2](B^+ \E \dirt^+)
+    }{
+        \ctx \prinent \letin{\letvar = v} c \T [\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \dirt^+)
+    }
+
+    \inferrule[Do]{
         \ctxp \prinent c_1 \T [\ctxm^-_1](A^+ \E \dirt^+_1) \\
         \ctxp, \letvar \T [\ctxm^-_1]A^+ \prinent c_2 \T [\ctxm^-_2](B^+ \E \dirt^+_2)
     }{
-        \ctx \prinent \letin{\letvar = c_1} c_2 \T [\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \dirt^+_2)
+        \ctx \prinent \doin{\letvar = c_1} c_2 \T [\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \dirt^+_2)
     }
     
     \inferrule[With]{
@@ -113,5 +133,5 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^−]A^+$ , statin
 \end{minipage}
 \end{framed}
 \end{center}
-\caption{Type inference algorithm}\label{fig:inference}
+\caption{Type inference algorithm for computations}\label{fig:inference:computations}
 \end{figure}

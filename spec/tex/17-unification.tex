@@ -142,38 +142,26 @@ Thus, when manipulating constraints, an ML type checker need only preserve equiv
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
-\textbf{Atomic constraint solving}
+\textbf{Atomic (partial function)}
 \begin{mathpar} 
-    \inferrule[]{
-        \beta \le A-
-    }{
-        \theta = [\rectype{\beta^-} \intersection [\alpha / \beta^-](A^-) / \beta^-]
+    \inferrule[]{}{
+        atomic(\beta \le A-) = [\rectype{\beta^-} \intersection [\alpha / \beta^-](A^-) / \beta^-]
     }\\
-    \inferrule[]{
-        A^+ \le \beta
-    }{
-        \theta = [\rectype{\beta^+} \union [\alpha / \beta^+](A^+) / \beta^+]
+    \inferrule[]{}{
+        atomic(A^+ \le \beta) = [\rectype{\beta^+} \union [\alpha / \beta^+](A^+) / \beta^+]
     }\\
-    \inferrule[]{
-        \beta \le \gamma
-    }{
-        \theta = [\rectype{\beta} \intersection [\alpha / \beta^-](\gamma) / \beta^-] \equiv [\alpha \intersection \gamma/\alpha^-]
+    \inferrule[]{}{
+        atomic(\beta \le \gamma) = [\rectype{\beta} \intersection [\alpha / \beta^-](\gamma) / \beta^-] \equiv [\alpha \intersection \gamma/\alpha^-]
     }\\
     
-    \inferrule[]{
-        \delta \le \dirt-
-    }{
-        \theta = 
+    \inferrule[]{}{
+        atomic(\delta \le \dirt-) = 
     }\\
-    \inferrule[]{
-        \dirt^+ \le \delta
-    }{
-        \theta = 
+    \inferrule[]{}{
+        atomic(\dirt^+ \le \delta) = 
     }\\
-    \inferrule[]{
-        \delta_1 \le \delta_2
-    }{
-        \theta =   
+    \inferrule[]{}{
+        atomic(\delta_1 \le \delta_2) =   
     }
 \end{mathpar}
 \end{minipage}
@@ -257,12 +245,12 @@ Thus, when manipulating constraints, an ML type checker need only preserve equiv
         biunify(H; c :: C) = biunify(H; C)
     }\\
     \inferrule[Atomic]{
-        c = atomic
+        atomic(c) = \theta_c
     }{
         biunify(H; c :: C) = biunify(\theta_c(H \cup \{c\}); \theta_c(C)) . \theta_c
     }\\
     \inferrule[Decompose]{
-        subi \text{succeeds}
+        subi(c)
     }{
         biunify(H; c :: C) = biunify(H \cup \{c\}; subi(c) :: C)
     }

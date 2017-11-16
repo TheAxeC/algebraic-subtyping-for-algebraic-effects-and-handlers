@@ -105,11 +105,19 @@ With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a str
   }
 
   \inferrule[Let]{
+    \ctx \ent v \T A \\
+    \ctx, \letvar \T \polytype{A} \ent c \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
+  }{
+    \ctx \ent \letin{\letvar = v} c \T B \E \dirt
+  }
+
+  \inferrule[Do]{
     \ctx \ent c_1 \T A \E \dirt \\
     \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt \\
     \alpha \not\in FTV(\ctx)
   }{
-    \ctx \ent \letin{\letvar = c_1} c_2 \T B \E \dirt
+    \ctx \ent \doin{\letvar = c_1} c_2 \T B \E \dirt
   }
 
   \inferrule[With]{

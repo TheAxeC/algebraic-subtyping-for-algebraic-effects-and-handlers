@@ -139,12 +139,19 @@
       }
     
       \inferrule[Let]{
+        \ctxp \entt v \T [\ctxm_1]A \\
+        \ctxp, \letvar \T [\ctxm_1]A \entt c \T [\ctxm_2](B \E \dirt)
+      }{
+        \ctx \entt \letin{\letvar = v} c \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
+      }
+      
+      \inferrule[Do]{
         \ctxp \entt c_1 \T [\ctxm_1](A \E \dirt) \\
         \ctxp, \letvar \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt)
       }{
-        \ctx \entt \letin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
+        \ctx \entt \doin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
       }
-    
+      
       \inferrule[With]{
         \ctxp \entt v \T [\ctxm](\C \hto \D) \\
         \ctxp \entt c \T [\ctxm]\C

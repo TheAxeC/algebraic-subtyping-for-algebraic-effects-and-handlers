@@ -5,6 +5,7 @@
 \framebox{
 \begin{minipage}{0.98\columnwidth}
 \[\begin{array}{r@{~}c@{~}l@{\quad}l}
+    \text{polymorphic typing contexts}~\ctxp & \bnfis {} & \epsilon \bnfor \ctxp, \letvar : [\ctxm^-]A^+ \\
     \text{(pure) type}~A^+, B^+ & \bnfis {}
     & \boolty & \text{bool type} \\
     & \bnfor & A^- \to \C^+ & \text{function type} \\
@@ -25,14 +26,14 @@
     & \bnfor & A^- \intersection B^- & \text{intersection} \\
     \text{dirty type}~\C^-, \D^- & \bnfis {} & A^- \E \dirt^- \\
 
-    \text{dirt}~\dirt^+ & \bnfis {} & \op^+ & \text{operation} \\
-    & \bnfor & \delta^+ & \text{row variable} \\
+    \text{dirt}~\dirt^+ & \bnfis {} & \op & \text{operation} \\
+    & \bnfor & \delta^+ & \text{dirt variable} \\
     & \bnfor & \emptyrow & \text{empty dirt} \\
     & \bnfor & \dirt_1^+ \union \dirt_2^+ & \text{union} \\
 
-    \text{dirt}~\dirt^- & \bnfis {} & \op^- & \text{operation} \\
-    & \bnfor & \delta^- & \text{row variable} \\
-    & \bnfor & \emptyrow & \text{empty dirt} \\
+    \text{dirt}~\dirt^- & \bnfis {} & \op & \text{operation} \\
+    & \bnfor & \delta^- & \text{dirt variable} \\
+    & \bnfor & \allops & \text{full dirt (all operations, top)} \\
     & \bnfor & \dirt_1^- \intersection \dirt_2^- & \text{intersection}
 \end{array}\]
 \end{minipage}

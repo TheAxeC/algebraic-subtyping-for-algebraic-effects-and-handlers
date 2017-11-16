@@ -18,7 +18,8 @@ Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are val
     & & \quad \shortcases & \quad\textbf{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
-    & \bnfor & \letin{\letvar = c_1} c_2 & \text{let} \\
+    & \bnfor & \doin{\letvar = c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \letin{\letvar = v} c & \text{let} \\
     & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
     & \bnfor & \ret v  & \textbf{returned val} \\
     & \bnfor & \op \, v & \textbf{operation call} \\
@@ -54,7 +55,7 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
   \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\
     
   \text{dirt}~\dirt & \bnfis {} & \op & \text{operation} \\
-    & \bnfor & \delta & \text{row variable} \\
+    & \bnfor & \delta & \text{dirt variable} \\
     & \bnfor & \emptyrow & \text{empty dirt} \\
     & \bnfor & \dirt_1 \intersection \dirt_2 & \text{intersection} \\
     & \bnfor & \dirt_1 \union \dirt_2 & \text{union} \\
