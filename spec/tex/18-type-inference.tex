@@ -36,27 +36,31 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
     \inferrule[Fun]{
         \ctxp \prinent c \T [\ctxm^-]\C^+
     }{
-        \ctxp \prinent \fun{x}c \T [\ctxm^-_x](\ctxm^-(x) \to \C^+)
+        \ctxp \prinent \fun{x}c \T [\ctxm^- \setminus x](\ctxm^-(x) \to \C^+)
     }
     
     \inferrule[Hand]{
-        \ctxp \entt c_r \T [\ctxm, x \T A](B \E \dirt) \\
+        \ctxp \entt c_r \T [\ctxm^-_r](B^+ \E \dirt^+) \\
         \Big[
-        (\op \T A_\op \to B_\op) \in \sig \qquad
-        \ctxp \entt c_\op \T [\ctxm, x \T A_\op, k \T B_\op \to B \E \dirt](B \E \dirt)
+        (\op \T A^+_\op \to B^-_\op) \in \sig \qquad
+        \ctxp \entt c_\op \T [\ctxm^-_\op](\C^+_\op)
         \Big]_{\op \in \ops}
     }{
-        \ctxp \entt \shorthand \T [\ctxm](A \E \dirt \union \ops \hto B \E \dirt)
-    } \xi = biunify\left(
+        \ctxp \entt \shorthand \T [\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\alpha_1 \E \delta_1 \union \ops \hto \alpha_2 \E \delta_2)
+    }\\ \xi = biunify\left(
         \begin{array}{ll}
-            c_r \le output\_handler \\
-            A_op \le \alpha (param)\\
-            param\_drt \le output\_handler\_dirt \\
-            \forall effect\_clauses . param \le dirt\_param \\
-            \forall effect\_clauses . ret \to output_handler \le continuation\_type \\
-            \forall effect\_clauses . output_handler \le return
+            B^+ \E \dirt^+ \le \alpha_2 \E \delta_2 \\
+            \alpha_1 \le \ctxm^-_r(x) \\
+            \delta_1 \le \delta_2 \\
+            \left[
+            \begin{array}{ll}
+                A^+_\op \le \ctxm^-_\op(y) \\
+                B^-_\op \to \C^+_\op \le \ctxm^-_\op(k) \\
+                \C^+_\op \le \alpha_2 \E \delta_2
+            \end{array}
+            \right]_{\op \in \ops}
         \end{array}
-      \right)
+        \right)
 \end{mathpar}
 \end{minipage}
 \end{framed}
@@ -78,20 +82,20 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
         \ctxp \prinent v_1 \T [\ctxm^-_1]A^+_1 \\
         \ctxp \prinent v_2 \T [\ctxm^-_2]A^+_2
     }{
-        \ctxp \prinent v_1 \, v_2 \T \xi([\ctxm^-_1 \intersection \ctxm^-_2]\alpha)
-    } \xi = biunify(A^+_1 \le A^+_2 \to \alpha)
+        \ctxp \prinent v_1 \, v_2 \T \xi([\ctxm^-_1 \intersection \ctxm^-_2](\alpha \E \delta))
+    } \xi = biunify(A^+_1 \le A^+_2 \to (\alpha \E \delta))
     
     \inferrule[Cond]{
         \ctxp \prinent v \T [\ctxm^-_1]A^+ \\
         \ctxp \prinent c_1 \T [\ctxm^-_2]\C^+_1 \\
         \ctxp \prinent c_2 \T [\ctxm^-_3]\C^+_2 \\
     }{
-        \ctxp \prinent \conditional{v}{c_1}{c_2} \T \xi([\ctxm^-_1 \intersection \ctxm^-_2 \intersection \ctxm^-_3]\alpha \E \delta)
+        \ctxp \prinent \conditional{v}{c_1}{c_2} \T \xi([\ctxm^-_1 \intersection \ctxm^-_2 \intersection \ctxm^-_3](\alpha \E \delta))
     } \xi = biunify\left(
         \begin{array}{ll}
             A^+ \le bool\\
-            \C^+_1 \le \alpha \E \delta\\
-            \C^+_2 \le \alpha \E \delta
+            \C^+_1 \le (\alpha \E \delta)\\
+            \C^+_2 \le (\alpha \E \delta)
         \end{array}
       \right)
     
@@ -102,10 +106,10 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
     }
     
     \inferrule[Op]{
-        (\op \T A^+ \to B^+) \in \sig \\
+        (\op \T A^+ \to B^-) \in \sig \\
         \ctxp \prinent v \T [\ctxm^-]A^+
     }{
-        \ctxp \prinent \op \, v \T [\ctxm^-](B^+ \E \op)
+        \ctxp \prinent \op \, v \T [\ctxm^-](\textcolor{red}{B^+} \E \op)
     }
     
     \inferrule[Let]{
@@ -126,8 +130,8 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
         \ctxp \prinent v \T [\ctxm^-_1]\C^+_1 \\
         \ctxp \prinent c \T [\ctxm^-_2]\C^+_2
     }{
-        \ctxp \prinent \withhandle{v}{c} \T \xi([\ctxm^-_1 \intersection \ctxm^-_2]\alpha)
-    } \xi = biunify(\C^+_1 \le \C^+_2 \hto \alpha)
+        \ctxp \prinent \withhandle{v}{c} \T \xi([\ctxm^-_1 \intersection \ctxm^-_2](\alpha \E \delta))
+    } \xi = biunify(\C^+_1 \le \C^+_2 \hto (\alpha \E \delta))
     
 \end{mathpar}
 \end{minipage}

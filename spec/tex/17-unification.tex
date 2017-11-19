@@ -8,13 +8,14 @@ To operate on polar type terms, we generalise from substitutions to bisubsti- tu
     \begin{minipage}[t]{0.95\columnwidth}
     \begin{mathpar}    
         \inferrule[Bisubstitution]{}{
-          \xi = [A^+ / \alpha,A^- / \alpha] %\\
-        %   \zeta = [\dirt^+ / \alpha, \dirt^- / \alpha]
+          \xi = [A^+ / \alpha^+, A^- / \alpha^-, \dirt^+/ \delta^+, \dirt^- / \delta^-]
         }\\
 
         \inferrule[]{}{
             \xi'(\alpha^+) = \alpha \\
             \xi'(\alpha^-) = \alpha \\
+            \xi'(\delta^+) = \delta \\
+            \xi'(\delta^-) = \delta \\
             \xi'(\_) = \_
         }
 
@@ -138,30 +139,91 @@ The presence of explicit type application in F, F$_\omega$ and CoC makes the exa
 
 Thus, when manipulating constraints, an ML type checker need only preserve equivalence of the set of instances, and not equivalence of the parameterisation. This freedom is not much used in plain ML, since unification happens to preserve equivalence of the parameterisation. However, this freedom is what allows MLsub to eliminate subtyping constraints.
 
+For all positive type terms $A+$ and variables, there exist positive type terms $A^+_\alpha$ and $A^+_g$ such that $A^+_\alpha \in {\bot, \alpha}$, $\alpha$ is guarded in $A^+_g$, and $A^+$ is equivalent to $A^+_\alpha \union A^+_g$.
+
+For all negative type terms $A-$ and variables, there exist negative type terms $A^-_\alpha$ and $A^-_g$ such that $A^-_\alpha \in {\top, \alpha}$, $\alpha$ is guarded in $A^-_g$, and $A^-$ is equivalent to $A^-_\alpha \intersection A^-_g$.
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar} 
+    \inferrule[]{}{
+        \rectypep{A^+} = \rectype{A^+_g} \\
+        \rectypen{A^-} = \rectype{A^-_g}
+    }
+    
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Polar recursive type}\label{fig:recursive}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\textbf{Constructed (partial function)}
+\begin{mathpar} 
+    \inferrule[]{}{
+        constructed(A \to \C) = true
+    }\\
+    \inferrule[]{}{
+        constructed(\C \hto \D) = true
+    }\\
+    \inferrule[]{}{
+        constructed(bool) = true
+    }
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Constructed types}\label{fig:constructed}
+\end{figure}
+
 \begin{figure}[!htb]
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
 \textbf{Atomic (partial function)}
 \begin{mathpar} 
-    \inferrule[]{}{
-        atomic(\beta \le A-) = [\rectype{\beta^-} \intersection [\alpha / \beta^-](A^-) / \beta^-]
+    \inferrule[]{
+        constructed(A^-) \\
+        \beta \text{ not free in } A^-
+    }{
+        atomic(\beta \le A^-) = [\beta \intersection A^- / \beta^-]
+    }\\
+    \inferrule[]{
+        constructed(A^-) \\
+        \beta \text{ free in } A^-
+    }{
+        atomic(\beta \le A^-) = [\rectypen{(\beta \intersection [\alpha / \beta^-](A^-))} / \beta^-]
+    }\\
+    \inferrule[]{
+        constructed(A^+) \\
+        \beta \text{ not free in } A^-
+    }{
+        atomic(A^+ \le \beta) = [\beta \union [\alpha / \beta^+](A^+) / \beta^+]
+    }\\
+    \inferrule[]{
+        constructed(A^+) \\
+        \beta \text{ free in } A^-
+    }{
+        atomic(A^+ \le \beta) = [\rectypep{(\beta \union [\alpha / \beta^+](A^+))} / \beta^+]
     }\\
     \inferrule[]{}{
-        atomic(A^+ \le \beta) = [\rectype{\beta^+} \union [\alpha / \beta^+](A^+) / \beta^+]
-    }\\
-    \inferrule[]{}{
-        atomic(\beta \le \gamma) = [\rectype{\beta} \intersection [\alpha / \beta^-](\gamma) / \beta^-] \equiv [\alpha \intersection \gamma/\alpha^-]
+        atomic(\beta \le \gamma) = [\rectypen{(\beta \intersection [\alpha / \beta^-](\gamma))} / \beta^-] \equiv [\alpha \intersection \gamma/\alpha^-] \equiv [\alpha \union \gamma/\gamma^+]
     }\\
     
     \inferrule[]{}{
-        atomic(\delta \le \dirt-) = 
+        atomic(\delta \le \op^-) = [\delta \intersection \op / \delta^-]
     }\\
     \inferrule[]{}{
-        atomic(\dirt^+ \le \delta) = 
+        atomic(\op^+ \le \delta) = [\delta \union \op / \delta^+]
     }\\
     \inferrule[]{}{
-        atomic(\delta_1 \le \delta_2) =   
+        atomic(\delta_1 \le \delta_2) = [\delta_1 \union \delta_2 / \delta_2^+] \equiv [\delta_1 \intersection \delta_2 / \delta_1^-]
     }
 \end{mathpar}
 \end{minipage}
