@@ -76,6 +76,10 @@ To operate on polar type terms, we generalise from substitutions to bisubsti- tu
         }\\
 
         \inferrule[]{}{
+            \xi(\dirt_1^- \union \dirt_2^-) \equiv \xi(\dirt_1^-) \union \xi(\dirt_2^-)
+        }\\
+
+        \inferrule[]{}{
             \xi(\op) \equiv \op
         }\\
 
@@ -223,6 +227,9 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
         atomic(\op^+ \le \delta) = [\delta \union \op / \delta^+]
     }\\
     \inferrule[]{}{
+        atomic(\delta \le (\dirt_1 \union \dirt_2)) = [\delta \intersection (\dirt_1 \union \dirt_2) / \delta^-]
+    }\\
+    \inferrule[]{}{
         atomic(\delta_1 \le \delta_2) = [\delta_1 \union \delta_2 / \delta_2^+] \equiv [\delta_1 \intersection \delta_2 / \delta_1^-]
     }
 \end{mathpar}
@@ -273,6 +280,15 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
     }\\
     \inferrule[]{}{
         subi(\dirt^+_1 \union \dirt^+_2 \le \dirt^-) = \{\dirt^+_1 \le \dirt^-, \dirt^+_2 \le \dirt^-\}
+    }\\
+    \inferrule[]{}{
+        subi(\dirt^+ \le \op \union \dirt^-) = \{\dirt^+ \le \dirt^-\}
+    }\\
+    \inferrule[]{}{
+        subi(\dirt^+ \le \dirt^- \union \op) = \{\dirt^+ \le \dirt^-\}
+    }\\
+    \inferrule[]{}{
+        subi(\dirt^+ \le \dirt^-_1 \union \dirt^-_2) = \{\dirt^+ \le \dirt^-_1, \dirt^+ \le \dirt^-_2\}
     }\\
     \inferrule[]{}{
         subi(\dirt^+ \le \dirt^-_1 \intersection \dirt^-_2) = \{\dirt^+ \le \dirt^-_1, \dirt^+ \le \dirt^-_2\}
