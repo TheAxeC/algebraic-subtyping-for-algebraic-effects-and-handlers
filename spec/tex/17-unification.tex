@@ -164,16 +164,16 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
-\textbf{Constructed (partial function)}
+\textbf{Constructed (predicate): \\constructed($A$)}
 \begin{mathpar} 
     \inferrule[]{}{
-        constructed(A \to \C) = true
+        constructed(A \to \C)
     }\\
     \inferrule[]{}{
-        constructed(\C \hto \D) = true
+        constructed(\C \hto \D)
     }\\
     \inferrule[]{}{
-        constructed(bool) = true
+        constructed(bool)
     }
 \end{mathpar}
 \end{minipage}
@@ -186,7 +186,7 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
-\textbf{Atomic (partial function)}
+\textbf{Atomic (partial function): \\atomic($A^+ \le A^-$) = $\theta$, atomic($\dirt^+ \le \dirt^-$) = $\theta$}
 \begin{mathpar} 
     \inferrule[]{
         constructed(A^-) \\
@@ -204,7 +204,7 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
         constructed(A^+) \\
         \beta \text{ not free in } A^-
     }{
-        atomic(A^+ \le \beta) = [\beta \union [\alpha / \beta^+](A^+) / \beta^+]
+        atomic(A^+ \le \beta) = [\beta \union A^+ / \beta^+]
     }\\
     \inferrule[]{
         constructed(A^+) \\
@@ -213,7 +213,7 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
         atomic(A^+ \le \beta) = [\rectypep{(\beta \union [\alpha / \beta^+](A^+))} / \beta^+]
     }\\
     \inferrule[]{}{
-        atomic(\beta \le \gamma) = [\rectypen{(\beta \intersection [\alpha / \beta^-](\gamma))} / \beta^-] \equiv [\alpha \intersection \gamma/\alpha^-] \equiv [\alpha \union \gamma/\gamma^+]
+        atomic(\beta \le \gamma) = [\rectypen{(\beta \intersection [\alpha / \beta^-](\gamma))} / \beta^-] \equiv [\beta \intersection \gamma/\beta^-] \equiv [\beta \union \gamma/\gamma^+]
     }\\
     
     \inferrule[]{}{
@@ -236,7 +236,7 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
-\textbf{Subi (partial function)}
+\textbf{Subi (partial function): \\subi($A^+ \le A^-$) = $C$, subi($\dirt^+ \le \dirt^-$) = $C$, subi($\C^+ \le \C^-$) = $C$}
 \begin{mathpar}    
     \inferrule[]{}{
         subi(A^+ \E \dirt^+ \le A^- \E \dirt^-) = \{A^+ \le A^-, \dirt^+ \le \dirt^-\}
@@ -251,10 +251,10 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
         subi(bool \le bool) = \{\}
     }\\
     \inferrule[]{}{
-        subi(\rectype{A^+} \le A-) = \{A^+[\rectype{A^+} / \alpha] \le A^-\}
+        subi(\rectype{A^+} \le A-) = \{[\rectype{A^+} / \alpha](A^+) \le A^-\}
     }\\
     \inferrule[]{}{
-        subi(A^+ \le \rectype{A^-}) = \{A^+ \le A^-[\rectype{A^-} / \alpha] \}
+        subi(A^+ \le \rectype{A^-}) = \{A^+ \le [\rectype{A^-} / \alpha]A^- \}
     }\\
     \inferrule[]{}{
         subi(A^+_1 \union A^+_2 \le A^-) = \{A^+_1 \le A^-, A^+_2 \le A^-\}
@@ -294,27 +294,28 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
+\textbf{Binunify(History, ContraintSet) = substitution}
 \begin{mathpar}
     \inferrule[Start]{}{
-        biunify(C) = biunify(\emptyset; C)
+        \mathit{biunify}(C) = \mathit{biunify}(\emptyset; C)
     }\\
     \inferrule[Empty]{}{
-        biunify(H; \epsilon) = 1
+        \mathit{biunify}(H; \epsilon) = 1
     }\\
     \inferrule[Redundant]{
         c \in H
     }{
-        biunify(H; c :: C) = biunify(H; C)
+        \mathit{biunify}(H; c :: C) = \mathit{biunify}(H; C)
     }\\
     \inferrule[Atomic]{
         atomic(c) = \theta_c
     }{
-        biunify(H; c :: C) = biunify(\theta_c(H \cup \{c\}); \theta_c(C)) . \theta_c
+        \mathit{biunify}(H; c :: C) = \mathit{biunify}(\theta_c(H \cup \{c\}); \theta_c(C)) \cdot \theta_c
     }\\
     \inferrule[Decompose]{
-        subi(c)
+        subi(c) = C'
     }{
-        biunify(H; c :: C) = biunify(H \cup \{c\}; subi(c) :: C)
+        \mathit{biunify}(H; c :: C) = \mathit{biunify}(H \cup \{c\}; C' \concat C)
     }
 \end{mathpar}
 \end{minipage}

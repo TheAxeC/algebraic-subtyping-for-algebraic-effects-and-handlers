@@ -2,6 +2,23 @@
 
 This is my main log file for my masterthesis. Progress will be recorded in the log directory.
 
+## Todo
+
+- Implementation
+  - letvar
+  - let
+  - recursive types
+  - bug handler
+  - simplification automata
+- spec
+  - fix typos
+  - handler signature only primitive
+- proofs
+- evaluation
+- thesis text
+- poster
+- paper
+
 ## Meetings
 
 | Thesis meetings        |          |
@@ -37,43 +54,49 @@ This is my main log file for my masterthesis. Progress will be recorded in the l
 | estimate   | ~700  |
 
 ## Summary
+
 This topic is situated in the area of Programming Language Theory, the formal study of programming language features and their properties. Specifically, a novel type system will be designed and its formal properties studied. This type system will be focused on algebraic effects and handlers.
 
 ## Background
+
 This thesis builds on two very recent developments in the area of programming language theory:
+
 - In his December 2016 PhD thesis, Stephen Dolan (University of Cambridge, UK), has presented a novel type system that combines subtyping and parametric polymorphism in a particularly attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect.
--  "Algebraic effects and handlers" are a new formalism for formally modelling side-effects (e.g. mutable state or non-determinism) in programming languages, developed by Matija Pretnar (University of Ljubjana) and Gordon Plotkin (University of Edinburgh). This approach is gaining a lot of traction, not only as a formalism but also as a practical feature in actual programming languages (e.g. the Koka language developed by Microsoft Research). We are collaborating with Matija Pretnar on the efficient implementation of one such language, called Eff. Axel Faes has contributed to this collaboration during a project he did for the Honoursprogramme of the Faculty of Engineering Science.
+- "Algebraic effects and handlers" are a new formalism for formally modelling side-effects (e.g. mutable state or non-determinism) in programming languages, developed by Matija Pretnar (University of Ljubjana) and Gordon Plotkin (University of Edinburgh). This approach is gaining a lot of traction, not only as a formalism but also as a practical feature in actual programming languages (e.g. the Koka language developed by Microsoft Research). We are collaborating with Matija Pretnar on the efficient implementation of one such language, called Eff. Axel Faes has contributed to this collaboration during a project he did for the Honoursprogramme of the Faculty of Engineering Science.
 
 Algebraic effects and handlers benefit from a custom type-&-effect system, a type system that also tracks which effects can happen in a program. Several such type-&-effect systems have been proposed in the literature, but all are unsatisfactory. We attribute this to the lack of the elegant properties of Dolan's type system. Indeed the existing type-&-effect systems are not only theoretically unsatisfactory, but they are also awkward to implement and use in practice.
 
 ## Goals
+
 The goal of this thesis is to derive a type-&-effect system that extends Dolan's elegant type system with effect information. This type-&-effect system should inherit Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserve all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types).
 
 I would like to publish my results. Either in the Student Research Competition of ICFP, a workshop of ICFP (such as the ML-family, OCaml or HOPE). Most ideal would be to publish in POPL.
 
 ## Research questions
+
 - How can Dolan's elegant type system be extended with effect information?
 - Which properties are preserved and which aren't preserved?
-  * Instantiation
-  * Weakening
-  * Substitution
-  * Soundness
-  * Type preservation
+  - Instantiation
+  - Weakening
+  - Substitution
+  - Soundness
+  - Type preservation
 - What advantages are there to an type-&-effect system based on Dolan's elegant type system?
-  * Does the system lend itself to optimisations?
-  * Runtime performance of the type system
-  * Better type-&-effect information given by the system to the programmer
+  - Does the system lend itself to optimisations?
+  - Runtime performance of the type system
+  - Better type-&-effect information given by the system to the programmer
 - Separation of type and effect system
-  * What type system should we use?
-  * We can use union/intersection types by annotating with effect sets
-  * Use union/intersection only for effects
-    + Effects become a tree-like structure
-    + Independent type and effect systems
-    + This makes the effect system modular
-    + Requires more proofs to be written
-    + Effect system looks like row-based type system with intersection and union types
+  - What type system should we use?
+  - We can use union/intersection types by annotating with effect sets
+  - Use union/intersection only for effects
+    - Effects become a tree-like structure
+    - Independent type and effect systems
+    - This makes the effect system modular
+    - Requires more proofs to be written
+    - Effect system looks like row-based type system with intersection and union types
 
 ## Steps
+
 - Step 1: Literature study
 - Step 2: Type system
 - Step 3: Proofs
@@ -83,9 +106,11 @@ I would like to publish my results. Either in the Student Research Competition o
 - Step 7: Write thesis
 
 ## Quote Dolan (p. 137)
+
 ... but merely to point out that the machinery developed in this thesis for type inference with subtyping can also be used to infer effects.
 
 ## Approach
+
 - Study of the relevant literature and theoretical background.
 - Design of a type-&-effect system derived from Dolan's, that integrates effects.
 - Proving the desirable properties of the proposed type-&-effect system: type soundness, principal typing, ...
@@ -93,6 +118,7 @@ I would like to publish my results. Either in the Student Research Competition o
 - Time permitting: Implementation of the algorithm and comparing it to other algorithms (such as row polymorphism based type-&-effect systems).
 
 ## Literature Study
+
 1. *Matija Pretnar. An Introduction to Algebraic Effects and Handlers. 2015. url: http://www.eff-lang.org/handlers-tutorial.pdf.*
 
 2. *Stephen Dolan. Algebraic Subtyping. 2016. url: https://www.cl.cam.ac.uk/~sd601/thesis.pdf.*
@@ -135,15 +161,3 @@ I would like to publish my results. Either in the Student Research Competition o
 [8] is Types and Programming Languages, a book written by Benjamin Pierce. This books provides an excellent background for type systems, polymorphism and subtyping.
 
 [4] and [5] were read during the summer vacation in August, while [2] was read in September. The prototype type inference engine [3] provided an implementation to play around with. These papers describe how ML-type polymorphism can be extended with subtyping. An advantage of this is that relationships between input and output types can be defined instead of just stating equivalences between input and output types.
-
-## Intermediate report/presentation #1
-
-## Intermediate report/presentation #2
-
-## Intermediate report/presentation #3
-
-## Poster
-
-## Text
-
-## Paper
