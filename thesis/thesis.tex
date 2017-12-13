@@ -36,7 +36,8 @@
 % This can be commented out for printed versions.
 \usepackage[pdfusetitle,colorlinks,plainpages=false]{hyperref}
 
-\input{tex/00-macros}
+\newcommand{\C}{\underline{C}}
+\input{../spec/tex/00-macros}
 \newcommand{\todo}[1]{\textcolor{red}{\textsc{Todo:} #1}}
 
 % Needed to use the files from spec
@@ -67,56 +68,56 @@
 \mainmatter
 
 \section{Introduction}
-\input{tex/01-introduction}
+\input{../spec/tex/01-introduction}
 
 \section{Background}
-\input{tex/02-background}
+\input{../spec/tex/02-background}
 
 \section{Related Work (Algebraic Subtyping)}
-\input{tex/03-algebraic-subtyping}
+\input{../spec/tex/03-algebraic-subtyping}
 
 \section{Related Work (\eff)}
-\input{tex/04-eff-intro}
-\input{tex/05-eff-types}
-\input{tex/06-eff-type-system}
+\input{../spec/tex/04-eff-intro}
+\input{../spec/tex/05-eff-types}
+\input{../spec/tex/06-eff-type-system}
 
 \section{Core Language (\core)}
-\input{tex/07-core-intro}
-\input{tex/08-core-types}
-\input{tex/09-core-type-system}
-\input{tex/10-core-subtyping}
-\input{tex/11-core-typing-rules}
-\input{tex/12-core-reformulated-typing}
+\input{../spec/tex/07-core-intro}
+\input{../spec/tex/08-core-types}
+\input{../spec/tex/09-core-type-system}
+\input{../spec/tex/10-core-subtyping}
+\input{../spec/tex/11-core-typing-rules}
+\input{../spec/tex/12-core-reformulated-typing}
 
 \section{Proofs}
-\input{tex/13-proofs}
+\input{../spec/tex/13-proofs}
 
 \section{Type Inference}
-\input{tex/14-elaboration}
-\input{tex/15-constraints}
-\input{tex/16-polarity}
-\input{tex/17-unification}
-\input{tex/18-type-inference}
+\input{../spec/tex/14-elaboration}
+\input{../spec/tex/15-constraints}
+\input{../spec/tex/16-polarity}
+\input{../spec/tex/17-unification}
+\input{../spec/tex/18-type-inference}
 
 \section{Implementation}
-\input{tex/19-implementation}
+\input{../spec/tex/19-implementation}
 
 \section{Evaluation}
-\input{tex/20-evaluation}
+\input{../spec/tex/20-evaluation}
 
 \section{Conclusion}
-\input{tex/21-conclusion}
+\input{../spec/tex/21-conclusion}
 
 \appendixpage*          % if wanted
 \appendix
 % \chapter{Appendix A}
-% \input{tex/appendix}
+% \input{../spec/tex/appendix}
 
 \backmatter
 
 % The bibliography comes after the appendices.
 % You can replace the standard "abbrv" bibliography style by another one.
 \bibliographystyle{abbrv}
-\bibliography{bib/main}
+\bibliography{../spec/bib/main}
 
 \end{document}

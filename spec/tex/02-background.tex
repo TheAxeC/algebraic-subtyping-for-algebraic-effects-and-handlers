@@ -1,3 +1,54 @@
-In this section, I will provide the background necessary to be able to read the text. This includes an introduction into programming languages (and programming language theory) and algebraic effect handlers 
+\subsection{Programming language theory}
+The field of programming language theory is a branch of computer science that describes how to formaly describe complete programming languages and programming language features, such as algebraic effect handlers.
 
-Dolan's type system and \eff are discussed in further chapters and thus shouldn't need to be explained in this section.
+The work described in this thesis uses several aspects from programming language theory. A first subdiscipline is type theory. Type theory is used to formaly describe type systems. A type system is a set of rules that are used to describe the accepted structure of a programming language. Each rule uses or assigns types to the various terms of the programming language. The typing rules typically have one of the following forms:
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{minipage}{0.95\columnwidth}
+\begin{mathpar}
+    \inferrule[Fact]{}{
+        \ctx \ent e : \tau
+    }
+
+    \inferrule[Inference rule]{
+        \ctx \ent e_1 : \tau_1 \to \tau_2 \\
+        \ctx \ent e_2 : \tau_1
+    }{
+        \ctx \ent e_1 \, e_2 : \tau_2
+    }
+\end{mathpar}
+\end{minipage}
+\end{center}
+\caption{Typing rules: judgements}\label{fig:judgement}
+\end{figure}
+
+A \textit{Fact} states that, under the assumption of $\ctx$, $e$ has type $\tau$. The context, $\ctx$, is a mapping of the free variables of $e$ to their types. It is called a fact since the rule always holds.
+
+An \textit{Inference rule} states that, if a derivation for $\ctx \ent e_1 : \tau_1 \to \tau_2$ can be found and a derivation for $ctx \ent e_2 : \tau_1$ can be found, it follows that there is a derivation for $\ctx \ent e_1 \, e_2 : \tau_2$. 
+
+In this example, $e_1$ is a function type. There is also a derivation for $e_2$ which has the same type as the argument type of $e_1$. The inference rule then states that the application of $e_2$ to $e_1$ has type $\tau_2$. Thus, the semantics of the programming language constructs, such as function application, are defined by the typing rules. 
+
+An inference rule can be read in multiple ways. It can be read top-down or bottom-up. Reading it top-down gives the above described reasoning. Given some expressions and some constraints, another expression can be constructed with a specific type. The bottom-up approach states that, given an expression such as the function application, there is a specific way the different parts of the expression can be typed. In the given example, a function expression has type $\tau_2$. Therefor, both $e_1$ and $e_2$ must follow a specific set of constraints. It is known that a function needs to exist of type $\tau_1 \to \tau_2$ and an expression that matches the argument of the function, $\tau_1$ needs to exist.
+
+Figure~\ref{fig:context} also shows that the context, $\ctx$, can be manipulated. In the typing rule, the context is used for the $\lambda$-abstraction. The condition states that $e$ has type $\tau_2$ given that context and that $x$, which can be a free variable in the expression $e$, has type $tau_1$. 
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{minipage}{0.95\columnwidth}
+\begin{mathpar}
+    \inferrule[Fun]{
+        \ctx, x \T \tau_1 \ent e \T \tau_2
+    }{
+        \ctx \ent \fun{x} c \T \tau_1 \to \tau_2
+    }
+\end{mathpar}
+\end{minipage}
+\end{center}
+\caption{Typing rules: manipulate context}\label{fig:context}
+\end{figure}
+
+\subsection{Subtyping}
+
+
+\subsection{Algebraic effects and handlers}
