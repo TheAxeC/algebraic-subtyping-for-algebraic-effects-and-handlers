@@ -1,6 +1,8 @@
 \subsection{Unification}
 
-To operate on polar type terms, we generalise from substitutions to bisubsti- tutions, which map type variables to a pair of a positive and a negative type term. The definitions for bisubstitions are given in Figure~\ref{fig:bisubstitution}.
+To operate on polar type terms, we generalise from substitutions to bisubstitutions, which map type variables to a pair of a positive and a negative type term. The definitions for bisubstitions are given in Figure~\ref{fig:bisubstitution}.
+
+\todo{explain substitutions and bisubstitions}
 
 \begin{figure}[!htb]
     \begin{center}
@@ -118,7 +120,7 @@ To operate on polar type terms, we generalise from substitutions to bisubsti- tu
 \caption{Bisubstitutions}\label{fig:bisubstitution}
 \end{figure}
 
-The presence of explicit type application in F, F$_\omega$ and CoC makes the exact parameterisation of a polymorphic type relevant. Conversely, in ML, the parameterisation is irrelevant and all that matters is the set of possible instances.
+% The presence of explicit type application in F, F$_\omega$ and CoC makes the exact parameterisation of a polymorphic type relevant. Conversely, in ML, the parameterisation is irrelevant and all that matters is the set of possible instances.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -141,11 +143,14 @@ The presence of explicit type application in F, F$_\omega$ and CoC makes the exa
 \caption{Parameterisation and typing}\label{fig:parameterisation}
 \end{figure}
 
+\todo{rewrite, in essence explain why equivalence of the parameterisation is important}
+``
 Thus, when manipulating constraints, an ML type checker need only preserve equivalence of the set of instances, and not equivalence of the parameterisation. This freedom is not much used in plain ML, since unification happens to preserve equivalence of the parameterisation. However, this freedom is what allows MLsub to eliminate subtyping constraints.
 
 For all positive type terms $A+$ and variables, there exist positive type terms $A^+_\alpha$ and $A^+_g$ such that $A^+_\alpha \in {\bot, \alpha}$, $\alpha$ is guarded in $A^+_g$, and $A^+$ is equivalent to $A^+_\alpha \union A^+_g$.
 
 For all negative type terms $A-$ and variables, there exist negative type terms $A^-_\alpha$ and $A^-_g$ such that $A^-_\alpha \in {\top, \alpha}$, $\alpha$ is guarded in $A^-_g$, and $A^-$ is equivalent to $A^-_\alpha \intersection A^-_g$.
+''
 
 \begin{figure}[!htb]
 \begin{center}
@@ -221,13 +226,10 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
     }\\
     
     \inferrule[]{}{
-        atomic(\delta \le \op^-) = [\delta \intersection \op / \delta^-]
+        atomic(\delta \le \op) = [\delta \intersection \op / \delta^-]
     }\\
     \inferrule[]{}{
-        atomic(\op^+ \le \delta) = [\delta \union \op / \delta^+]
-    }\\
-    \inferrule[]{}{
-        atomic(\delta \le (\dirt_1 \union \dirt_2)) = [\delta \intersection (\dirt_1 \union \dirt_2) / \delta^-]
+        atomic(\op \le \delta) = [\delta \union \op / \delta^+]
     }\\
     \inferrule[]{}{
         atomic(\delta_1 \le \delta_2) = [\delta_1 \union \delta_2 / \delta_2^+] \equiv [\delta_1 \intersection \delta_2 / \delta_1^-]
@@ -282,13 +284,16 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
         subi(\dirt^+_1 \union \dirt^+_2 \le \dirt^-) = \{\dirt^+_1 \le \dirt^-, \dirt^+_2 \le \dirt^-\}
     }\\
     \inferrule[]{}{
-        subi(\dirt^+ \le \op \union \dirt^-) = \{\dirt^+ \le \dirt^-\}
+        subi(\op \le \op \union \dirt^-) = \{\}
     }\\
     \inferrule[]{}{
-        subi(\dirt^+ \le \dirt^- \union \op) = \{\dirt^+ \le \dirt^-\}
+        subi(\op \le \dirt^- \union \op) = \{\}
     }\\
     \inferrule[]{}{
-        subi(\dirt^+ \le \dirt^-_1 \union \dirt^-_2) = \{\dirt^+ \le \dirt^-_1, \dirt^+ \le \dirt^-_2\}
+        subi(\op_1 \le \op_2 \union \dirt^-) = \{\op_1 \le \dirt^-\}
+    }\\
+    \inferrule[]{}{
+        subi(\op_1 \le \dirt^- \union \op_2) = \{\op_1 \le \dirt^-\}
     }\\
     \inferrule[]{}{
         subi(\dirt^+ \le \dirt^-_1 \intersection \dirt^-_2) = \{\dirt^+ \le \dirt^-_1, \dirt^+ \le \dirt^-_2\}

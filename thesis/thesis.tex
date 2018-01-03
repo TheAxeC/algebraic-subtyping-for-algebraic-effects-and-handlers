@@ -1,9 +1,9 @@
-\documentclass[master=cws,masteroption=ai]{kulemt}
+\documentclass[master=ecws, masteroption=ai]{kulemt} %master=cws
 \setup{title={Algebraic Subtyping for Algebraic Types and Effects},
   author={Axel Faes},
   promotor={Prof.\,dr.\,ir.\ Tom Schrijvers},
-  assessor={assesors},
-  assistant={Amr Hany Saleh}}
+  assessor={Amr Hany Shehata Saleh, Prof.\,dr.\,ir.\ Bart Jacobs},
+  assistant={Amr Hany Shehata Saleh}}
 % The following \setup may be removed entirely if no filing card is wanted
 \setup{filingcard,
   translatedtitle=,
@@ -50,7 +50,7 @@
 \begin{document}
 
 \begin{preface}
-  I would like to thank everybody who kept me busy the last year,
+  I would like to thank everybody who kept me busy and supported me the last year,
   especially my promoter and my assistants. I would also like to thank the
   jury for reading the text.
 \end{preface}
@@ -58,7 +58,7 @@
 \tableofcontents*
 
 \begin{abstract}
-  Algebraic effects and handlers are a very active area of research. An important aspect is the development of an optimising compiler. \eff is an ML-style language with support for effects and forms the testbed for the optimising compiler. However, the type-\&-effect system of \eff is unsatisfactory. This is due to the lack of some elegant properties. It is also awkward to implement and use in practice.
+  Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. Recently, Stephen Dolan (University of Cambridge, UK) presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. In this work, a type-\&-effect system is derived that extends Dolan's elegant type system with effect information. This type-\&-effect system inherits Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserves all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types).
 \end{abstract}
 
 \listoffigures
@@ -70,13 +70,10 @@
 \section{Introduction}
 \input{../spec/tex/01-introduction}
 
-\section{Background}
+\section{Simply Typed Lambda Calculus}
 \input{../spec/tex/02-background}
 
-\section{Related Work (Algebraic Subtyping)}
-\input{../spec/tex/03-algebraic-subtyping}
-
-\section{Related Work (\eff)}
+\section{Algebraic effects and handlers (\eff)}
 \input{../spec/tex/04-eff-intro}
 \input{../spec/tex/05-eff-types}
 \input{../spec/tex/06-eff-type-system}
@@ -85,7 +82,7 @@
 \input{../spec/tex/07-core-intro}
 \input{../spec/tex/08-core-types}
 \input{../spec/tex/09-core-type-system}
-\input{../spec/tex/10-core-subtyping}
+% \input{../spec/tex/10-core-subtyping}
 \input{../spec/tex/11-core-typing-rules}
 \input{../spec/tex/12-core-reformulated-typing}
 
@@ -93,8 +90,8 @@
 \input{../spec/tex/13-proofs}
 
 \section{Type Inference}
-\input{../spec/tex/14-elaboration}
-\input{../spec/tex/15-constraints}
+% \input{../spec/tex/14-elaboration}
+% \input{../spec/tex/15-constraints}
 \input{../spec/tex/16-polarity}
 \input{../spec/tex/17-unification}
 \input{../spec/tex/18-type-inference}
@@ -119,5 +116,6 @@
 % You can replace the standard "abbrv" bibliography style by another one.
 \bibliographystyle{abbrv}
 \bibliography{../spec/bib/main}
+\nocite{*}
 
 \end{document}

@@ -10,52 +10,52 @@
 
 
 
-\begin{figure}[!htb]
-\begin{center}
-\framebox{
-\begin{minipage}{0.95\columnwidth}
-\textbf{Subtyping of dirts}
-\begin{mathpar}
+% \begin{figure}[!htb]
+% \begin{center}
+% \framebox{
+% \begin{minipage}{0.95\columnwidth}
+% \textbf{Subtyping of dirts}
+% \begin{mathpar}
 
-  \inferrule[Sub-$\E$-Row-Row]{
-    n \ge 0 \\
-    m \ge 0 \\
-    p \ge 0 \\
-    \{Op_1, ..., Op_{n}, Op_{n+m+1}, ..., Op_{n+m+p}, \delta_1\} \le \\ \{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, \delta_2\}
-  }{
-    \{\delta_1\} \le \{Op_{n+1}, ..., Op_{n+m}, \delta_3\} \\
-    \{\delta_3\} = \{Op_{n+m}, ..., Op_{n+m+p}, \delta_2\}
-  }
+%   \inferrule[Sub-$\E$-Row-Row]{
+%     n \ge 0 \\
+%     m \ge 0 \\
+%     p \ge 0 \\
+%     \{Op_1, ..., Op_{n}, Op_{n+m+1}, ..., Op_{n+m+p}, \delta_1\} \le \\ \{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, \delta_2\}
+%   }{
+%     \{\delta_1\} \le \{Op_{n+1}, ..., Op_{n+m}, \delta_3\} \\
+%     \{\delta_3\} = \{Op_{n+m}, ..., Op_{n+m+p}, \delta_2\}
+%   }
 
-  \inferrule[Sub-$\E$-Dot-Row]{
-    n \ge 0 \\
-    m \ge 0 \\
-    p \ge 0 \\
-    \{Op_1, ..., Op_{n}, Op_{n+m+1}, ..., Op_{n+m+p}, .\} \le \\ \{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, \delta_2\}
-  }{
-    \emptyrow \le \{Op_{n+1}, ..., Op_{n+m}, \delta_3\} \\
-    \{\delta_3\} = \{Op_{n+m}, ..., Op_{n+m+p}, \delta_2\}
-  }
+%   \inferrule[Sub-$\E$-Dot-Row]{
+%     n \ge 0 \\
+%     m \ge 0 \\
+%     p \ge 0 \\
+%     \{Op_1, ..., Op_{n}, Op_{n+m+1}, ..., Op_{n+m+p}, .\} \le \\ \{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, \delta_2\}
+%   }{
+%     \emptyrow \le \{Op_{n+1}, ..., Op_{n+m}, \delta_3\} \\
+%     \{\delta_3\} = \{Op_{n+m}, ..., Op_{n+m+p}, \delta_2\}
+%   }
 
-  \inferrule[Sub-$\E$-Row-Dot]{
-    n \ge 0 \\
-    m \ge 0 \\
-    \{Op_1, ..., Op_n, \delta_1\} \le \{Op_1, ..., Op_n, Op_{n+1}, Op_{n+m}, .\}
-  }{
-    \{\delta_1\} \le \{Op_{n+1}, Op_{n+m}, .\}
-  }
+%   \inferrule[Sub-$\E$-Row-Dot]{
+%     n \ge 0 \\
+%     m \ge 0 \\
+%     \{Op_1, ..., Op_n, \delta_1\} \le \{Op_1, ..., Op_n, Op_{n+1}, Op_{n+m}, .\}
+%   }{
+%     \{\delta_1\} \le \{Op_{n+1}, Op_{n+m}, .\}
+%   }
 
-  \inferrule[Sub-$\E$-Dot-Dot]{
-    n \ge 0 \\
-    m \ge 0 \\
-    \{Op_1, ..., Op_n, .\} \le \{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, .\}
-  }{
-    \emptyrow \le \{Op_{n+1}, Op_{n+m}, .\}
-  }
+%   \inferrule[Sub-$\E$-Dot-Dot]{
+%     n \ge 0 \\
+%     m \ge 0 \\
+%     \{Op_1, ..., Op_n, .\} \le \{Op_1, ..., Op_n, Op_{n+1}, ..., Op_{n+m}, .\}
+%   }{
+%     \emptyrow \le \{Op_{n+1}, Op_{n+m}, .\}
+%   }
 
-\end{mathpar}
-\end{minipage}
-}
-\end{center}
-\caption{Subtyping for dirts of \core}\label{fig:core-subtyping-dirt}
-\end{figure}
+% \end{mathpar}
+% \end{minipage}
+% }
+% \end{center}
+% \caption{Subtyping for dirts of \core}\label{fig:core-subtyping-dirt}
+% \end{figure}

@@ -1,7 +1,7 @@
 \subsection{Types and terms}
 
 \paragraph{Terms}
-Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are values $v$ and computations $c$. Computations are terms that can contain effects. Effects are denoted as operations $Op$ which can be called. The function term is explicitly annotated with a type and type abstraction and type application has been added to the language. These terms only work on pure types.
+Figure~\ref{fig:terms:core} shows the two types of terms in \core. Just like in \eff. there are values $v$ and computations $c$. Computations are terms that can contain effects. Effects are denoted as operations $Op$ which can be called. The only change compared to \eff is that \core makes a distinction between let-bound variables and lambda-bound variables. This distinction was introduced by Dolan in order to simplify the algebraic subtyping approach \cite{mlsub}. By making this distinction, a distinction can be made between monomorphic variables (lambda-bound) and polymorphic variables (let-bound) at the term level.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -13,17 +13,17 @@ Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are val
     & \bnfor & \tru & \text{true} \\
     & \bnfor & \fls & \text{false} \\
     & \bnfor & \fun{x}c & \text{function} \\
-    & \bnfor & \{ & \textbf{handler} \\
-    & & \quad \ret x \mapsto c_r, & \quad\textbf{return case} \\
-    & & \quad \shortcases & \quad\textbf{operation cases} \\
+    & \bnfor & \{ & \text{handler} \\
+    & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
+    & & \quad \shortcases & \quad\text{operation cases} \\
     & & \} & \\
   \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
     & \bnfor & \doin{\letvar = c_1} c_2 & \text{sequencing} \\
     & \bnfor & \letin{\letvar = v} c & \text{let} \\
     & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
-    & \bnfor & \ret v  & \textbf{returned val} \\
-    & \bnfor & \op \, v & \textbf{operation call} \\
-    & \bnfor & \withhandle{v}{c} & \textbf{handling}
+    & \bnfor & \ret v  & \text{returned val} \\
+    & \bnfor & \op \, v & \text{operation call} \\
+    & \bnfor & \withhandle{v}{c} & \text{handling}
 \end{array}\]
 \end{minipage}
 }
@@ -32,7 +32,9 @@ Figure~\ref{fig:terms:core} shows the two types of terms in \core. There are val
 \end{figure}
 
 \paragraph{Types}
-Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. It can also be an union or intersection of dirty types. In further sections, the relations between dirty intersections or unions and pure intersections or unions are explained. The finite set $\dirt$ is an over-approximation of the operations that are actually called. Row variables are introduced as well as intersection and unions. The $\dirtend$ is used to close rows that do not end with a row variable. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result.
+Figure~\ref{fig:types:core} shows the types of \core. There are, like in \eff, two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. It can also be an union or intersection of dirty types. In further sections, the relations between dirty intersections or unions and pure intersections or unions are explained. The finite set $\dirt$ is an over-approximation of the operations that are actually called. Row variables are introduced as well as intersection and unions. The $\dirtend$ is used to close rows that do not end with a row variable. The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result. \cite{handling}
+
+However, now the effects of the algebraic subtyping approach become apparant. Different types are added in order to support the subtyping. These are a type variables, recursive type, top, bottom, intersection and union \cite{mlsub}. The novel element here is the combination of the algebraic effects and algebraic subtyping. There needs to be a way to bring the dirts into the algebraic subtyping framework. Since the recursive element is handled at the term level, there is no need for recursive dirts. Aside from this and the lack of a function and handler type, the dirts mirror the types.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -45,7 +47,7 @@ Figure~\ref{fig:types:core} shows the types of \core. There are two main sorts o
   \text{(pure) type}~A, B & \bnfis {}
     & \boolty & \text{bool type} \\
     & \bnfor & A \to \C & \text{function type} \\
-    & \bnfor & \C \hto \D & \textbf{handler type} \\
+    & \bnfor & \C \hto \D & \text{handler type} \\
     & \bnfor & \alpha & \text{type variable} \\
     & \bnfor & \rectype{A} & \text{recursive type} \\
     & \bnfor & \top & \text{top} \\
