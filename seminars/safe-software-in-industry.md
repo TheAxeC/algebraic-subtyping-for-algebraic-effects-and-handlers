@@ -10,5 +10,3 @@ There was a strong "story" in the presentation. The presentation had a good flow
 
 ## What could be improved?
 Give more details in the presentation about what certain advantages and disadvantages are.
-
-
