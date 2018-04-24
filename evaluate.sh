@@ -4,9 +4,10 @@
 # run evaluate.sh
 # make sure there are no unsaved changes in the code folder
 
-declare -a BRANCHES=("master" "algebraic-subtyping" "rowbased" "explicit-effect-subtyping")
+declare -a BRANCHES=("algebraic-subtyping")
+# declare -a BRANCHES=("master" "algebraic-subtyping" "rowbased" "explicit-effect-subtyping")
 declare -a TESTS=("interp.eff" "loop.eff" "parser.eff" "queens.eff" "range.eff")
-QUALITY=1
+QUALITY=1000
 EFF_FOLDER="../eff-cp"
 TEST_FOLDER="../algebraic-subtyping-for-algebraic-effects-and-handlers/src/"
 EFF_LOC="./../../eff-cp/eff.native"
@@ -22,12 +23,9 @@ function git_checkout {
 
 function run_test {
     echo =============================
-    echo "Branch $1 - testcase $2" 
-    # for i in {1..100} ; do
-    #     ( time ( echo $i ; sleep 1 ) ) 2>&1 | sed 's/^/   /'
-    # done | tee timing.log
+    echo "Branch $1 - testcase $2"
     time for ((i=1;i<=$QUALITY;i++)); do 
-        $EFF_LOC -V 4 --no-pervasives "$2"; 
+        $EFF_LOC -V 4 --no-pervasives "$2" 1> /dev/null; 
     done
 }
 

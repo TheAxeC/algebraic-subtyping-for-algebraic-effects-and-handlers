@@ -2,8 +2,29 @@
 
 ## Bugs
 
-### Sequencing/letin
+### Evaluation
 
-`fun a -> #Op (); a` is compiled to `fun a -> let _ = #Op () in a`.
+The notation for effects has changed: `#Op ()` has changed into `perform (Op ())
 
-This does not comply with the specification
+    => change this by manually changing the parsers
+
+### Optimization
+
+    => Try to get optimization to work
+
+### Recursive types
+
+    => Check recursive types implementation
+
+### Simplification
+
+    => Implement algorithm
+
+### Text
+
+    => Write text
+    => Write poster
+
+### Proofs
+
+    => Write proofs

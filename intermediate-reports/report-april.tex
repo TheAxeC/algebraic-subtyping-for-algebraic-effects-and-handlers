@@ -1,0 +1,48 @@
+\documentclass[12pt]{report}
+
+\setlength{\parindent}{0cm}
+
+\begin{document}
+\pagestyle{myheadings}
+\markright{Tussentijds verslag November -  Student: Axel Faes}
+{\bf Titel eindwerk:} {\em Algebraic Subtyping for Algebraic Effects and Handlers}
+
+\vspace{0.5cm}
+{\bf Promotor:} prof. dr. ir. Tom Schrijvers
+
+\vspace{0.5cm}
+{\bf Begeleider:} Amr Hany Saleh
+
+\vspace{1cm}
+{\bf Korte situering en Doelstelling:} In de thesis zal een nieuw type systeem uitgewerkt worden. Tijdens het verloop van de thesis worden ook de formele aspecten van dit systeem bestudeerd worden. Het type systeem is gefocussed op algebraïsche effecten en handlers en is een uitbreiding van een recent voorgesteld type systeem dat subtyping combineert met parametrisch polymorphisme. Het is dan ook belangrijk dat het systeem dat ontwikkeld zal worden het recent voorgestelde type systeem zo dicht mogelijk volgt. De doelstelling is om dit type systeem uit te werken en een proof-of-concept hiervan te implementeren en te testen.
+
+\vspace{1cm}
+{\bf Belangrijkste bestudeerde literatuur:}
+\begin{itemize}
+\item Matija Pretnar. An Introduction to Algebraic Effects and Handlers. 2015. url: http://www.eff-lang.org/handlers-tutorial.pdf.
+\item Stephen Dolan and Alan Mycroft. Polymorphism, Subtyping, and Type Inference in MLsub. In: Proceedings of the 44th ACM SIGPLAN Symposium on Principles of Programming Languages. POPL 2017. Paris, France: ACM, 2017, pp. 60–72. isbn: 978-1-4503-4660-3. doi: 10.1145/3009837.3009882. url: http://doi.acm.org/10.1145/3009837.3009882.
+\item Benjamin C. Pierce. 2002. Types and Programming Languages (1st ed.). The MIT Press. url: http://dl.acm.org/citation.cfm?id=509043
+\item Matija Pretnar. 2014. Inferring Algebraic Effects. Logical Methods in Computer Science 10, 3 (2014). https://doi.org/10.2168/LMCS-10(3: 21)2014
+\end{itemize}
+
+\vspace{1cm}
+{\bf Geleverd werk (inclusief tijdsrapportering):} De bewijzen zijn grotendeels uitgewerkt (op papier). Het type systeem is volledig uitgewerkt en geimplementeerd. Momenteel produceerd de implementatie types die versimpelt kunnen worden. Hiervoor is een algoritme aangepast dat Stephen Dolan ook gebruikt heeft in zijn thesis. Dit algoritme is geimplementeerd maar bezit nog enkele bugs. De evaluatie moet nog uitgevoerd worden maar alles staat hiervoor klaar. De andere systemen (subtyping, row-based) staan klaar, het testing script en de test programma's zijn ook klaar. Er wordt enkel nog gewacht op de implementatie van het simplificatie algoritme. De thesistekst is gedeeltelijk uitgeschreven (ordegrootte: 50 pg). In het tweede semester heb ik mijn tijdsrapportering niet uitgevoerd, ik heb wel weekelijkse meetings gehad met mijn begeleider. Ik zou zelf zeggen dat ik veel meer tijd gestoken heb in mijn thesis dan 600 uur (25 uur x 24 studiepunten).
+
+\vspace{1cm}
+{\bf Belangrijkste resultaten:}
+Het belganrijkste aspect komt neer op het uitgewerkte type systeem, meer specifiek de uitwerking van de algebraische effecten. Dit vormt de core van de thesis. De bewijzen en de implementatie (en evaluaties) vormen het "bewijsmateriaal".
+
+\vspace{1cm}
+{\bf Belangrijkste moeilijkheden:}
+Voornamelijk is het werk heel vlot verlopen tot nu toe. Door vorige ervaring, het honours programma, was ik al relatief bekend met de literatuur en algemene structuur van programmeertalen onderzoek. Het moeilijkste aspect veruit is het simplificatie algoritme. Ik had niet verwacht om met zo een "klein" stukje zo lang (meerdere weken) bezig te zijn.
+
+\vspace{1cm}
+{\bf Gepland werk:}
+Oplossen bugs in het simplificatie algoritme, uitvoeren van de evaluatie en het afwerken van de thesistekst. Als extra was er het idee om eens te kijken naar een verdere toepassing van het type systeem. Dit zou gaan omtrent optimalisatie van algebraïsche effecten en handlers. Concreet gaat het hierbij tot een werkende implementatie van de optimalisaties te komen zoals eerder geimplementeerd in Eff.
+
+\vspace{1cm}
+{\bf Als ik mijn werk nu goed vervolledig, dan denk ik 19/20 te verdienen op het einde.}
+{\bf Ik plan mijn eindwerk af te geven in juni.}
+
+
+\end{document}
