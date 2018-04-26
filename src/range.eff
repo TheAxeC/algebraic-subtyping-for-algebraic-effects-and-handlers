@@ -1,3 +1,5 @@
+external ( - ) : int -> int -> int = "-"
+
 effect Fetch : unit -> int;;
 
 let rec range n =
@@ -5,9 +7,6 @@ match n with
 | 0 -> []
 | _ -> let n1 = n - 1 
 	   in #Fetch () :: range (n1)
-
-
-
 
 let test n = 
 	handle ( range n ) with

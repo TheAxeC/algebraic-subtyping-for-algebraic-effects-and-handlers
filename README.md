@@ -1,30 +1,17 @@
 # Algebraic Subtyping for Algebraic Effects and Handlers
 
-## Bugs
+## Evaluation
 
-### Evaluation
+    => Only need to run the tests
 
-The notation for effects has changed: `#Op ()` has changed into `perform (Op ())
-
-    => change this by manually changing the parsers
-
-### Optimization
-
-    => Try to get optimization to work
-
-### Recursive types
-
-    => Check recursive types implementation
-
-### Simplification
-
-    => Implement algorithm
-
-### Text
+## Text
 
     => Write text
     => Write poster
-
-### Proofs
-
     => Write proofs
+
+## Future work
+
+Optimization engine can be implemented in the future. 
+ 
+Implementing the simplification algorithm: Decode + toDFA + Simplify + Rcursive + variables_removal

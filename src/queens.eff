@@ -14,6 +14,8 @@ let rec (@) xs ys =
   | [] -> ys
   | x :: xs -> x :: (xs @ ys)
 
+type 'a option = None | Some of 'a
+
 (******************************************************************************)
 let no_attack (x, y) (x', y') =
   x <> x' && y <> y' && abs (x - x') <> abs (y - y')
@@ -38,7 +40,7 @@ let available (number_of_queens, x, qs) =
 effect Decide : unit -> bool
 effect Fail : unit -> empty
 
-(* type 'a option = None | Some of 'a *)
+
 
 let rec choose = function
   | [] -> (match (#Fail ()) with)

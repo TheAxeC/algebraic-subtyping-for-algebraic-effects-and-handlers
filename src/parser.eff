@@ -56,7 +56,7 @@ let backtrack = handler
 
 let createNumber (prev, num) = prev * 10 + num;;
 
-let rec parseNum (l, v) =
+(* let rec parseNum (l, v) =
     begin match l with
     | [] -> v
     | (x :: xs) ->
@@ -71,7 +71,28 @@ let rec parseNum (l, v) =
         | "7" -> parseNum (xs, (createNumber (v, 7)))
         | "8" -> parseNum (xs, (createNumber (v, 8)))
         | "9" -> parseNum (xs, (createNumber (v, 9)))
+        | _ -> parseNum (xs, (createNumber (v, 0)))
         end
+    end
+;; *)
+let rec parseNum (l, v) =
+    begin match l with
+    | [] -> v
+    | (x :: xs) ->
+        let i = begin match x with
+        | "0" -> createNumber (v, 0)
+        | "1" -> createNumber (v, 1)
+        | "2" -> createNumber (v, 2)
+        | "3" -> createNumber (v, 3)
+        | "4" -> createNumber (v, 4)
+        | "5" -> createNumber (v, 5)
+        | "6" -> createNumber (v, 6)
+        | "7" -> createNumber (v, 7)
+        | "8" -> createNumber (v, 8)
+        | "9" -> createNumber (v, 9)
+        | _ -> createNumber (v, 0)
+        end in
+        parseNum (xs, i)
     end
 ;;
 
