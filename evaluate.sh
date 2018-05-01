@@ -6,7 +6,7 @@ declare -a TESTS=("interp.eff" "loop.eff" "parser.eff" "queens.eff" "range.eff")
 declare -a BRANCHES=("../eff-benchmarks/eff-algebraic-subtyping/" "../eff-benchmarks/eff-subtyping/")
 TEST_FOLDER="../../algebraic-subtyping-for-algebraic-effects-and-handlers/src/"
 
-QUALITY=10
+QUALITY=100
 
 function git_checkout {
     cd $i
