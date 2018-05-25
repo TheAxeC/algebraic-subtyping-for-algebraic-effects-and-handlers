@@ -1,0 +1,150 @@
+In order to have an emperical evaluation of the proposed type system, it has been implemented in \eff, a prototype functional programming language with algebraic effects and handlers. This chapter provides the necessary information required to implement the type system. \eff is an open-source system \cite{eff-source}.
+
+The scope of \eff is about 6000 lines of code with 1500 lines of comments. A lot of this code was already written, including, a lexer, parser, optimization engine, runtime and utilities. The code that implements the terms, types and type inference spans 2700 lines of code with 750 lines of comments. This shows that half of the entire codebase of \eff consists out of the type inference engine, which is huge in comparison to the other different components.
+
+First, some general background information is given. More specifically, the pre-existing structure of \eff is brievely touched upon such that it is clear how to piece all the parts together. Afterwards, the structure of the types and terms are discussed. 
+
+The section for type inference consists out of two important parts. It contains information about the reformulated typing rules and the polarity of types. Secondly it contains information about the actual type inference and biunification algorithms. Finally, the simplification algorithm is discussed.
+
+\section{Overview}
+\eff is a prototype functional programming language implemented in \ocaml. The type system as discussed in this thesis requires several additional components. Considering that this type system was implemented within \eff, these components already existed.
+
+The lexer and parser are necessary components for any programming language. For \eff, these were implemented using \texttt{ocamllex} and \texttt{ocamlyacc}. The lexer and parser produces sugared untyped terms. In case of \eff, the sugared syntax contains both functions and lambda's. The sugared syntax is immediately desugared into an untyped language containing only the necessary, basic components. The sugared syntax and the untyped language both contain only a single syntactic sort of terms, which groups together expressions and computations. 
+
+Once this process is completed, the untyped syntax is then converted into a typed language using the type system described in this thesis. This aspect is discussed in depth in later sections. The typed language can then be used for optimizations and outputting \ocaml code. When outputting \ocaml code, a free monad representation is used. \cite{programming, optimization}
+
+\eff provides an interpreted runtime environment. This runtime environment is based upon the untyped syntax. Having the runtime environment based upon the untyped syntax makes the interpreter more robust. As mentioned before, \eff is a prototype language and is therefor in a constant state of change. The biggest changes happen within the type system (or some syntactical changes). The interpreter has no specific need for a typed language as it is merely a tool to calculate the result of a program.  
+
+\section{Types and terms}
+The terms and types of \core have a near identical representation as seen in the specification. There are two sorts of terms, expressions and computations as seen in Listing~\ref{lst:expression}. Each term is annotated with a location and a scheme. The location refers to the location within the source code in order to be able to use that information when printing debug or error messages.
+
+\begin{figure}
+\caption{Term implementation}
+\label{lst:expression}
+\begin{lstlisting}[language=Caml]
+let annotate t sch loc = {
+    term = t;
+    scheme = sch;
+    location = loc;
+}
+
+type expression = (plain_expression, Scheme.ty_scheme) annotation
+and computation = (plain_computation, Scheme.dirty_scheme) annotation  
+\end{lstlisting}
+\end{figure}
+
+A scheme contains information about the type, the free variables that occur in this type called the context and a type used for subtyping constraints as seen in Listing~\ref{lst:scheme}. Types are represented in an identical representation as seen in the specification. \eff contains some additional types such as tuples and records. Like in the specification, there are two sorts of types, pure types and dirty types. 
+
+\begin{figure}
+\caption{Type implementation}
+\label{lst:scheme}
+\begin{lstlisting}[language=Caml]
+(* represents a context and contains all free variables that occur *)
+type context = (Untyped.variable, Type.ty) OldUtils.assoc
+(* represents a generic scheme *)
+type 'a t = context * 'a * Unification.t
+(* type scheme for expressions *)
+type ty_scheme = Type.ty t
+(* type scheme for computations *)
+type dirty_scheme = Type.dirty t
+\end{lstlisting}
+\end{figure}
+
+Construction of typed terms happens through the use of ``smart'' constructors. This was introduced within the previous type system of \eff and, as it is a useful feature, has also been used for the implementation of this thesis. ``Smart'' constructors take already types subterms as arguments and contains the necessary logic to properly construct the annotated term. 
+
+For example, the ``smart'' constructor for the application is given in Listing~\ref{lst:smart}. It calculates the location, constructs the term and uses another constructor for the creation of the required scheme. Within the ``smart'' constructor for the scheme, it can be seen that a constraint $ty\_e1 \le ty\_e2 \to drty$ is made. $drty$ contains a fresh type variable and a fresh dirt variable. The type inference algorithm traverses the untyped terms and applies the corresponding smart constructors in order to construct the typed terms. 
+
+\begin{figure}
+\caption{Smart constructor of application}
+\label{lst:smart}
+\begin{lstlisting}[language=Caml]
+let apply ?loc e1 e2 =
+    let loc = backup_location loc [e1.Typed.location; e2.Typed.location] in
+    let term = Typed.Apply (e1, e2) in
+    let sch = Scheme.apply ~loc e1.Typed.scheme e2.Typed.scheme in
+    Typed.annotate term sch loc
+
+let Scheme.apply ~loc e1 e2 =
+    let ctx_e1, ty_e1, cnstrs_e1 = e1 in
+    let ctx_e2, ty_e2, cnstrs_e2 = e2 in
+    let drty = Type.fresh_dirty () in
+    let constraints = Unification.union cnstrs_e1 cnstrs_e2  in
+    let constraints = Unification.add_ty_constraint ~loc ty_e1 (Type.Arrow (ty_e2, drty)) constraints in
+    solve_dirty (ctx_e1 @ ctx_e2, drty, constraints)
+\end{lstlisting}
+\end{figure}
+
+Additionally, \eff contains pattern terms which are used within the context of abstractions. For example, a pattern is used for \lstinline{x} within \lstinline{let x = e in c}. The usage of these patterns are an implementation choice that was made in the pre-existing code of \eff. 
+
+\section{Type Inference}
+The type inference algorithm implementation traverses, as stated before, the untyped terms and applies the corresponding smart constructors in order to construct the typed terms. Each ``smart'' constructor contains the logic necessary to construct the terms. They make the fresh type and dirt variables, add the subtyping constraints and alter the context. The type inference algorithm shown in figure~\ref{fig:inference:expressions} and figure~\ref{fig:inference:computations} are directly implemented using these ``smart'' constructors. Just like in the specification, the biunification happens at the end of each ``smart'' constructor (if applicable).
+
+More interesting is the implementation of the biunification algorithm and polar types. From the aspect of the implementation, polar types are only useful for the biunification algorithm. Thus, most of the implementation completely ignores polar types. Polar types are implemented using a boolean flag. With bisubstitution, a type is traversed. If the polarity of the outer type is known, all other polarities can be deduced from this given polarity. Thus, there is no need to completely convert a type into a polar type from the perspective of the implementation.
+
+Another interesting aspect, which has not yet been discussed for the implementation, are the reformulated typing rules. The type inference algorithm shown in figure~\ref{fig:inference:expressions} and figure~\ref{fig:inference:computations} are based on the reformulated typing rules. The main differences between the normal typing rules and the reformulated typing rules is that the reformulated typing rules distinguish between lambda-bound and let-bound variables.
+
+The sugared syntax and the untyped syntax of \eff does not make this distinction. Thus the implementation has to make this distinction whenever it encounters a variable. Listing~\ref{lst:var} shows part of the type inference algorithm (and an additional required function). The type inference algorithm implementation is context-sensitive. This means that there is an explicit context argument \lstinline{ctx} that needs to be passed around. When an untyped variable is encountered, a simple lookup can be done within this context. This context argument is altered whenever a lambda is encountered. 
+
+The implementation of \lstinline{Ctor.lambdavar} and \lstinline{Ctor.letvar} is trivial. When the distinction is made, and it is found to be a let-bound variable, \lstinline{get_var_scheme_env} is used to find the scheme of the let-bound variable. There is an additional state argument \lstinline{st} that contains the polymorphic context. If the variable cannot be found in the polymorphic context, it means that we found this variable before it was bound (or that it is an unbound variable). A temporary scheme is created and the situation is resolved in a later stage, which might end up in a ``unbound variable'' error.
+
+\begin{figure}
+\caption{Distinguish lambda-bound and let-bound variables}
+\label{lst:var}
+\begin{lstlisting}[language=Caml]
+(* Lookup the variable in the context, which includes only
+lambda-bound variables.
+If we can find the variable, it is lambda-bound.
+Otherwise, check the (polymorphic) context 
+*)
+begin match OldUtils.lookup x ctx with
+| Some ty -> Ctor.lambdavar ~loc x ty, st
+| None -> Ctor.letvar ~loc x (get_var_scheme_env ~loc st x), st
+end
+
+(* Lookup a type scheme for a variable in the typing environment
+Otherwise, create a new scheme (and add it to the typing environment)
+*)
+let get_var_scheme_env ~loc st x =
+begin match TypingEnv.lookup st.context x with
+    | Some ty_sch -> ty_sch
+    | None -> 
+            let ty = Type.fresh_ty () in
+            let sch = Scheme.tmpvar ~loc x ty in
+            sch
+end
+\end{lstlisting}
+\end{figure}
+
+\section{Simplification}
+The simplification algorithm is partly left for future work. The simplification algortihm works in four stages. In the first stage, types are converted into type automata which are nondeterministic finite automata (NFA). These type automata need to be simplified which can be done using any standard simplification algortihm. However, most of these algorithms operate on deterministic finite automata (DFA) as opposed to NFA's. Thus in the second stage, the type automata is converted into a DFA. Afterwards, in the third stage, the DFA is simplified using any chosen simplification algorithm. Finally, the DFA is deconstructed into a type again.
+
+The implementation for the second and third stage are left for future work. However, the first and last stage, the encoding and decoding have been implemented. In the definition of the automaton as seen in Listing~\ref{lst:simple}, an initial and final state is required. The transition table is stored as a list. While transitions representing types and dirts could be stored within the same list, in order to simplify the encoding, there are two different lists. Just like there are two different data types for types and dirty types. The alphabet is a direct implementation from the specification. The representation of the actual states is of no importance. In the implementation, integers were chosen as we can very simply generate new unique states by incrementing a counter. The simplification should take place right after the biunification within each ``smart'' constructor. 
+
+\begin{figure}
+\caption{Representation of type automata}
+\label{lst:simple}
+\begin{lstlisting}[language=Caml]
+type ('state,'letter) automaton = {
+    initial    : 'state;
+    final      : 'state;
+    transition : ('state * 'letter * 'state list) list;
+    transition_drt : ('state * 'letter * 'state list) list;
+    currentState : 'state;
+    prevtransition : ('state * 'letter * 'state list) list;
+}
+
+type alphabet =
+    | Prim of (Type.prim_ty * bool)
+    | Function of bool
+    | Handler of bool
+    | Alpha of (Params.ty_param * bool)
+    | Domain of bool
+    | Range of bool
+    | Op of (OldUtils.effect * bool)
+    | DirtVar of (Params.dirt_param * bool)
+    
+type statetype = int
+    
+type automatype = (statetype, alphabet) automaton
+\end{lstlisting}
+\end{figure}

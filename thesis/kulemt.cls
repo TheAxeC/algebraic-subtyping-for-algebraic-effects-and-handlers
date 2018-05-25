@@ -381,11 +381,11 @@
 \AtBeginDocument{\gdef\latinencoding{T1}%
   \ifx\cf@encoding\latinencoding\else \xdef\latinencoding{OT1}\fi}
 \edef\kulemt@language{\kulemt@language}
-\expandafter\main@language\expandafter{\kulemt@language}
+\expandafter\main@language\expandafter{english}
 \def\kulemt@selectmasterlanguage{%
   \expandafter\selectlanguage\expandafter{\kulemt@master@language}}
 \def\kulemt@selecttextlanguage{%
-  \expandafter\selectlanguage\expandafter{\kulemt@language}}
+  \expandafter\selectlanguage\expandafter{english}}
 \RequirePackage{graphicx}
 \RequirePackage{color}
 \def\kulemt@loadmt{%

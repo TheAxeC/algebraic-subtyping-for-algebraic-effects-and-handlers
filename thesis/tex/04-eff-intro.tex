@@ -1,0 +1,57 @@
+Algebraic effect handling is a very active area of research. The theoretical background of algebraic effects and handlers as developed by Plotkin, Pretnar and Power \cite{DBLP:journals/acs/PlotkinP03, DBLP:conf/lics/PlotkinP08}. Implementations of algebraic effect handlers are becoming available and the theory is actively being developed. One such implementation is the \eff programming language. This is the first language to have effects as first class citizens \cite{pretnar2015introduction}. 
+
+The type-\&-effect system that is used in \eff is based on subtyping and algebraic effect handlers \cite{effectsystem}. The \textit{simply typed lambda calculus} is used as a basis for \eff.  Let us start with a simple example in order to show what algebraic effects and handlers are. With this example, the differences with the \textit{simply typed lambda calculus} can also be shown.
+
+In the example in figure~\ref{lst:first}, a new effect is defined \textit{DivisionByZero}. In essence, this effect can be thought of as an exception. From the type that is written, it can also be seen that an exception has some relation with functions. In this case, the effect describes a function type from \textit{unit} to \textit{empty}. This type describes what kind of argument the effect requires in order to be called and what kind of type the continuation needs in order to procede. Calling the effect is done by the notation \lstinline{#DivisionByZero ()}. 
+
+\begin{figure}
+\caption{Algebraic effects and handlers example}
+\label{lst:first}
+\begin{lstlisting}[language=Caml]
+effect DivisionByZero : unit -> empty;;
+
+let divide a b = 
+  if (b == 0) then 
+    #DivisionByZero ()
+  else 
+    a / b;;
+
+let safeDivide a b = 
+  handle (divide a b) with 
+    | #DivisionByZero () k -> 0;;
+\end{lstlisting}
+\end{figure}
+
+The effect can be called just like any function can be called, by applying an argument to it. Here, an important distinction can be made. Any term that can contain effects are called computations, while terms that cannot contain effects are called expressions. Finally, computations can be handled. This can be thought of as an exception handler with the big difference being that within an effect handler, there is access to a continuation to the place where the effect was called. 
+
+\begin{figure}
+\caption{Algebraic effect continuation usage example}
+\label{lst:second}
+\begin{lstlisting}[language=Caml]
+effect Op : unit -> int;;
+
+let someFun b = 
+  handle (
+    if (b == 0) then 
+      let a = #Op () in
+      print a
+    else 
+      print b
+  ) with
+    | #Op () k -> k 1;;
+\end{lstlisting}
+\end{figure}
+
+In the second example in figure~\ref{lst:second}, the effect \textit{Op} has an \textit{int} as the return value. In the handler, the continuation called \textit{k} is called with \textit{1} as the argument. The continuation looks like a program with a "hole". In the example, figure~\ref{lst:third} represents the continuation with \lstinline{[ ]} representing the hole. Thus, if the function \textit{someFun} is called with \textit{b} equal to \textit{0}, the number \textit{1} will be printed due to the continuation. The handler can also choose to ignore the continuation, as seen in figure~\ref{lst:first}, or it can call the continuation more than once. This shows the power of algebraic effects and handlers in a small, albeit artificial, example. 
+
+\begin{figure}
+\caption{Algebraic effect continuation example}
+\label{lst:third}
+\begin{lstlisting}[language=Caml]
+let a = [ ] in
+print a
+\end{lstlisting}
+\end{figure}
+
+
+

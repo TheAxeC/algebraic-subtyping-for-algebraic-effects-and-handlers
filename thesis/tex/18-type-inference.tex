@@ -1,6 +1,8 @@
-\subsection{Principal Type Inference}
+\section{Principal Type Inference}\label{principality}
 
 We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating that $[\ctxm^-]A^+$  is the principal typing scheme of $e$ under the polar typing context $\ctxp$. 
+
+\todo{explain type inference}
 
 \begin{figure}[!htb]
 \begin{center}
@@ -46,7 +48,8 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
         \ctxp \entt c_\op \T [\ctxm^-_\op](\C^+_\op)
         \Big]_{\op \in \ops}
     }{
-        \ctxp \entt \shorthand \T [\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\alpha_1 \E \delta_1 \union \ops \hto \alpha_2 \E \delta_2)
+        \ctxp \entt \shorthand \T \\
+        [\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\alpha_1 \E \delta_1 \intersection \ops \hto \alpha_2 \E \delta_2)
     }\\ \xi = biunify\left(
         \begin{array}{ll}
             B^+ \E \dirt^+ \le \alpha_2 \E \delta_2 \\
@@ -123,7 +126,7 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
         \ctxp \prinent c_1 \T [\ctxm^-_1](A^+ \E \dirt^+_1) \\
         \ctxp, \letvar \T [\ctxm^-_1]A^+ \prinent c_2 \T [\ctxm^-_2](B^+ \E \dirt^+_2)
     }{
-        \ctx \prinent \doin{\letvar = c_1} c_2 \T [\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \dirt^+_2)
+        \ctx \prinent \doin{\letvar = c_1} c_2 \T [\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E (\dirt^+_1 \union \dirt^+_2))
     }
     
     \inferrule[With]{

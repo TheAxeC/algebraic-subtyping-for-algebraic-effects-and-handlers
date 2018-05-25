@@ -1,0 +1,57 @@
+\subsection{Types and terms}
+In order to extend the \textit{simply typed lambda calculus} to \eff's calculus, several terms need to be added. A term is required in order to call effects and a term is required to handle effects. Some additional types are needed to represent handlers and the effects. \cite{pretnar2015introduction}
+
+The types receive a big extension. A sort is needed to represent effects. It is also important to distuingish types between expressions and computations. Having such a distinction makes the difference also explicit on type level. Types given to expressions are called pure types. A pure type has no representation of effects. Types given to computations are called dirty types. A dirty type is represented by combining a pure type with a representation for effects. The representation for effects are called dirts.  
+
+\paragraph{Terms}
+Figure~\ref{fig:terms:eff} shows the two sorts of terms in \eff. As explained before, there are values, or expressions $v$ and computations $c$. Computations are terms that can contain effects. Effects are denoted as operations $Op$ which can be called. \cite{handling}
+
+In \eff, there are also several other small additions aside from the terms required for the algebraic effects and handlers. Sequencing, a conditional and a recursive definition have also been added. This was done in order to enrich the language and further exploit the advantage of algebraic effects and handlers. \cite{programming}
+
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{value}~v & \bnfis {} & x & \text{variable} \\
+    & \bnfor & \tru & \text{true} \\
+    & \bnfor & \fls & \text{false} \\
+    & \bnfor & \fun{x} c & \text{function} \\
+    & \bnfor & \{ & \text{handler} \\
+    & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
+    & & \quad \shortcases & \quad\text{operation cases} \\
+    & & \} & \\ 
+  \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
+    & \bnfor & \doin{x \leftarrow c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
+    & \bnfor & \letrecin{f \, x = c_1} c_2 & \text{rec definition} \\
+    & \bnfor & \ret v  & \text{returned val} \\
+    & \bnfor & \op \, v & \text{operation call} \\
+    & \bnfor & \withhandle{v}{c} & \text{handling}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Terms of \eff}\label{fig:terms:eff}
+\end{figure}
+
+\paragraph{Types}
+Figure~\ref{fig:types:eff} shows the types of \eff. There are two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a finite set of operations $\dirt$, which we call dirt, that can be called. This finite set $\dirt$ is in general defined as an over-approximation of the operations that are actually called. The type $\C \hto \D$ is used for handlers because a handler takes an input computation with type $\C$, handles the effects in this computation and outputs a computation with type $\D$ as the result \cite{handling}. Other than the handler type and the distinction between pure and dirty types, there is nothing new compared to the types from the \textit{simply typed lambda calculus}.
+
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{(pure) type}~A, B & \bnfis {}
+    & \boolty & \text{bool type} \\
+    & \bnfor & A \to \C & \text{function type} \\
+    & \bnfor & \C \hto \D & \text{handler type} \\
+  \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\
+  \text{dirt}~\dirt & \bnfis {} &\set{\op_1, \dots, \op_n}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Types of \eff}\label{fig:types:eff}
+\end{figure}

@@ -1,0 +1,75 @@
+\section{Types and terms}\label{typesterms}
+This section gives the terms and types of \core. A lot of the aspects that can be seen in this section are the required constructions needed for algebraic effects and for algebraic subtyping. The main point of interest, as well as the novelty, in this section is the representation that is given to the types of the dirt. 
+
+\paragraph{Terms}
+Figure~\ref{fig:terms:core} shows the two kinds of terms in \core. Just like in \eff. there are values $v$ and computations $c$. Computations are terms that can contain effects and these effects are denoted as operations $Op$ which can be called. 
+
+The relevant change compared to \eff is that \core makes a distinction between let-bound variables and lambda-bound variables. This distinction was introduced by Dolan in order to simplify the algebraic subtyping approach \cite{mlsub}. By making this distinction, an explicit distinction can be made between monomorphic variables (lambda-bound) and polymorphic variables (let-bound) at the term level.
+
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{value}~v & \bnfis {} & x & \lambda\text{-variable} \\
+    & \bnfor & \letvar & \text{let-variable} \\
+    & \bnfor & \tru & \text{true} \\
+    & \bnfor & \fls & \text{false} \\
+    & \bnfor & \fun{x}c & \text{function} \\
+    & \bnfor & \{ & \text{handler} \\
+    & & \quad \ret x \mapsto c_r, & \quad\text{return case} \\
+    & & \quad \shortcases & \quad\text{operation cases} \\
+    & & \} & \\
+  \text{comp}~c & \bnfis & v_1 \, v_2 & \text{application} \\
+    & \bnfor & \doin{\letvar = c_1} c_2 & \text{sequencing} \\
+    & \bnfor & \letin{\letvar = v} c & \text{let} \\
+    & \bnfor & \conditional{e}{c_1}{c_2} & \text{conditional} \\
+    & \bnfor & \ret v  & \text{returned val} \\
+    & \bnfor & \op \, v & \text{operation call} \\
+    & \bnfor & \withhandle{v}{c} & \text{handling}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Terms of \core}\label{fig:terms:core}
+\end{figure}
+
+\paragraph{Types}
+Figure~\ref{fig:types:core} shows the types of \core. There are, like in \eff, two main sorts of types. There are (pure) types $A, B$ and dirty types $\C, \D$. A dirty type is a pure type $A$ tagged with a dirt $\dirt$. The dirt represents the set of operations that can be called. It can also be an union or intersection of dirty types. The dirt $\dirt$ is an over-approximation of the operations that are actually called. In the next section, the relations between dirty intersections or unions and pure intersections or unions are explained.
+
+The type $\C \hto \D$ is used for handlers because a handler takes an input computation $\C$, handles the effects in this computation and outputs computation $\D$ as the result. \cite{handling} The $\top$ and $\bot$ types are needed in order to properly compute the lattice of different types. Type intersections and type unions are also provided. \cite{mlsub}
+
+Looking at all the changes to the types given in Chapter~\ref{eff-chapter}, the effects of the algebraic subtyping approach become apparant. Different types are added in order to support the subtyping. These are type variables, recursive type, top, bottom, intersection and union \cite{mlsub}. The novel element here is the combination of the algebraic effects and algebraic subtyping. There needs to be a way to bring the dirts into the algebraic subtyping framework. Since the recursive element is handled at the term level, there is no need for recursive dirts. Aside from this and the lack of a function and handler type, the dirts mirror the types.
+
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx, \letvar : \polytype{B}\\
+  \text{monomorphic typing contexts}~\ctxm & \bnfis {} & \epsilon \bnfor \ctxm, x : A\\
+  \text{polymorphic typing contexts}~\ctxp & \bnfis {} & \epsilon \bnfor \ctxp, \letvar : [\ctxm]A\\
+  \text{(pure) type}~A, B & \bnfis {}
+    & \boolty & \text{bool type} \\
+    & \bnfor & A \to \C & \text{function type} \\
+    & \bnfor & \C \hto \D & \text{handler type} \\
+    & \bnfor & \alpha & \text{type variable} \\
+    & \bnfor & \rectype{A} & \text{recursive type} \\
+    & \bnfor & \top & \text{top} \\
+    & \bnfor & \bot & \text{bottom} \\
+    & \bnfor & A \intersection B & \text{intersection} \\
+    & \bnfor & A \union B & \text{union} \\
+  \text{dirty type}~\C, \D & \bnfis {} & A \E \dirt \\
+    
+  \text{dirt}~\dirt & \bnfis {} & \op & \text{operation} \\
+    & \bnfor & \delta & \text{dirt variable} \\
+    & \bnfor & \emptyrow & \text{empty dirt} \\
+    & \bnfor & \dirt_1 \intersection \dirt_2 & \text{intersection} \\
+    & \bnfor & \dirt_1 \union \dirt_2 & \text{union} \\
+  \text{All operations}~\allops & \bnfis {} & \bigsqcup \op_i | \op_i \in \sig \\
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Types of \core}\label{fig:types:core}
+\end{figure}

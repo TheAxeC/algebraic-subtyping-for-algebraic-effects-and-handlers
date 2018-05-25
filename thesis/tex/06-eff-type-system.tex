@@ -1,0 +1,222 @@
+\subsection{Subtyping}
+\eff uses a subtyping based system. Subtyping is a form of type polymorphism. Types can be related to eachother, being either subtypes or supertypes. Intuitively one could think about Java classes and inheritance in order to understand subtyping. There are some big differences between inheritance and subtyping, but from the principle of gaining an understanding of what subtyping entails, the relation between the two can be made. 
+
+Let us take the subtyping judgement $\boolty \le \boolty$. This judgement is about reflexivity. It states that $\boolty$ is a subtype of itself. The subtyping judgement for the arrow type (functions) states that, if we have $A' \le A$ and $\C \le \C'$, then we also induce the natural subtyping judgement $A \to \C \le A' \to \C'$. This tells us that, if we have a function, the caller can always call that function with a type that is "more" and that function can always return "more" than what the caller expects. This can be easily visualised when the argument and return values are records. If a function requires a record with labels "x" and "y", the caller is allowed to call the function with a record containing more that just "x" and "y". A similar analogy can be made for the return values. Functions are contravariant in its argument types and covariant in its return types.
+
+The dirty type $A \E \dirt$ is assigned to a computation returning values of type $A$ and potentially calling operations from the set $\dirt$. This set $\dirt$ is always an over-approximation of the actually called operations, and may safely be increased, inducing a natural subtyping judgement $A \E \dirt \le A \E \dirt'$ on dirty types where $\dirt'$ contains extra operations compared to $\dirt$. As dirty types can occur inside pure types, we also get a derived subtyping judgement on pure types. Both judgements are defined in Figure~\ref{fig:subtyping}. Observe that, as usual, subtyping is contravariant in the argument types of functions as well as handlers, and covariant in their return types. \cite{inferring}
+
+\begin{figure}[!htb]
+\begin{center}
+\framebox{
+\begin{minipage}{0.95\columnwidth}
+\textbf{Subtyping}
+\begin{mathpar}
+  \inferrule[Sub-$\boolty$]{
+  }{
+    \boolty \le \boolty
+  }
+
+  \inferrule[Sub-$\to$]{
+    A' \le A \\
+    \C \le \C'
+  }{
+    A \to \C \le A' \to \C'
+  }
+
+  \inferrule[Sub-$\hto$]{
+    \C' \le \C \\
+    \D \le \D'
+  }{
+    \C \hto \D \le \C' \hto \D'
+  }
+
+  \inferrule[Sub-$\E$]{
+    A \le A' \\
+    \dirt \subseteq \dirt'
+  }{
+    A \E \dirt \le A' \E \dirt'
+  }
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Subtyping for pure and dirty types of \eff}\label{fig:subtyping}
+\end{figure}
+
+\subsection{Typing rules}
+Figure~\ref{fig:eff-typing:e} and figure~\ref{fig:eff-typing:c} defines the typing judgements for values and computations with respect to a standard typing context $\ctx$. This types context can contain $\epsilon$ or a variable with a type.
+
+\paragraph{Values}
+The rules for subtyping, variables, and functions are entirely standard.
+
+A handler expression has type $A \E \dirt \cup \ops \hto B \E \dirt$ iff all branches (both the operation cases and the return case) have dirty type $B \E \dirt$ and the operation cases cover the set of operations $\ops$. Note that the intersection $\dirt \cap \ops$ is not necessarily empty. The handler deals with the operations $\ops$, but in the process may re-issue some of them (i.e., $\dirt \cap \ops$).
+
+When typing operation cases, the given signature for the operation $(\op \T A_\op \to B_\op) \in \sig$ determines the type $A_\op$ of the parameter $x$ and the domain $B_\op$ of the continuation $k$. As our handlers are deep, the codomain of $k$ should be the same as the type $B \E \dirt$ of the cases. \cite{inferring}
+
+\paragraph{Computations}
+With the following exceptions, the typing judgement $\ctx \ent c : \C$ has a straightforward definition. The $\ret$ construct renders a value $v$ as a pure computation, i.e., with empty dirt. An operation invocation $\op\,v$ is typed according to the operation's signature, with the operation itself as its only operation. Finally, rule \textsc{With} shows that a handler with type $\C \hto \D$ transforms a computation with type $\C$ into a computation with type $\D$. \cite{inferring}
+
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.95\columnwidth}
+\[\begin{array}{r@{~}c@{~}l}
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A\\
+\end{array}\]
+\textbf{Expressions}
+\begin{mathpar}
+  \inferrule[SubVal]{
+    \ctx \ent v \T A \\
+    A \le A'
+  }{
+    \ctx \ent v \T A'
+  }
+
+  \inferrule[Var]{
+    (x \T A) \in \ctx
+  }{
+    \ctx \ent x \T A
+  }
+
+  % \inferrule[Const]{
+  %   (\const \T A) \in \sig
+  % }{
+  %   \ctx \ent \const \T A
+  % }
+
+  \inferrule[True]{
+  }{
+    \ctx \ent \tru \T bool
+  }
+
+  \inferrule[False]{
+  }{
+    \ctx \ent \fls \T bool
+  }
+  
+  \inferrule[Fun]{
+    \ctx, x \T A \ent c \T \C
+  }{
+    \ctx \ent \fun{x} c \T A \to \C
+  }
+
+  \inferrule[Hand]{
+    \ctx, x \T A \ent c_r \T B \E \dirt \\
+    \Big[
+      (\op \T A_\op \to B_\op) \in \sig \qquad \\
+      \ctx, y \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
+    \Big]_{\op \in \ops}
+  }{
+    \ctx \ent \shorthand \T \\ A \E \dirt \cup \ops \hto B \E \dirt
+  }
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Typing of expressions in \eff}\label{fig:eff-typing:e}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+  \framebox{
+  \begin{minipage}{0.95\columnwidth}
+  \[\begin{array}{r@{~}c@{~}l}
+    \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A\\
+  \end{array}\]
+\textbf{Computations}
+\begin{mathpar}
+  \inferrule[SubComp]{
+    \ctx \ent c \T \C \\
+    \C \le \C'
+  }{
+    \ctx \ent c \T \C'
+  }
+
+  \inferrule[App]{
+    \ctx \ent v_1 \T A \to \C \\
+    \ctx \ent v_2 \T A
+  }{
+    \ctx \ent v_1 \, v_2 \T \C
+  }
+
+  \inferrule[Cond]{
+    \ctx \ent v \T bool \\
+    \ctx \ent c_1 \T \C \\
+    \ctx \ent c_2 \T \C \\
+  }{
+    \ctx \ent \conditional{v}{c_1}{c_2} \T \C
+  }
+
+  \inferrule[LetRec]{
+    \ctx, f \T A \to \C, x \T A \ent c_1 \T \C \\
+    \ctx, f \T A \to \C \ent c_2 \T \D
+  }{
+    \ctx \ent \letrecin{f \, x = c_1} c_2 \T \D
+  }
+
+  \inferrule[Ret]{
+    \ctx \ent v \T A
+  }{
+    \ctx \ent \ret v \T A \E \emptyset
+  }
+
+  \inferrule[Op]{
+    (\op \T A \to B) \in \sig \\
+    \ctx \ent v \T A
+  }{
+    \ctx \ent \op \, v \T B \E \{\op\}
+  }
+
+  \inferrule[Do]{
+    \ctx \ent c_1 \T A \E \dirt \\
+    \ctx, x \T A \ent c_2 \T B \E \dirt
+  }{
+    \ctx \ent \doin{x \leftarrow c_1} c_2 \T B \E \dirt
+  }
+
+  \inferrule[With]{
+    \ctx \ent v \T \C \hto \D \\
+    \ctx \ent c \T \C
+  }{
+    \ctx \ent \withhandle{v}{c} \T \D
+  }
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Typing of computations in \eff}\label{fig:eff-typing:c}
+\end{figure}
+
+\subsection{Type Inference}\label{type-inference-explain}
+Type inference is the process where types are automatically inferred by the compiler. Types rules are used as a blueprint for type inference. Every typing rule indicates a situation a program can be in at any point in time. Thus, for every typing rule, there has to be a type inference rule. 
+
+In the case of a subtyping based system, contraint-based type inference rules are used. The specific rules for \eff are not fully given as they are not required for the work in this thesis. The idea behind constraint-based type inference rules is that, in each rule, constraints can be made. In case of a subtyping based system, these constraints are subtyping constraints between two types. 
+
+In figure~\ref{fig:inference:eff}, the type inference for function specialization can be seen. We have two expressions $v_1$ and $v_2$ with types $A_1$ and $A_2$. The application produces some type $\alpha \E \delta$. In order to link the types of the two expressions to the produced type, a subtyping constraint is used. The constraint $A_1 \le A_2 \to (\alpha \E \delta)$ indicates that $A_1$ has to be a subtype of a function type $A_2 \to (\alpha \E \delta)$. 
+
+The reader may wonder what happens when the subtyping constraint is changed into an equality constraint $A_1 = A_2 \to (\alpha \E \delta)$. If every subtyping relation is changed into an equality relation, including for all relations in the subtyping rules in figure~\ref{fig:subtyping}, than we have changed the subtyping system into a Hindley-Milner system. The Hindley-Milner system is less expressive than the subtyping system. This makes sense as an equation with subtyping $\le$ allows for more solutions than using equality $=$.
+
+For every typing rule, there is a type inference rule. At the end of the of applying all the rules, $\ctrs$ contains a lot of constraints. These constraints are solved as much as possible using substitution techniques. Subtyping does not allow for all constraints to be completely solved. In contrast, the Hindley-Milner system can solve all constraints with substitution techniques.
+
+\begin{figure}[H]
+\begin{center}
+  \begin{framed}
+  \begin{minipage}[t]{0.95\columnwidth}
+  \[\begin{array}{r@{~}c@{~}l}
+      \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A\\
+      \end{array}\]
+  \textbf{Computations}
+      \begin{mathpar}
+      \inferrule[App]{
+          \ctx \prinent v_1 \T A_1 \\
+          \ctx \prinent v_2 \T A_2
+      }{
+          \ctx \prinent v_1 \, v_2 \T \alpha \E \delta
+      } \ctrs = \ctrs \cup (A_1 \le A_2 \to (\alpha \E \delta))
+      \end{mathpar}
+  \end{minipage}
+  \end{framed}
+  \end{center}
+  \caption{Type inference rule for function application for \eff}\label{fig:inference:eff}
+  \end{figure}
+  

@@ -1,3 +1,80 @@
+@article{DBLP:journals/acs/PlotkinP03,
+  author    = {Gordon D. Plotkin and
+               John Power},
+  title     = {Algebraic Operations and Generic Effects},
+  journal   = {Applied Categorical Structures},
+  volume    = {11},
+  number    = {1},
+  pages     = {69--94},
+  year      = {2003}
+}
+
+@inproceedings{DBLP:conf/lics/PlotkinP08,
+  author    = {Gordon D. Plotkin and
+               Matija Pretnar},
+  title     = {A Logic for Algebraic Effects},
+  booktitle = {Proceedings of the Twenty-Third Annual {IEEE} Symposium on Logic in
+               Computer Science, {LICS} 2008, 24-27 June 2008, Pittsburgh, PA, {USA}},
+  pages     = {118--129},
+  year      = {2008},
+  publisher = {{IEEE} Computer Society},
+  year      = {2008},
+}
+
+@inproceedings{DBLP:conf/popl/KammarP12,
+  author    = {Ohad Kammar and
+               Gordon D. Plotkin},
+  title     = {Algebraic foundations for effect-dependent optimisations},
+  booktitle = {Proceedings of the 39th Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages     = {349--360},
+  publisher = {{ACM}},
+  year      = {2012}
+}
+
+@inproceedings{eff2ocaml,
+  author = {Oleg Kiselyov and KC Sivaramakrishnan}, 
+  title = {Eff Directly in OCaml},
+  year  = {2016},
+  booktitle ={OCaml Workshop},
+}
+
+@inproceedings{DBLP:conf/icfp/Brady13,
+  author    = {Edwin Brady},
+  title     = {Programming and reasoning with algebraic effects and dependent types},
+  booktitle = {Proceedings of the 18th ACM SIGPLAN International Conference on Functional Programming},
+  pages     = {133--144},
+  publisher = {{ACM}},
+  year      = {2013}
+}
+
+@inproceedings{kammar,
+ author = {Kammar, Ohad and Lindley, Sam and Oury, Nicolas},
+ title = {Handlers in action},
+ booktitle = {Proceedings of the 18th ACM SIGPLAN International Conference on Functional programming},
+ year = {2013},
+ pages = {145--158},
+ numpages = {14},
+ publisher = {ACM},
+ keywords = {algebraic effects, continuations, effect handlers, effect typing, haskell, modularity, monads},
+ series = {ICFP '14}
+} 
+
+@techreport{optimization,
+  author = {Matija Pretnar and Amr Hany Saleh and Axel Faes and Tom Schrijvers},
+  title  = {Efficient compilation of algebraic effects and handlers},
+  year   = 2017,
+  number = {CW 708},
+  institution = {KU Leuven Department of Computer Science},
+}
+
+@inproceedings{links2ocaml,
+  author = {Daniel Hillerstr{\"{o}}m and Sam Lindley and KC Sivaramakrishnan}, 
+  title = {Compiling Links Effect Handlers to the OCaml Backend},
+  year  = {2016},
+  booktitle ={OCaml Workshop},
+}
+
+
 @book{pierce2002types,
   title={Types and programming languages},
   author={Pierce, Benjamin C},
@@ -101,6 +178,13 @@
   bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
+@inproceedings{ocaml,
+  author = {Stephen Dolan and Leo White and KC Sivaramakrishnan and Jeremy Yallop and Anil Madhavapeddy}, 
+  title = {Effective Concurrency through Algebraic Effects},
+  year  = {2015},
+  booktitle ={OCaml Workshop},
+}
+
 @incollection{typeinference,
  author = {R{\'e}my, Didier},
  chapter = {Type Inference for Records in Natural Extension of ML},
@@ -121,6 +205,11 @@
   author={Leijen, Daan},
   journal={arXiv preprint arXiv:1406.2061},
   year={2014}
+}
+
+@book{dolan2017algebraic,
+  title={Algebraic Subtyping},
+  author={Dolan, Stephen}
 }
 
 @inproceedings{mlsub,
@@ -176,3 +265,41 @@
  address = {New York, NY, USA},
  keywords = {Algebraic Effect Handlers, CPS transformation, Type Inference},
 } 
+
+@inproceedings{row-optimised,
+  author = {Axel Faes and Tom Schrijvers},
+  title  = {A core language with row-based effects for optimised compilation},
+  year   = 2017,
+  booktitle = {Student Research Competition},
+  publisher = {ICFP},
+}
+
+@inproceedings{saleh2018explicit,
+  title={Explicit Effect Subtyping},
+  author={Saleh, Amr Hany and Karachalias, Georgios and Pretnar, Matija and Schrijvers, Tom},
+  booktitle={European Symposium on Programming},
+  pages={327--354},
+  year={2018},
+  organization={Springer}
+}
+
+@misc{eff-source,
+author =   {Matija Pretnar},
+title =    {{Eff}},
+howpublished = {\url{https://github.com/matijapretnar/eff}},
+year = {2018}
+}
+
+@article{mitchell1996foundations,
+  title={Foundations for Programming Languages},
+  author={Mitchell, John C},
+  year={1996},
+  publisher={MIT Press}
+}
+
+@phdthesis{pottier1998type,
+  title={Type inference in the presence of subtyping: from theory to practice},
+  author={Pottier, Fran{\c{c}}ois},
+  year={1998},
+  school={INRIA}
+}

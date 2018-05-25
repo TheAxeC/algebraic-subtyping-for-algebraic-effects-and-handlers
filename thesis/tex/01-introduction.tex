@@ -1,0 +1,45 @@
+Algebraic effects and handlers are a new formalism for formally modelling side-effects (e.g. mutable state or non-determinism) in programming languages, developed by Matija Pretnar (University of Ljubjana) and Gordon Plotkin (University of Edinburgh) \cite{DBLP:conf/lics/PlotkinP08,handling}. They can be seen as exception handlers on steroids. They look like exceptions and exception handlers. However, exception handlers have no way to access the continuation from where the exception was raised. Effect handlers do have this access. 
+
+Algebraic effects and handlers are gaining a lot of traction, not only as a formalism but also as a practical feature in actual programming languages (e.g. the Koka language developed by Microsoft Research \cite{leijen2014koka}). We are collaborating with Matija Pretnar on the efficient implementation of one such language, called \eff. I have contributed to this collaboration during a project I did for the Honoursprogramme of the Faculty of Engineering Science.
+
+Any typed programming language requires a type system in order to function. A type system governs a set of rules that assigns types to the various constructions in that typed programming language. Last year, in his December 2016 PhD thesis, Stephen Dolan (University of Cambridge, UK), has presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. This system is called algebraic subtyping\cite{mlsub}
+
+This thesis extends the algebraic subtyping approach in order to account for algebraic effects and handlers. The formal properties of this system are studied in order to find which properties are satisfied compared to other type-\&-effect systems. 
+
+\section{Motivation}
+Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature \cite{leijen2014koka,handling,effectsystem}. We attribute this to the lack of the elegant properties of Dolan's type system. Indeed the existing type-\&-effect systems are not only theoretically unsatisfactory, but they are also awkward to implement and use in practice. This can be seen in recent research we did on an optimizing compiler for \eff \cite{optimization}. Within this research, the main hurdle here involved working with, instead of against, the type system of \eff based on subtyping. 
+
+\paragraph{Research questions}
+\begin{itemize}
+\item How can Dolan's elegant type system be extended with effect information?
+\item Which properties are preserved and which aren't preserved?
+\item What advantages are there to an type-\&-effect system based on Dolan's elegant type system?
+\end{itemize}
+
+\section{Contributions}
+The goal of this thesis, as well as it's main contribution, is to derive a type-\&-effect system that extends Dolan's elegant type system with effect information. This type-\&-effect system should inherit Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserve all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types). The following approach is taken:
+\begin{enumerate}
+\item Study of the relevant literature and theoretical background.
+\item Design of a type-\&-effect system derived from Dolan's, that integrates effects.
+\item Proving the desirable properties of the proposed type-\&-effect system: type soundness, principal typing, ...
+\item Design of a type inference algorithm that derives the principal types of programs without type annotations and proving its correctness.
+\item Implementation of the algorithm and comparing it to other algorithms.
+\end{enumerate}
+
+\section{Results}
+A novel type-\&-effect system is provided. This system extends Dolan's algebraic subtyping system with effect information. The full specification for this system is given including terms, types, typing rules and equivalence rules to subtyping. A type inference algorithm for algebraic subtyping has also been extended to account for the effect information. This involves a type inference algorithm for the effects. Finally, another delivarable is an implementation of this system within the \eff programming language. This is a fully featured programming language that is and can be used for further evaluation and comparisons.
+
+\section{Structure of the thesis}
+\textbf{Chapter~\ref{background}} provides the required background in programming language theory, algebraic effects and optimizing \eff. How a type system specification needs to be read can be found in the section about programming language theory. This section explains the simply typed lambda calculus which is the simplest typed calculus. This calculus is the foundation for the calculus given in the section about algebraic effects. 
+
+The section about algebraic effects gives the calculus of \eff and an thorough explanation of algebraic effects and handlers. The final section explains the research that led to this thesis, the optimization of \eff. An explanation of the optimization techniques are given and the hurdles encountered during the research are explained. 
+
+\textbf{Chapter~\ref{core},~\ref{type-inference} and~\ref{simplification}} define the \core type system. This is the main constribution of this thesis. The major novelty is the representation and construction of the effect information. \textbf{Chapter~\ref{core}} gives the concrete syntax and the typing rules of the \core type system. 
+
+\textbf{Chapter~\ref{type-inference}} introduces polar types and presents the algorithm to infer principal types and the biunification algorithm. Biunification is an analogue of unification for solving subtyping constraints. The difference is that biunification works over polar types. 
+
+\textbf{Chapter~\ref{simplification}} shows how types and effects may be represented compactly as automata. This representation is an extension from the representation from Algebraic Subtyping. The automata is used in order to simplify types in order to give smaller types.
+
+\textbf{Chapter~\ref{implementation}} explains the empirical work that is done. This includes an explanation of the \eff programming language and gives implementation details of the \core type system. Finally, the evaluation of the \core system is given as the system is compared with subtyping.
+
+\textbf{Chapter~\ref{related}} reviews related work such as explicit eff subtyping, and \textbf{Chapter~\ref{conclusion}} presents some future work and concludes the thesis. Proofs are given in \textbf{Appendix~\ref{proofs}}.

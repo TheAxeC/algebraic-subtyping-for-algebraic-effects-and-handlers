@@ -1,0 +1,148 @@
+
+\section{Typing rules}\label{typingrules}
+Figure~\ref{fig:core-typing} defines the typing judgements for values and computations with respect to a standard typing context $\ctx$. Most of the rules are standard. It is important to note that the typing context $\ctx$ contains variables with monomorphic types $A$ and variables with polymorphic type schemes.
+
+\paragraph{Values}
+The rules for subtyping, constants, variables and functions are entirely standard. The difference between $\lambda$-variables $x$ and let-variables $\letvar$ becomes much more clear in these rules. $\lambda$-variables $x$ means that the variable is bound by a $\lambda$ abstraction, its type is monomorphic. In contrast, let-variables $\letvar$ are bound by let constructs. Rule \textsc{Var-$\forall$} shows that $\letvar$ is polymorphic and is given a polymorphic type scheme $\polytype{A}$. 
+ 
+A handler expression has type $A \E \dirt \intersection \ops \hto B \E \dirt$. An interesting detail is dirt of the argument of the handler $\dirt \intersection \ops$. The reason for the choice to use a $\intersection$ is non-trivial. In chapter~\ref{polarity}, the reason is explored more formally. Unformallly, the reason is that, in general, argument types utilise the intersection while return types utilise unions. Note that the intersection $\dirt \cap \ops$ is not necessarily empty (with $\cap$ being the intersection of the operations, not to be confused with the $\intersection$ type). The handler deals with the operations $\ops$, but in the process may reintrodcue some of them.
+
+\paragraph{Computations}
+The rules for subtyping, application, conditional, return, operation, let and with have a straightforward definition. The interesting rule for the computations is \textsc{Do}. In the \textsc{Do} rule, the type aspect of the $do$ computation is $B$, which is the same type as that of $c_2$. However, the dirt of the $do$ computation is the union of the dirt from $c_1$ and the dirt from $c_2$. Side effects may occur even without the explicit usage of the variable $\letvar$, thus we need to explicitly keep track of those specific side effects. This is done by taking the union.
+
+\begin{figure}[!htb]
+\begin{center}
+\framebox{
+\begin{minipage}{0.95\columnwidth}
+\[\begin{array}{r@{~}c@{~}l}
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx, \letvar : \polytype{B}\\
+\end{array}\]
+\textbf{Expressions}
+\begin{mathpar}
+  \inferrule[SubVal]{
+    \ctx \ent v \T A \\
+    A \le B
+  }{
+    \ctx \ent v \T B
+  }
+
+  \inferrule[Var-$\lambda$]{
+    (x \T A) \in \ctx
+  }{
+    \ctx \ent x \T A
+  }
+
+  \inferrule[Var-$\forall$]{
+    (\letvar \T \polytype{A}) \in \ctx
+  }{
+    \ctx \ent \letvar \T A[\bar{A}/\bar{\alpha}]
+  }
+
+  \inferrule[True]{
+  }{
+    \ctx \ent \tru \T bool
+  }
+
+  \inferrule[False]{
+  }{
+    \ctx \ent \fls \T bool
+  }
+
+  \inferrule[Fun]{
+    \ctx, x \T A \ent c \T \C
+  }{
+    \ctx \ent \fun{x}c \T A \to \C
+  }
+
+  \inferrule[Hand]{
+    \ctx, x \T A \ent c_r \T B \E \dirt \\
+    \Big[
+      (\op \T A_\op \to B_\op) \in \sig \qquad \\
+      \ctx, y \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
+    \Big]_{\op \in \ops}
+  }{
+    \ctx \ent \shorthand \T \\ A \E \dirt \intersection \ops \hto B \E \dirt
+  }
+
+\end{mathpar}
+\textbf{Computations}
+\begin{mathpar}
+  \inferrule[SubComp]{
+    \ctx \ent c \T \C \\
+    \C \le \D
+  }{
+    \ctx \ent c \T \D
+  }
+
+  \inferrule[App]{
+    \ctx \ent v_1 \T A \to \C \\
+    \ctx \ent v_2 \T A
+  }{
+    \ctx \ent v_1 \, v_2 \T \C
+  }
+
+  \inferrule[Cond]{
+    \ctx \ent v \T bool \\
+    \ctx \ent c_1 \T \C \\
+    \ctx \ent c_2 \T \C \\
+  }{
+    \ctx \ent \conditional{v}{c_1}{c_2} \T \C
+  }
+
+  \inferrule[Ret]{
+    \ctx \ent v \T A
+  }{
+    \ctx \ent \ret v \T A \E \emptyrow
+  }
+
+  \inferrule[Op]{
+    (\op \T A \to B) \in \sig \\
+    \ctx \ent v \T A
+  }{
+    \ctx \ent \op \, v \T B \E \op
+  }
+
+  \inferrule[Let]{
+    \ctx \ent v \T A \\
+    \ctx, \letvar \T \polytype{A} \ent c \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
+  }{
+    \ctx \ent \letin{\letvar = v} c \T B \E \dirt
+  }
+
+  \inferrule[Do]{
+    \ctx \ent c_1 \T A \E \dirt_1 \\
+    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt_2 \\
+    \alpha \not\in FTV(\ctx)
+  }{
+    \ctx \ent \doin{\letvar = c_1} c_2 \T B \E (\dirt_1 \union \dirt_2)
+  }
+
+  \inferrule[With]{
+    \ctx \ent v \T \C \hto \D \\
+    \ctx \ent c \T \C
+  }{
+    \ctx \ent \withhandle{v}{c} \T \D
+  }
+
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Typing of \core}\label{fig:core-typing}
+\end{figure}
+
+\section{Properties of the type system}
+Since the typing rules of \core mirror those from algebraic subtyping and from eff which are both based on the typing rules from ML, the familiar properties of those type systems also hold for \core.
+
+\subsection{Instantiation}
+\todo{explain proof instantiation}
+
+\subsection{Weakening}
+\todo{explain proof weakening}
+
+\subsection{Substitution}
+\todo{explain proof substitution}
+
+\subsection{Soundness}
+\todo{explain proof soundness}

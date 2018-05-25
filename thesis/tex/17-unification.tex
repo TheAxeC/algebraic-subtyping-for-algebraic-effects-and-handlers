@@ -1,8 +1,14 @@
-\subsection{Unification}
+\section{Unification}
 
 To operate on polar type terms, we generalise from substitutions to bisubstitutions, which map type variables to a pair of a positive and a negative type term. The definitions for bisubstitions are given in Figure~\ref{fig:bisubstitution}.
 
-\todo{explain substitutions and bisubstitions}
+\todo{explain bisubstitions}
+
+\todo{explain constraint solving}
+
+\todo{explain constraint decomposition}
+
+\todo{explain biunification algorithm}
 
 \begin{figure}[!htb]
     \begin{center}
@@ -78,10 +84,6 @@ To operate on polar type terms, we generalise from substitutions to bisubstituti
         }\\
 
         \inferrule[]{}{
-            \xi(\dirt_1^- \union \dirt_2^-) \equiv \xi(\dirt_1^-) \union \xi(\dirt_2^-)
-        }\\
-
-        \inferrule[]{}{
             \xi(\op) \equiv \op
         }\\
 
@@ -122,52 +124,52 @@ To operate on polar type terms, we generalise from substitutions to bisubstituti
 
 % The presence of explicit type application in F, F$_\omega$ and CoC makes the exact parameterisation of a polymorphic type relevant. Conversely, in ML, the parameterisation is irrelevant and all that matters is the set of possible instances.
 
-\begin{figure}[!htb]
-\begin{center}
-\begin{framed}
-\begin{minipage}[t]{0.95\columnwidth}
-\begin{mathpar}    
-    \inferrule[]{}{
-        \forall \alpha \forall \beta . \alpha \to \beta \to \alpha \\
-        \forall \beta \forall \alpha . \alpha \to \beta \to \alpha
-    }\\
+% \begin{figure}[!htb]
+% \begin{center}
+% \begin{framed}
+% \begin{minipage}[t]{0.95\columnwidth}
+% \begin{mathpar}    
+%     \inferrule[]{}{
+%         \forall \alpha \forall \beta . \alpha \to \beta \to \alpha \\
+%         \forall \beta \forall \alpha . \alpha \to \beta \to \alpha
+%     }\\
 
-    \inferrule[]{}{
-        \{ \alpha \to \beta \to \alpha \bnfor{} \alpha, \beta \text{types}\} \\ 
-        \{ \alpha \to \beta \to \alpha \bnfor{} \beta, \alpha \text{types}\}
-    }
-\end{mathpar}
-\end{minipage}
-\end{framed}
-\end{center}
-\caption{Parameterisation and typing}\label{fig:parameterisation}
-\end{figure}
+%     \inferrule[]{}{
+%         \{ \alpha \to \beta \to \alpha \bnfor{} \alpha, \beta \text{types}\} \\ 
+%         \{ \alpha \to \beta \to \alpha \bnfor{} \beta, \alpha \text{types}\}
+%     }
+% \end{mathpar}
+% \end{minipage}
+% \end{framed}
+% \end{center}
+% \caption{Parameterisation and typing}\label{fig:parameterisation}
+% \end{figure}
 
-\todo{rewrite, in essence explain why equivalence of the parameterisation is important}
-``
-Thus, when manipulating constraints, an ML type checker need only preserve equivalence of the set of instances, and not equivalence of the parameterisation. This freedom is not much used in plain ML, since unification happens to preserve equivalence of the parameterisation. However, this freedom is what allows MLsub to eliminate subtyping constraints.
+% \todo{rewrite, in essence explain why equivalence of the parameterisation is important}
+% ``
+% Thus, when manipulating constraints, an ML type checker need only preserve equivalence of the set of instances, and not equivalence of the parameterisation. This freedom is not much used in plain ML, since unification happens to preserve equivalence of the parameterisation. However, this freedom is what allows MLsub to eliminate subtyping constraints.
 
-For all positive type terms $A+$ and variables, there exist positive type terms $A^+_\alpha$ and $A^+_g$ such that $A^+_\alpha \in {\bot, \alpha}$, $\alpha$ is guarded in $A^+_g$, and $A^+$ is equivalent to $A^+_\alpha \union A^+_g$.
+% For all positive type terms $A+$ and variables, there exist positive type terms $A^+_\alpha$ and $A^+_g$ such that $A^+_\alpha \in {\bot, \alpha}$, $\alpha$ is guarded in $A^+_g$, and $A^+$ is equivalent to $A^+_\alpha \union A^+_g$.
 
-For all negative type terms $A-$ and variables, there exist negative type terms $A^-_\alpha$ and $A^-_g$ such that $A^-_\alpha \in {\top, \alpha}$, $\alpha$ is guarded in $A^-_g$, and $A^-$ is equivalent to $A^-_\alpha \intersection A^-_g$.
-''
+% For all negative type terms $A-$ and variables, there exist negative type terms $A^-_\alpha$ and $A^-_g$ such that $A^-_\alpha \in {\top, \alpha}$, $\alpha$ is guarded in $A^-_g$, and $A^-$ is equivalent to $A^-_\alpha \intersection A^-_g$.
+% ''
 
-\begin{figure}[!htb]
-\begin{center}
-\begin{framed}
-\begin{minipage}[t]{0.95\columnwidth}
-\begin{mathpar} 
-    \inferrule[]{}{
-        \rectypep{A^+} = \rectype{A^+_g} \\
-        \rectypen{A^-} = \rectype{A^-_g}
-    }
+% \begin{figure}[!htb]
+% \begin{center}
+% \begin{framed}
+% \begin{minipage}[t]{0.95\columnwidth}
+% \begin{mathpar} 
+%     \inferrule[]{}{
+%         \rectypep{A^+} = \rectype{A^+_g} \\
+%         \rectypen{A^-} = \rectype{A^-_g}
+%     }
     
-\end{mathpar}
-\end{minipage}
-\end{framed}
-\end{center}
-\caption{Polar recursive type}\label{fig:recursive}
-\end{figure}
+% \end{mathpar}
+% \end{minipage}
+% \end{framed}
+% \end{center}
+% \caption{Polar recursive type}\label{fig:recursive}
+% \end{figure}
 
 \begin{figure}[!htb]
 \begin{center}
@@ -284,16 +286,16 @@ For all negative type terms $A-$ and variables, there exist negative type terms 
         subi(\dirt^+_1 \union \dirt^+_2 \le \dirt^-) = \{\dirt^+_1 \le \dirt^-, \dirt^+_2 \le \dirt^-\}
     }\\
     \inferrule[]{}{
-        subi(\op \le \op \union \dirt^-) = \{\}
+        subi(\op \le \op \intersection \dirt^-) = \{\}
     }\\
     \inferrule[]{}{
-        subi(\op \le \dirt^- \union \op) = \{\}
+        subi(\op \le \dirt^- \intersection \op) = \{\}
     }\\
     \inferrule[]{}{
-        subi(\op_1 \le \op_2 \union \dirt^-) = \{\op_1 \le \dirt^-\}
+        subi(\op_1 \le \op_2 \intersection \dirt^-) = \{\op_1 \le \dirt^-\}
     }\\
     \inferrule[]{}{
-        subi(\op_1 \le \dirt^- \union \op_2) = \{\op_1 \le \dirt^-\}
+        subi(\op_1 \le \dirt^- \intersection \op_2) = \{\op_1 \le \dirt^-\}
     }\\
     \inferrule[]{}{
         subi(\dirt^+ \le \dirt^-_1 \intersection \dirt^-_2) = \{\dirt^+ \le \dirt^-_1, \dirt^+ \le \dirt^-_2\}

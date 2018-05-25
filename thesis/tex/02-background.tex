@@ -1,0 +1,89 @@
+The field of programming language theory is a branch of computer science that describes how to formally define complete programming languages and programming language features, such as algebraic effect handlers.
+
+The work described in this thesis uses several aspects from programming language theory. An important subdiscipline that is extensively used is type theory. Type theory is used to formaly describe type systems. A type system is a set of rules that are used to define the shape of meaningful programs. The \textit{simply typed lambda calculus} will be used to show and explain the necessary background that is required for further chapters. The \textit{simply typed lambda calculus} is the simplest and most elementary form of all typed languages. \cite{pierce2002types}
+\subsection{Types and terms}\label{simpletypes}
+Types and terms are necessary components of the \textit{simply typed lambda calculus}. A simply example is the identity function, $\fun{x \T bool} x$. In this example, we can see the syntax of our calculus. The different elements of the syntax are called the terms. Every term also needs to have a type. 
+
+\paragraph{Terms}
+Figure~\ref{fig:types:lambda} shows the five term constructors of the \textit{simply typed lambda calculus} \cite{mitchell1996foundations}. A variable by itself is already a term. $\tru$ and $\fls$ are also already terms. The abstraction of some variable $x$ from a certain term $t$ is called a function. Finally, an application is a term. The terms define the syntax of a programming language, but it does not place any constraints on how these terms can be composed. A wanted constraint could for example be that an application $t_1 \, t_2$ should only be valid if $t_1$ is a function. This shows that only having terms is not enough to describe a programming language. \cite{hindley1986introduction}
+
+\paragraph{Types}
+Since we are describing the \textit{simply typed lambda calculus}, we require the concept of "types". As seen in figure~\ref{fig:types:lambda}, there are two types, the base type and the function type. The function type, also called the arrow type, is used for functions. The type of $\fun{x \T bool} x$ is $bool \T bool$. The function takes an input of type $bool$, which in the function type can be seen on the left of the arrow. The function return that same input variable. The return type can be seen in the function type on the right of the arrow. In a valid and meaningful program, every term has a type. A term is called well typed or typable if there is a type for that term. 
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{terms}~t & \bnfis {} & x & \text{variable} \\
+    & \bnfor & \tru & \text{true} \\
+    & \bnfor & \fls & \text{false} \\
+    & \bnfor & \fun{x \T T} t & \text{function} \\
+    & \bnfor & t_1 \, t_2 & \text{application}
+\end{array}\]
+
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{type}~T & \bnfis {}
+    & bool & \text{base type} \\
+    & \bnfor & T \to T & \text{function type}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Types and terms of simply typed lambda calculus}\label{fig:types:lambda}
+\end{figure}
+\subsection{Typing rules}
+Typing rules are used to bring structure in the programming language. The example, $\fun{x \T bool} x$ has type $bool \T bool$. In this example, we would expect that both occurences of $x$ have type $bool$. However, the specification given in section~\ref{simpletypes} doesn't impose this structure. This is done with typing rules or types judgements. The typing rules for the \textit{simply typed lambda calculus} are given in figure~\ref{fig:lambda-typing}.
+\begin{figure}[H]
+\begin{center}
+\framebox{
+\begin{minipage}{0.95\columnwidth}
+\[\begin{array}{r@{~}c@{~}l}
+  \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : T \\
+\end{array}\]
+\begin{mathpar}
+  \inferrule[True]{
+  }{
+    \ctx \ent \tru \T bool
+  }
+
+  \inferrule[False]{
+  }{
+    \ctx \ent \fls \T bool
+  }
+
+  \inferrule[Var]{
+    (x \T T) \in \ctx
+  }{
+    \ctx \ent x \T T
+  }
+
+  \inferrule[App]{
+    \ctx \ent t_1 \T T_1 \to T_2 \\
+    \ctx \ent t_2 \T T_1
+  }{
+    \ctx \ent t_1 \, t_2 \T T_2
+  }
+  
+  \inferrule[Fun]{
+    \ctx, x \T T_1 \ent t \T T_2
+  }{
+    \ctx \ent \fun{x \T T} t \T T_1 \to T_2
+  }
+\end{mathpar}
+\end{minipage}
+}
+\end{center}
+\caption{Typing of simply typed lambda calculus}\label{fig:lambda-typing}
+\end{figure}
+The first rules to take note of are the \textsc{True} and \textsc{False} rules. These rules do not have a premise and are called facts. They state that the terms true and false have type \textit{bool}. A \textit{Fact} states that, under the assumption of $\ctx$, $t$ has type $T$. The context, $\ctx$, is a mapping of the free variables of $t$ to their types. It is called a fact since the rule always holds.
+
+The context, $\ctx$, is a (possibly empty) collection of variables mapped to their types. The \textsc{Var} rule states that, if the context contains a mapping for a variable, that variable is also a valid term with that type. The \textsc{App} rule defines the usage of a function. When there are two terms $t_1$ and $t_2$ with types $T_1 \to T_2$ and $T_1$, then the application $t_1 \, t_2$ will have the type $T_2$.  
+
+There are two ways to read inference rules. It can be read top-down or bottom-up. Reading it top-down gives the above described reasoning. Given some expressions and some constraints, another expression can be constructed with a specific type. The bottom-up approach states that, given an expression such as the function application, there is a specific way the different parts of the expression can be typed. In the \textsc{App} rule, a function expression has type $T_2$. Therefor, both $t_1$ and $t_2$ must follow a specific set of constraints. It is known that a function needs to exist of type $T_1 \to T_2$ and an expression that matches the argument of the function, $T_1$ needs to exist. \cite{pierce2002types}
+
+Finally, there is the \textsc{Fun} rule. This rule is also called a function abstraction or simply an abstraction. It shows how a function can be constructed. The interesting part of this rule is $\ctx, x \T T_1 \ent t \T T_2$. This states that $t$ is only entailed by some context and a variable of type $T_1$.
+
+\subsection{Extensions}
+Starting with the \textit{simply typed lambda calculus}, extensions can be added onto this calculus. In chapter~\ref{eff-chapter}, \eff will be discussed. \eff's calculus is a modification of the \textit{simply typed lambda calculus} with algebraic effects and handlers. \eff also uses subtyping rules, this concept will also be further explained in the next chapter. After this, algebraic subtyping will be added to \eff's calculus. This is described in chapter~\ref{core}.
+
+There are many other aspects to a specification than just the ones discussed in this section. Certain aspects or properties could be proved in order to show that they do (or do not) hold in the given calculus. Type inference is another aspect which is not talked about in this chapter. Type inference revolves around the automatic detection (or inference) of the types of terms. Both proofs and a type inference algorithm are given in later chapters. 

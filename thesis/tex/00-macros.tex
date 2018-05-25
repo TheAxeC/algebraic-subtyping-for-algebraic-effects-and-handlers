@@ -51,6 +51,7 @@
 \newcommand{\letrecin}[1]{\kpre{let} \kpre{rec} #1 \kop{in}}
 \newcommand{\op}{\kord{Op}}
 \newcommand{\ops}{\mathcal{O}}
+\newcommand{\ctrs}{\Theta}
 \newcommand{\ocs}{\mathit{ocs}}
 \newcommand{\ocsnil}{\kord{nil}}
 \newcommand{\tru}{\kord{true}}
@@ -87,3 +88,36 @@
 \newcommand{\getop}[1]{{#1}_{\kord{op}}}
 
 \newcommand{\concat}{\ensuremath{+\!\!\!\!+\,}}
+
+\lstset{
+  language=[objective]caml,
+  columns=fixed,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries,
+  % numberstyle=\tiny,
+  numbers=left, 
+  numberstyle=\small, 
+  numbersep=8pt, 
+  frame = single, 
+  escapeinside={\$}{\$},
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  showstringspaces=false
+}
+
+\newcommand{\comp}[1]{\llbracket{#1}{\rrbracket}}
+\newcommand{\compty}{\kpost{computation}}
+\newcommand{\casesty}{\kpost{handler\_cases}}
+\newcommand{\ocamlbind}{\kord{>\!>\!=}}
+\newcommand{\ocop}{\kord{op}}
+
+% type automata
+\newcommand{\enctype}{\mathcal{E}}
+\newcommand{\dectype}{\mathcal{R}}
+\newcommand{\functp}{\langle \to \rangle}
+\newcommand{\handtp}{\langle \hto \rangle}
+\newcommand{\booltp}{\langle \text{b} \rangle}
+\newcommand{\dirttp}{\langle \text{drty} \rangle}
+\newcommand{\optp}[1]{\langle{#1}{\rangle}}
+\newcommand{\unknowntp}{\mathcal{X}}
+\newcommand{\unknowndrttp}{\mathcal{D}}
