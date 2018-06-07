@@ -1,23 +1,56 @@
-\todo{intro simplification}
+\core inherits one big disadvantage from algebraic subtyping. Type systems with subtyping produce large types. More specifically, the size of infered types and the constraints grows linearly with the size of the program. Dolan provides a solution to this problem by proposing a simplification algorithm \cite{dolan2017algebraic}. I have extended this algorithm in order to include algebraic effects and handlers. 
 
-\section{Type Automata}
-\todo{intro type automata}
+The simplification algorithm encodes polar types into finite automata. There is a lot of research about simplifying deterministic finite automata (DFA). Once the automata has been simplified, it is decoded into a polar type. Equivalent types are converted into automata accepting equal languages.
 
-\section{Encoding}
-\todo{explain encoding}
+In this chapter, type automata are extended into type-\$-effect automata. Afterwards the encoding and decoding algorithms are extended to operate on type-\$-effect automata rather than just type automata.
+
+\section{Type-\&-Effect Automata}
+The regular language of the type-\&-effect automata are defined in Figure~\ref{fig:automata}. A type-\&-effect automaton consists of a finite set of states $Q$, with a designated start state $q_0$. Each state is labeled with a set of head constructors and has a polarity. Head constructors represent the types of \core, as seen in Figure~\ref{fig:types:core}, excluding unions, intersections and the recursive type. Recursive types are represented as loops in the type-\&-effect automaton. The set of head constructors represent a union or intersection of its elements depending on the polarity of that state. State transitions within a type-\&-effect automaton are represented by $\Sigma_F$. 
+
+$\Sigma_F$ consists of a function domain $d$, a function range $r$, a handler domain $dh$, a handler range $rh$, a type splitter $t$ and a dirt splitter $e$. The domains and ranges are used to encode the domains and ranges of functions and handlers. The splitters are the novel element in type-\&-effect automata. They are used to encode dirty types. When a dirty type $\C = A \E \dirt$ needs to be encoded, a transition $t$ is made to encode $A$ and a transition $e$ is made to encode the dirt. Type and dirt variables are represented by the symbol $V$. 
+
+Types are encoded as regular expressions that need to be accepted by standard non-deterministic finite automata (NFA). A NFA does not label its states, thus all information is encoded into state transitions as can be seen in the definition of $E$.  
 
 \begin{figure}[!htb]
     \begin{center}
     \begin{framed}
     \begin{minipage}[t]{0.95\columnwidth}
     \begin{mathpar}    
-        \inferrule[Type Automata]{}{
+        \inferrule[Type-\&-Effect Automata]{}{
             \Sigma_F ::= \{d, r, dh, rh, t, e \} \\
             T ::= \{ \functp, \handtp, \booltp, \dirttp\} \\
             \Sigma ::= V^+ \cup V^- \cup \Sigma_F^+ \cup \Sigma_F^- \cup T^+ \cup T^-\\ 
-            E ::= \emptyset\, |\, \epsilon\, |\, \Sigma\, |\, E + E\, |\, E . E
+            E ::= \emptyset\, |\, \epsilon\, |\, \Sigma\, |\, E + E\, |\, E . E\, | E^*
         }\\
+    \end{mathpar}
+    \end{minipage}
+\end{framed}
+\end{center}
+\caption{Type-\&-effect automata}\label{fig:automata}
+\end{figure}
 
+\section{Encoding}
+A mapping $\enctype$ is used to encode types as a regular expression. Figure~\ref{fig:automata:enc} shows the main encoding algorithm. The first few cases map the head constructors into a regular expression. We can see how dirty types are encoded by the case $\enctype^+(\C) = \enctype^+(A \E \dirt) =\\ t^+ . \enctype^+(A) + e^+ . \enctype^+(\dirt) + \enctype^+(\dirttp)$. The usage of $t$ and $e$ can be observed. $\dirttp$ is used to indicate that that state in the representing NFA represents a dirty type, similar to the usage of $\functp$. The encoding of handlers follows the encoding of functions. The other rules are the standard rules used in Dolan's thesis. \cite{dolan2017algebraic} The mapping $\Omega_\alpha$ is used to help encode recursive types (Figure~\ref{fig:automata:enc:rec}). There are no suprises in this mapping. 
+
+The type $\alpha \to bool \E Op$ is converted into: $d^+ . \alpha^- + r^+ . (t^+ . \booltp^+ + e^+ . \optp{\op}^+ + \dirttp^+) + \functp^+$.
+
+\begin{theorem}
+\label{thm:equiv:enc}
+(Equivalence of types) If $A^+_1 \equiv A^+_2$ then $\enctype^+(A^+_1)$ and $\enctype^+(A^+_2)$ are the same language and dually for negative types and dirty types.
+\end{theorem}
+The extension made to the encoding algorithm accompasses two changes. The first change is the addition of the handlers. Since handlers behave in exactly the same way as functions, adding handlers cannot invalidate the proof made in Dolan's thesis. 
+
+The second change is the addition of dirty types. This change is a bit more tricky. There are two parts to look at. Firstly, let's look at the encoding of dirts. Dirts can be seen as a subset of types. More specifically, dirts are equivalent to types with the exclusion of functions, handlers and recursive types. The basic element $\op$ behaves like $bool$ and dirt variables are equivalent to type variables. By taking Dolan's original proof, and removing functions, handlers and recursive types, we get a proof for the encoding of dirts.
+
+Finally, the encoding of the dirty type. Taking Dolan's proof, and adding handlers, we know that the encoding of two equivalent types represent the same language (if we were to ignore effects). We also know that encoding two equivalent dirts results in the same language. The key argument that is still needed is that dirty types always remain dirty types. This can be proven by case analysis.
+
+If we have two equivalent types and one of the types is a function type, then the other type is also a function type. Two function types are equivalent if the domain and ranges are equivalent. We know that the domains (which is pure) are encoded into the same language. For the dirty type, there is only one way to encode the dirty type, which is to use the $\enctype^+(\C) = \enctype^+(A \E \dirt) = t^+ . \enctype^+(A) + e^+ . \enctype^+(\dirt) + \enctype^+(\dirttp)$ case. A similar logic can be used for handler types. Thus, equivalent dirty types are encoded into the same language. 
+
+\begin{figure}[!htb]
+    \begin{center}
+    \begin{framed}
+    \begin{minipage}[t]{0.95\columnwidth}
+    \begin{mathpar}    
         \inferrule[]{}{
             \enctype^+(\functp) = \functp^+ \\
             \enctype^+(\handtp) = \handtp^+ \\
@@ -136,17 +169,6 @@
 \begin{figure}[!htb]
     \begin{center}
     \begin{framed}
-    \begin{minipage}[t]{0.95\columnwidth}
-    \begin{mathpar}    
-        \inferrule[Type Automata]{}{
-            \Sigma_F ::= \{d, r, dh, rh, t, e \} \\
-            T ::= \{ \functp, \handtp, \booltp, \dirttp\} \\
-            \Sigma ::= V^+ \cup V^- \cup \Sigma_F^+ \cup \Sigma_F^- \cup T^+ \cup T^-\\ 
-            E ::= \emptyset\, |\, \epsilon\, |\, \Sigma\, |\, E + E\, |\, E . E
-        }
-    \end{mathpar}
-    \end{minipage}
-
     \begin{minipage}[t]{0.475\columnwidth}
     \begin{mathpar}
         \inferrule[]{}{
@@ -229,7 +251,7 @@
         }\\
 
         \inferrule[]{}{
-            \Omega_\alpha^-(\C \hto \D) = dh^- . \Omega_\alpha^+(\C) + rh^- . \Omega_\alpha^-(\D)
+            \Omega_\alpha^-(\C \hto \D) = dh^- . \Omega_\alpha^+(\C) +\\ rh^- . \Omega_\alpha^-(\D)
         }\\
 
         \inferrule[]{}{
@@ -264,61 +286,91 @@
 \end{figure}
 
 \section{Decoding}
-\todo{explain decoding}
+Decoding is accomplished by the mapping $\dectype$, as seen in Figure~\ref{fig:automata:dec}. This function acts as the inverse of $\enctype$. Considering that regular languages do no distinguish between positive and negative types, the mapping $\dectype$ produces both a positive and negative type. When a regular expression of an automaton representing a positive type $A^+$ is decoded, $\dectype$ produces $(A^+, \top)$. Similarly, when a regular expression of an automaton representing a negative type $A^-$ is decoded, $\dectype$ produces $(\bot, A^-)$.
+
+Symbols representing type constructors are mapped to the greatest or least type according to polarity. Symbols representing fields are mapped to a context, which is a type marking the use of a particular field by the particular type variable.
+
+Interpreting union, concatenation and the Kleene star is done with the definitions from Figure~\ref{fig:automata:dec:dec1} and Figure~\ref{fig:automata:dec:dec2}. It is interesting to note that there are three ways to solve concatenation: $(A_1^+, A_1^-) . (A_2^+, A_2^-)$ and $(\C_1^+, \C_1^-) . (A_2^+, A_2^-)$, $(\C_1^+, \C_1^-) . (\C_2^+, \C_2^-)$. $(A_1^+, A_1^-) . (A_2^+, A_2^-)$ is used for situations where we need to decode $d^+ . \alpha^-$. $(\C_1^+, \C_1^-) . (A_2^+, A_2^-)$ is used for $t^+ . \booltp^+$. In this case, we want to decode the pure part of a dirty type. Since we need to merge this pure part with the dirty part later, the pure part is already converted into a dirty type. $(\C_1^+, \C_1^-) . (\C_2^+, \C_2^-)$ is used for situations like $e^+ . \optp{\op}^+$. These three formulas make sure that the decoded types have the correct form (pure vs dirty).
+
+\begin{theorem}
+\label{thm:equiv:dec}
+$\dectype(\enctype^+(A^+)) \equiv (A^+, \top)$ (and dually for dirty types) \\
+$\dectype(\enctype^-(A^-)) \equiv (\bot, A^-)$ (and dually for dirty types)
+\end{theorem}
+
+The proof can be done by induction on the syntax of $A$. All cases are trivial and straightforward. The complexity arises from recursive types. However, that part of the proof remains equivalent to the original proof.
+
+\begin{theorem}
+\label{thm:equiv:equiv}
+if $E_1$ and $E_2$ represent equal regular languages, then $\dectype(E_1) \equiv \dectype(E_2)$
+\end{theorem}
+The proof can be made in the same way that the proof for Theorem~\ref{thm:equiv:enc} was made. The extension made to the encoding algorithm accompasses two changes. The first change is the addition of the handlers. Since handlers behave in exactly the same way as functions, adding handlers cannot invalidate the proof made in Dolan's thesis. Secondly, dirts are subsets of types, and the proof holds. Encoding dirty types and decoding dirty types can only occur in one way. 
+
+Now that we know that equal languages represent equal types, any algorithm that operates on languages while preserving equality, also preserve equality of the types that are being represented. Any algorithm for simplifying finite automata can be used to simplify type-\&-effect automata. A popular option is to convert a NFA that needs to be simplified into a DFA using the subset construction. This DFA can be simplified using any standard algorithm such as Hopcroft's algorithm.
+
 
 \begin{figure}[!htb]
     \begin{center}
     \begin{framed}
     \begin{minipage}[t]{0.95\columnwidth}
     \begin{mathpar}    
-        (A_1^+, A_1^-) + (A_2^+, A_2^-) = (A_1^+ \union A_2^+, A_1^- \intersection A_2^-)\\
-        (\C_1^+, \C_1^-) + (\C_2^+, \C_2^-) = (\C_1^+ \union \C_2^+, \C_1^- \intersection \C_2^-)\\
+        (A^+, A^-)^* =
+        \Big(
+            \begin{tabular}{cr}
+            $\rectypep{\unknowntp} \union [\alpha / \unknowntp^+, \mu^- \beta .(\unknowntp \intersection [\alpha / \unknowntp^+, \beta / \unknowntp^-](A^-)) / \unknowntp^-]A^+$, \\
+            $\mu^- \beta . \unknowntp \intersection [\rectypep{(\unknowntp \union [\alpha / \unknowntp^+, \beta / \unknowntp^-](A^+))} / \unknowntp^+ , \beta / \unknowntp^-]A^-$\\
+            \end{tabular}
+            \Big)
 
-        (A_1^+, A_1^-) . (A_2^+, A_2^-) = \left \{
-        \begin{tabular}{cr}
-        $(\bot, \top)$ & if $(A_2^+, A_2^-) = (\bot, \top)$ \\
+            \inferrule[]{}{
+                (A_1^+, A_1^-) + (A_2^+, A_2^-) = (A_1^+ \union A_2^+, A_1^- \intersection A_2^-) \text{ (dually for dirty types $\C$)}
+            }
+            
+            \inferrule[]{}{
+                \dectype(\emptyset) = (\bot, \top) \\
+                \dectype(\epsilon) = (\unknowntp, \unknowntp)
+            }
+    \end{mathpar}
+    \end{minipage}
+\end{framed}
+\end{center}
+\caption{Decoding type automata concat, union and kleene star into types}\label{fig:automata:dec:dec1}
+\end{figure}
+
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+    \begin{mathpar}    
+        (A_1^+, A_1^-) . (A_2^+, A_2^-) = (\bot, \top) \text{ if } (A_2^+, A_2^-) = (\bot, \top) \text{ else } 
         \Big(
             \begin{tabular}{cr}
             $[A_2^+ / \unknowntp^+ , A_2^- / \unknowntp^-]A_1^+$, \\
             $[A_2^+ / \unknowntp^+ , A_2^- / \unknowntp^-]A_1^-$\\
             \end{tabular}
-            \Big)  & otherwise \\
-        \end{tabular}
-        \right \}\\
+            \Big)\\
 
-        (\C_1^+, \C_1^-) . (\C_2^+, \C_2^-) = \left \{
-        \begin{tabular}{cr}
-        $(\bot \E \emptyset, \top \E \allops)$ & if $(\C_2^+, \C_2^-) = (\bot \E \emptyset, \top \E \allops)$ \\
+        (\C_1^+, \C_1^-) . (\C_2^+, \C_2^-) = (\bot \E \emptyset, \top \E \allops) \text{ if } (\C_2^+, \C_2^-) = (\bot \E \emptyset, \top \E \allops) \text{ else } 
         \Big(
             \begin{tabular}{cr}
             $[\C_2^+ / \unknowntp^+ \E \unknowndrttp^+, \C_2^- / \unknowntp^- \E \unknowndrttp^-]\C_1^+$, \\
             $[\C_2^+ / \unknowntp^+ \E \unknowndrttp^+ , \C_2^- / \unknowntp^- \E \unknowndrttp^-]\C_1^-$\\
             \end{tabular}
-            \Big)  & otherwise \\
-        \end{tabular}
-        \right \}\\
+            \Big)\\
 
-        (\C_1^+, \C_1^-) . (A_2^+, A_2^-) = \left \{
-        \begin{tabular}{cr}
-        $(\bot \E \emptyset, \top \E \allops)$ & if $(A_2^+, A_2^-) = (\bot, \top)$ \\
+        (\C_1^+, \C_1^-) . (A_2^+, A_2^-) = (\bot \E \emptyset, \top \E \allops) \text{ if } (A_2^+, A_2^-) = (\bot, \top) \text{ else } 
         \Big(
             \begin{tabular}{cr}
             $[A_2^+ / \unknowntp^+ \E \unknowndrttp^+, A_2^- / \unknowntp^- \E \unknowndrttp^-]\C_1^+$, \\
             $[A_2^+ / \unknowntp^+ \E \unknowndrttp^+ , A_2^- / \unknowntp^- \E \unknowndrttp^-]\C_1^-$\\
             \end{tabular}
-            \Big)  & otherwise \\
-        \end{tabular}
-        \right \}\\
-
-        \inferrule[]{}{
-            \dectype(\emptyset) = (\bot, \top) \\
-            \dectype(\epsilon) = (\unknowntp, \unknowntp)
-        }
+            \Big)
     \end{mathpar}
     \end{minipage}
 \end{framed}
 \end{center}
-\caption{Decoding type automata concat, union and kleene star into types}\label{fig:automata:dec}
+\caption{Decoding type automata concatenation into types}\label{fig:automata:dec:dec2}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -424,3 +476,4 @@
     \end{center}
 \caption{Decoding type automata into types}\label{fig:automata:dec}
 \end{figure}
+

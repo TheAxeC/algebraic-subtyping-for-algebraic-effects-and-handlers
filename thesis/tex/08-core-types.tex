@@ -41,6 +41,10 @@ The type $\C \hto \D$ is used for handlers because a handler takes an input comp
 
 Looking at all the changes to the types given in Chapter~\ref{eff-chapter}, the effects of the algebraic subtyping approach become apparant. Different types are added in order to support the subtyping. These are type variables, recursive type, top, bottom, intersection and union \cite{mlsub}. The novel element here is the combination of the algebraic effects and algebraic subtyping. There needs to be a way to bring the dirts into the algebraic subtyping framework. Since the recursive element is handled at the term level, there is no need for recursive dirts. Aside from this and the lack of a function and handler type, the dirts mirror the types.
 
+An important aspect is the semantics given to the dirt. The dirt intersection is used to indicate that the operations are allowed to happen in an input, while dirt union is used in outputs. This, for example, applies to the handler type. A handler type $\C \hto \D$ will generally use dirt intersection in $\C$ and dirt union in $\D$. In Chapter~\ref{polarity}, a restriction will be placed on the structure of types that makes this difference explicit.
+
+Structuring dirts using intersections and dirts as defined by algebraic subtyping, we can take advantage of Dolan's framework. This includes polarity of types and biunification. If dirts were structured using set operations, we wouldn't be able to take advantage of this system.
+
 \begin{figure}[H]
 \begin{center}
 \framebox{

@@ -15,7 +15,7 @@ Once this process is completed, the untyped syntax is then converted into a type
 
 \eff provides an interpreted runtime environment. This runtime environment is based upon the untyped syntax. Having the runtime environment based upon the untyped syntax makes the interpreter more robust. As mentioned before, \eff is a prototype language and is therefor in a constant state of change. The biggest changes happen within the type system (or some syntactical changes). The interpreter has no specific need for a typed language as it is merely a tool to calculate the result of a program.  
 
-\section{Types and terms}
+\section{Types and Terms}
 The terms and types of \core have a near identical representation as seen in the specification. There are two sorts of terms, expressions and computations as seen in Listing~\ref{lst:expression}. Each term is annotated with a location and a scheme. The location refers to the location within the source code in order to be able to use that information when printing debug or error messages.
 
 \begin{figure}
@@ -43,9 +43,8 @@ A scheme contains information about the type, the free variables that occur in t
 type context = (Untyped.variable, Type.ty) OldUtils.assoc
 (* represents a generic scheme *)
 type 'a t = context * 'a * Unification.t
-(* type scheme for expressions *)
+(* type scheme for expressions and computations*)
 type ty_scheme = Type.ty t
-(* type scheme for computations *)
 type dirty_scheme = Type.dirty t
 \end{lstlisting}
 \end{figure}
@@ -91,26 +90,26 @@ The implementation of \lstinline{Ctor.lambdavar} and \lstinline{Ctor.letvar} is 
 \caption{Distinguish lambda-bound and let-bound variables}
 \label{lst:var}
 \begin{lstlisting}[language=Caml]
-(* Lookup the variable in the context, which includes only
-lambda-bound variables.
-If we can find the variable, it is lambda-bound.
-Otherwise, check the (polymorphic) context 
+(* Lookup the variable in the context, which includes
+   only lambda-bound variables.
+   If we can find the variable, it is lambda-bound.
+   Otherwise, check the (polymorphic) context 
 *)
 begin match OldUtils.lookup x ctx with
-| Some ty -> Ctor.lambdavar ~loc x ty, st
-| None -> Ctor.letvar ~loc x (get_var_scheme_env ~loc st x), st
+    | Some ty -> Ctor.lambdavar ~loc x ty, st
+    | None -> Ctor.letvar ~loc x (get_var_scheme_env ~loc st x), st
 end
 
 (* Lookup a type scheme for a variable in the typing environment
-Otherwise, create a new scheme (and add it to the typing environment)
+   Otherwise, create a new scheme
 *)
 let get_var_scheme_env ~loc st x =
 begin match TypingEnv.lookup st.context x with
     | Some ty_sch -> ty_sch
     | None -> 
-            let ty = Type.fresh_ty () in
-            let sch = Scheme.tmpvar ~loc x ty in
-            sch
+        let ty = Type.fresh_ty () in
+        let sch = Scheme.tmpvar ~loc x ty in
+        sch
 end
 \end{lstlisting}
 \end{figure}
@@ -118,11 +117,11 @@ end
 \section{Simplification}
 The simplification algorithm is partly left for future work. The simplification algortihm works in four stages. In the first stage, types are converted into type automata which are nondeterministic finite automata (NFA). These type automata need to be simplified which can be done using any standard simplification algortihm. However, most of these algorithms operate on deterministic finite automata (DFA) as opposed to NFA's. Thus in the second stage, the type automata is converted into a DFA. Afterwards, in the third stage, the DFA is simplified using any chosen simplification algorithm. Finally, the DFA is deconstructed into a type again.
 
-The implementation for the second and third stage are left for future work. However, the first and last stage, the encoding and decoding have been implemented. In the definition of the automaton as seen in Listing~\ref{lst:simple}, an initial and final state is required. The transition table is stored as a list. While transitions representing types and dirts could be stored within the same list, in order to simplify the encoding, there are two different lists. Just like there are two different data types for types and dirty types. The alphabet is a direct implementation from the specification. The representation of the actual states is of no importance. In the implementation, integers were chosen as we can very simply generate new unique states by incrementing a counter. The simplification should take place right after the biunification within each ``smart'' constructor. 
+The implementation for the second and third stage are left for future work. However, the first and last stage, the encoding and decoding have been implemented. In the definition of the automaton as seen in Listing~\ref{lst:simplification}, an initial and final state is required. The transition table is stored as a list. While transitions representing types and dirts could be stored within the same list, in order to simplify the encoding, there are two different lists. Just like there are two different data types for types and dirty types. The alphabet is a direct implementation from the specification. The representation of the actual states is of no importance. In the implementation, integers were chosen as we can very simply generate new unique states by incrementing a counter. The simplification should take place right after the biunification within each ``smart'' constructor. 
 
 \begin{figure}
 \caption{Representation of type automata}
-\label{lst:simple}
+\label{lst:simplification}
 \begin{lstlisting}[language=Caml]
 type ('state,'letter) automaton = {
     initial    : 'state;

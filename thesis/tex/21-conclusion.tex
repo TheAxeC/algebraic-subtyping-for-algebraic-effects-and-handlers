@@ -1,15 +1,26 @@
+The main goal of this thesis is to extend algebraic subtyping such that it can operate on algebraic effects and handlers. There is a lot of research going towards extending various type systems to type-\&-effect systems in order to give programming language developers more options to utilise algebraic effects and handlers. 
+
+Algebraic subtyping offers the advantage and expressivity of subtyping, without the disadvantage of unsolved subtyping constraints. The lack of this disadvantage also extends to effects.
+
+By closely following the approach of algebraic subtyping, a type-\&-effect system was constructed that still has the properties of algebraic subtyping extended with semantics for algebraic subtyping for effects. This thesis offers a type-\&-effect system that is based on the calculus of \eff. A biunification algorithm, and by extension the bisubstitutions, constraint handling and polar types have been extended to include algebraic effects and handlers. A type inference algorithm, using the biunification algorithm, has been proposed. The simplification of types using type automata has been extended to the simplification of type and effects using type-\&-effect automata.
+
+This type-\&-effect system, called \core, has been implemented in the \eff programming language. The implementation has more features compared to the formalisation. Records, matching and tuples have been implemented. The simplification algorithm has not been included in the final implementation. The implementation has been evaluated using performance testing and comparing inferred types.
+
+The original goals have been achieved. The focus lied on the design of a type-\&-effect system derived from Dolan's algebraic subtyping as well as the proving of the properties of this system. The type inference algorithm, the implementation and the emperical evaluation were added to prove the correctness and improve the usability of our work. 
+
+We added a type inference algorithm, an implementation and the emperical evaluation into the main scope of this thesis. Which helped me to ground the work as well as deliver a more complete package. Due to this, the proofs are not as rigorous as initially planned. In his PhD thesis, Dolan focusses heavily on order theory, semirings, Kleene algebra and category theory. Using order theory, semirings, Kleene algebra and category theory to help construct proofs, in addition to including all the optional components would have been too big of a scope. Some proofs in this thesis therefor heavily rely on the proofs made by Dolan in his thesis.
+
+In conclusion, \core and an implementation have been delivered. I have shown that algebraic subtyping can indeed be extended to include algebraic effects and handlers. In addition, \core and the implementation provide a platform for further research. 
 
 \section{Future Work}
-\todo{write future work}
+Even though this thesis has come to a close, there are still opportunities for future work. Some of the following aspects can be considered low hanging fruit, while others build on top of and go beyond the research in this thesis.
 
-\subsection{Simplification}
+\subsection{Simplification algorithm implementation}
+As mentioned in Chapter~\ref{implementation}, the simplification algorithm has not been implemented in the \eff programming language. Implementing the simplification algorithm would yield interesting results in the emperical evaluation. One aspect of the emperical evaluation is the performance benchmarking of the algebraic subtyping approach compared to subtyping. Some benchmarks, the \texttt{Parser} and \textsc{Queens} programs, performed badly when compared to subtyping. I made the hypothesis that this is due to the lack of simplification that causes an internal build-up of type variables. By implementing the simplification algorithm, this hypothesis can be tested. 
 
-\subsection{Biunification with type automata}
+\subsection{Biunification with Type Automata}
+Extending on the previous point, there is one aspect of the simplification algorithm that has not been extended to algebraic effects and handlers. This is biunification with type automata. In his thesis, Dolan uses the type automata to implement biunification, replacing the standard biunification algorithm. This algorithm is straightfoward to extend in order to use type-\&-effect automata. Yet again, comparing the performance of this biunification algorithm compared to the current version could yield interesting results.
 
 \subsection{Optimization}
-
-\section{Conclusion}
-
-\todo{write conclusion}
-Briefly recall what the goal of the work was. Summarize what you have done, summarize the results, and present conclusions. Conclusions include a critical assessment: where the original goals reached? Discuss the limitations of your work. Describe how the work could possibly be extended in the future, mitigating limitations or solving remaining problems.
+Originally, as stated in Subsection~\ref{problems-eff}, we were looking for type-\&-effect system that could efficiently be used in the development of an optimising compiler. Algebraic subtyping, and by extension, \core, is partly such a type-\&-effect system. An optimising compiler for \core does not have to deal with subtyping constraints anymore, because they get solved during the type inference using biunification. This opens the door for better optimization techniques using \core. 
 

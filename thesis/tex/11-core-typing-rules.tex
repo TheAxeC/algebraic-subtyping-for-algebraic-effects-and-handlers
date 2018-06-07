@@ -1,5 +1,5 @@
 
-\section{Typing rules}\label{typingrules}
+\section{Typing Rules}\label{typingrules}
 Figure~\ref{fig:core-typing} defines the typing judgements for values and computations with respect to a standard typing context $\ctx$. Most of the rules are standard. It is important to note that the typing context $\ctx$ contains variables with monomorphic types $A$ and variables with polymorphic type schemes.
 
 \paragraph{Values}
@@ -10,12 +10,176 @@ A handler expression has type $A \E \dirt \intersection \ops \hto B \E \dirt$. A
 \paragraph{Computations}
 The rules for subtyping, application, conditional, return, operation, let and with have a straightforward definition. The interesting rule for the computations is \textsc{Do}. In the \textsc{Do} rule, the type aspect of the $do$ computation is $B$, which is the same type as that of $c_2$. However, the dirt of the $do$ computation is the union of the dirt from $c_1$ and the dirt from $c_2$. Side effects may occur even without the explicit usage of the variable $\letvar$, thus we need to explicitly keep track of those specific side effects. This is done by taking the union.
 
-\begin{figure}[!htb]
+
+
+\section{Properties of the Type System}
+Since the typing rules of \core mirror those from algebraic subtyping and from eff which are both based on the typing rules from ML, the familiar properties of those type systems also hold for \core. 
+
+\subsection{Instantiation}
+The first property is instantiation. Instantiation allows us to replace type variables with types through the means of a type derivation. Instantiation is a property that holds for Algebraic subtyping \cite{dolan2017algebraic}. The proof given here is a straightforward extension from the standard proof.
+
+The (pure) types as defined in Figure~\ref{fig:types:core}, with the exclusion of the handler type $\hto$, is equivalent to the types from algebraic subtyping. The typing rules from \core add some new rules regarding the handlers and the dirts. Excluding these new rules, the typing rules are also equivalent to the algebraic subtyping typing rules. The main distinction is the separation of the typing rules into expressions and computations. This separation is only used to make a distinction and thus does not change any definition. This means that the proofs are also extensions from the proofs from algebraic subtyping, rather than radically different proofs. 
+
+Two type schemes are alpha-equivalent if they only differ in the naming of variables. When two typing contexts are called equivalent, they have the same domain. They assign equal types to $\lambda$-bound variables and alpha-equivalent typing schemes to let-bound variables. The following proposition states that typing also respects this equivalence relation. This holds for both expressions and computations. 
+\begin{prop}
+\label{prop:equiv:env}
+(Equivalence of typing contexts) \\
+If $\ctx_1 \ent v \T A$ and $\ctx_1 \equiv \ctx_2$ then $\ctx_2 \ent v \T A$ \\
+If $\ctx_1 \ent v \T A$ and $\ctx_1 \equiv \ctx_2$ then $\ctx_2 \ent v \T A$
+\end{prop}
+The proof for this proposition is a straightforward induction on derivations. Considering that typing contexts in \core behave exactly the same as typing contexts from algebraic subtyping, the proof is omitted in this thesis as it did not change. Instantiation allows us to apply a substitution to a typing context and the pure or dirty type while preserving validity. A substitution can map typing and dirt variables to types and dirts. 
+\begin{theorem}
+\label{thm:instantiation:pure}
+(Instantiation of pure types) If $\ctx \ent v \T A$ then $\rho(\ctx) \ent v \T \rho(A)$
+\end{theorem}
+
+\begin{theorem}
+\label{thm:instantiation:drty}
+(Instantiation of dirty types) If $\ctx \ent c \T \C$ then $\rho(\ctx) \ent c \T \rho(\C)$
+\end{theorem}
+The proofs for both of these theorems are made in Appendix~\ref{proof:instantiation}. There are no note-worthy cases in this proof regarding novelty of this thesis. However, considering \core has typing rules which did not exist in algebraic subtyping, the proof is given for completion.
+
+\subsection{Weakening}
+Weakening allows us to weaken any type derivation. This is done by making stronger assumptions in the typing context. More concretely, this means that the weaker typing context may contain more variable mapping than is actually necessary, it may assign alpha-equivalent typing schemes to let-bound variables and it may assign subtypes to all $\lambda$-bound variables. We write $\ctx_2 \le \ctx_1$ when $dom \ctx_2 \supseteq dom \ctx_1$ and $\forall \letvar \in \ctx_1: \ctx_2(\letvar) \equiv \ctx_2(\letvar)$ and $\forall x \in \ctx_1: \ctx_2(x) \le \ctx_1(x)$.
+
+\begin{theorem}
+\label{thm:weakening:pure}
+(Weakening of pure types) If $\ctx_1 \ent v \T A$ and $\ctx_2 \le \ctx_1$ then $\ctx_2 \ent v \T A$
+\end{theorem}
+
+\begin{theorem}
+\label{thm:weakening:drty}
+(Weakening of dirty types) If $\ctx_1 \ent c \T \C$ and $\ctx_2 \le \ctx_1$ then $\ctx_2 \ent c \T \C$
+\end{theorem}
+
+The proofs for both of these theorems are not given in their entirety. We can construct the proof by induction of the derivations which is mostly straightforward. \textsc{True} is an example of such a straightforward case, $\ctx_1 \ent \tru \T bool$ and $\ctx_2 \le \ctx_1$ trivially leads to $\ctx_2 \ent \tru \T bool$. 
+
+The non-trivial cases are \textsc{Var-$\lambda$}, \textsc{Var-$\forall$}, \textsc{Fun}, \textsc{Let} \textsc{Do} and \textsc{Hand}. For all these cases, except for \textsc{Hand}, the original proof from Dolan still applies. For \textsc{Var-$\lambda$}, we have $(x : A) \in \ctx_1$ which can be written as $\ctx_1(x) = A$. Due to $\ctx_2 \le \ctx_1$, we know that $\ctx_2(x) \le A$. By applying \textsc{SubVal}, we achieve our result. For \textsc{Var-$\forall$}, the resulting type schemes are alpha-equivalent, thus the case is valid. 
+
+For \textsc{Fun}, $\ctx_2 \le \ctx_2$ implies that $\ctx_2, x \T A \le \ctx_1, x \T A$, which causes the inductive hypothesis to apply. The exact same reasoning applies to the \textsc{Hand} case, where we use it for the value case and effect clauses. Finally, there is the \textsc{Let} and \textsc{Do}. The difficulty here is the condition that $\alpha \not\in FTV(\ctx)$. We can use Theorem~\ref{thm:instantiation:pure} and Theorem~\ref{thm:instantiation:drty} to make sure this condition applies. Afterwards, we can apply the weakening. 
+
+\subsection{Substitution}
+\core contains several kinds of variables. For types, there are $\lambda$-bound variables and let-bound variables. For dirts, there dirt variables. We need two substitution theorems for, respectively, $\lambda$-bound and let-bound variables. However, we do not need a substitution theorem for dirt variables. The reasoning behind this is that the typing context can only contain pure types, but not dirty types. 
+
+\core models its algebraic effects and handlers to \eff. \eff executes effects as soon as they are seen. The code \lstinline{let x = Op true}, will execute \textit{effect Op} and the result of that effect will be stored in \lstinline{x}. Thus, it would not make sense for a typing context to directly contain effects.
+
+\begin{theorem}
+\label{thm:sub:lambda:pure}
+(Substitution $\lambda$-bound for pure types) If $\ctx \ent v \T A, \ctx(x) = B$ and $\ctx_x \ent e' \T B$ then $\ctx_x \ent v[e'/x] \T A$
+\end{theorem}
+
+\begin{theorem}
+\label{thm:sub:lambda:drty}
+(Substitution $\lambda$-bound for dirty types) If $\ctx \ent c \T \C, \ctx(x) = B$ and $\ctx_x \ent e' \T B$ then $\ctx_x \ent c[e'/x] \T \C$
+\end{theorem}
+\core does not change the monomorphic types (in the monomorhpic typing context) from algebraic subtyping. Thus the original substitution proof cannot be invalidated. Handlers abstract variables in the same way that functions abstract variables and thus, cannot cause issues.
+
+
+\begin{theorem}
+\label{thm:sub:let:pure}
+(Substitution let-bound for pure types) If $\ctx \ent v \T A, \ctx(\letvar) = \polytype{B}$ and $\forall \bar{A}: \ctx_\letvar \ent e' \T B[\bar{A}/\alpha]$ then $\ctx_x \ent v[e'/\letvar] \T A$
+\end{theorem}
+
+\begin{theorem}
+\label{thm:sub:let:drty}
+(Substitution let-bound for dirty types) If $\ctx \ent c \T \C, \ctx(\letvar) = \polytype{B}$ and $\forall \bar{A}: \ctx_\letvar \ent e' \T B[\bar{A}/\alpha]$ then $\ctx_x \ent c[e'/\letvar] \T \C$
+\end{theorem}
+\core does not change the polymorphic types (in the polymorphic typing context) from algebraic subtyping. Thus the original substitution proof cannot be invalidated.
+
+
+\subsection{Soundness}
+Now, we can proof the soundness of our system. This means that we need to show that typable programs in \core are valid and do not go wrong. This is done with small-step-call-by-value operational semantics, determined by a relation $c \longrightarrow c'$ defined in Figure~\ref{fig:small:step}. One peculiarity can be noticed in the $\withhandle{h}{\op v}$ rules. These rules contain an extra function $.\fun{y}c$ which represents an implicit continuation. This continuation is not visible to the user of \core and is only used for the operational semantics. 
+
+\begin{figure}[htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar}    
+  \inferrule[App]{}{
+    (\fun{x}c) v \longrightarrow c[v/x]
+}
+
+\inferrule[Cond-True]{}{
+    \conditional{\tru}{c_1}{c_2} \longrightarrow c_1
+}
+
+\inferrule[Cond-False]{}{
+    \conditional{\fls}{c_1}{c_2} \longrightarrow c_2
+}
+
+\inferrule[Doin-C]{
+    c_1 \longrightarrow c_1'
+}{
+    \doin{\letvar = c_1} c_2 \longrightarrow \doin{\letvar = c_1'} c_2
+}
+
+\inferrule[Doin-Ret]{}{
+    \doin{\letvar = \ret v} c_2 \longrightarrow c_2[(\ret v)/x]
+}
+
+\inferrule[Doin-Op]{}{
+    \doin{\letvar = \op v} c_2 \longrightarrow c_2[(\op v)/x]
+}
+
+\inferrule[Let]{}{
+    \letin{\letvar = v} c \longrightarrow c[v/\letvar]
+}
+
+\inferrule[With-C]{
+  c \longrightarrow c'
+}{
+  \withhandle{h}{c} \longrightarrow \withhandle{h}{c'}
+}
+
+\inferrule[With-Ret]{}{
+  \withhandle{h}{\ret v} \longrightarrow c_r[v/x]
+}
+
+\inferrule[With-Op-Handled]{
+  h \text{ handles } \op
+}{
+  \withhandle{h}{\op v. \fun{y}c} \longrightarrow c_\op[v/x, (\fun{y}(\withhandle{h}{c}))/k]
+}
+
+\inferrule[With-Op-Not-Handled]{
+  h \text{ does not handle } \op
+}{
+  \withhandle{h}{\op v. \fun{y}c} \longrightarrow \op v. \fun{y}(\withhandle{h}{c})
+}
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Small-step transition relation}\label{fig:small:step}
+\end{figure}
+
+\begin{theorem}
+\label{thm:value}
+(Value inversion) \\
+If $\ent v \T A \to \C$ then $v = \fun{x}$ \\
+If $\ent v \T \C \hto \D$ then $v = \{\ret x \mapsto c_r, \shortcases\}$ \\
+If $\ent v \T bool$ then $v \in \{\tru, \fls\}$
+\end{theorem}
+
+\begin{theorem}
+\label{thm:progress}
+(Progress) If $\ent c \T A$ then $c$ is either a $\ret v$, a $\op v$ or $c \longrightarrow c'$ for some $c'$
+\end{theorem}
+
+\begin{theorem}
+\label{thm:preservation}
+(Preservation) If $\ent c \T \C$ and $c \longrightarrow c'$ then $\ent c' \T \C$
+\end{theorem}
+
+These two theorems make up the soundness theorem for \core. The \textsc{Progress} theorem states that we do not get stuck when evaluating a computation. Either we end up with a $\ret v$ or $\op v$, which means the evaluation has ended, or we can continue evaluating. Values $v$ are not mentioned since they do not require further evaluation, hence the name values. The \textsc{Preservation} theorem states that the small-step operational semantics produce a valid term. Theorem~\ref{thm:value} is an additonal theorem that helps us proof the other two theorems. The proofs are given in Appendix~\ref{proof:soundness}.
+
+\begin{figure}[htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.95\columnwidth}
 \[\begin{array}{r@{~}c@{~}l}
   \text{typing contexts}~\ctx & \bnfis {} & \epsilon \bnfor \ctx, x : A \bnfor \ctx, \letvar : \polytype{B}\\
+  
 \end{array}\]
 \textbf{Expressions}
 \begin{mathpar}
@@ -111,11 +275,11 @@ The rules for subtyping, application, conditional, return, operation, let and wi
   }
 
   \inferrule[Do]{
-    \ctx \ent c_1 \T A \E \dirt_1 \\
-    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt_2 \\
+    \ctx \ent c_1 \T A \E \dirt \\
+    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt \\
     \alpha \not\in FTV(\ctx)
   }{
-    \ctx \ent \doin{\letvar = c_1} c_2 \T B \E (\dirt_1 \union \dirt_2)
+    \ctx \ent \doin{\letvar = c_1} c_2 \T B \E \dirt
   }
 
   \inferrule[With]{
@@ -131,18 +295,3 @@ The rules for subtyping, application, conditional, return, operation, let and wi
 \end{center}
 \caption{Typing of \core}\label{fig:core-typing}
 \end{figure}
-
-\section{Properties of the type system}
-Since the typing rules of \core mirror those from algebraic subtyping and from eff which are both based on the typing rules from ML, the familiar properties of those type systems also hold for \core.
-
-\subsection{Instantiation}
-\todo{explain proof instantiation}
-
-\subsection{Weakening}
-\todo{explain proof weakening}
-
-\subsection{Substitution}
-\todo{explain proof substitution}
-
-\subsection{Soundness}
-\todo{explain proof soundness}

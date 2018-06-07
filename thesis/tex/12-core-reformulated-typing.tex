@@ -1,4 +1,4 @@
-\section{Typing schemes and subsumption}
+\section{Typing Schemes and Subsumption}
 Currently, the typing context $\ctx$ contains variables with monomorphic types $A$ and variables with polymorphic type schemes. Separating this into two typing contexts, one containing variables with monomorphic types $A$ and one containing variables with polymorphic type schemes will make the type inference easier. Thus, we need to reformulate the typing rules. \cite{dolan2017algebraic}
 
 Before we can reformulate the typing rules, there are some important concepts to introduce. Subsumption is the analogue of subtyping between two type schemes. Subsumption is an interesting case as the $\le$ relation can be used between two environments when they assign alpha-equivalent type schemes to let-bound variables. Considering that the typing environments in \core only contains pure types and pure typing schemes, the typing environment is exactly alike to the typing environment from standard algebraic subtyping. This section therefore summarizes the required definitions from algebraic subtyping. Proofs for the subsumption are also not given in this thesis, \cite{dolan2017algebraic}
@@ -7,23 +7,18 @@ The important definitions are given in Figure~\ref{fig:core-scheme}. Definition 
 
 \textsc{SubScheme} requires both typing contexts to use exactly the same type schemes, instead of alpha-equivalent type schemes. $\le^\forall$ is introduced in definition \textsc{SubInst}. This definitoon states that $[\ctxm_2]A_2$ subsumes $[\ctxm_1]A_1$ if there is some substitution $\rho$ (that instantiates both type and dirt variables) for $[\ctxm_2]A_2$ such that $\rho([\ctxm_2]A_2) \le [\ctxm_1]A_1$. Definition \textsc{SubstEq} shows how a substitution is applied to a typing scheme. \textsc{SubInstDirty} is to \textsc{SubSchemeDirty} what \textsc{SubInst} is to \textsc{SubScheme}.
 
-Two monomorphic typing contexts $\ctxm_1$ and $\ctxm_2$ have a greatest lower bound: $\ctxm_1 \intersection \ctxm_2$ where dom($\ctxm_1 \intersection \ctxm_2$) = dom($\ctxm_1$) $\cup$ dom($\ctxm_2$), and $(\ctxm_1 \intersection \ctxm_2)(x) = \ctxm_1(x) \intersection \ctxm_2(x)$, interpreting $\ctxm_i(x) = \top$ if $x \in dom(\ctxm_i)$ (for $i \in \{1, 2\}$). \cite{dolan2017algebraic}
-
-Two monomorphic typing contexts are equivalent if they subsume each other as seen in \textsc{Eq}. Definition \textsc{WeakeningMono} more concretely defines the $\le^\forall$ in terms of the domain of the monomorphic typing contexts.
-
-For polymorphic typing contexts, $\ctxp$ is used. Definition \textsc{WeakeningPoly} shows the $\le^\forall$ in terms of the domain of the polymorphic typing contexts.
+Two monomorphic typing contexts $\ctxm_1$ and $\ctxm_2$ have a greatest lower bound: $\ctxm_1 \intersection \ctxm_2$ where dom($\ctxm_1 \intersection \ctxm_2$) = dom($\ctxm_1$) $\cup$ dom($\ctxm_2$), and $(\ctxm_1 \intersection \ctxm_2)(x) = \ctxm_1(x) \intersection \ctxm_2(x)$, interpreting $\ctxm_i(x) = \top$ if $x \in dom(\ctxm_i)$ (for $i \in \{1, 2\}$). \cite{dolan2017algebraic} Two monomorphic typing contexts are equivalent if they subsume each other as seen in \textsc{Eq}. Definition \textsc{WeakeningMono} more concretely defines the $\le^\forall$ in terms of the domain of the monomorphic typing contexts. For polymorphic typing contexts, $\ctxp$ is used. Definition \textsc{WeakeningPoly} shows the $\le^\forall$ in terms of the domain of the polymorphic typing contexts.
 
 An interesting detail about the typing schemes is that they can be equivalent by $\equiv^\forall$ without being alpha-equivalent. Disregarding effects, let's take the \texttt{choose} function, which takes two arguments and returns one of the two randomly. With the Hindley-Milner type system, we would infer the typing scheme $\alpha \to \alpha \to \alpha$. Algebraic subtyping will infer the typing scheme $\alpha \to \beta \to (\alpha \union \beta)$. These two typing schemes are not alpha-equivalent. The second typing scheme subsumes the first by instantiation and the first typing scheme subsumes the second. Thus both typing schemes are equivalent by $\equiv^\forall$, but not alpha-equivalent. 
 
-\section{Reformulated typing rules}\label{reformulated}
-Now, we can reformulate the typing rules from Figure~\ref{fig:core-typing}. The reformulated typing rules are given in Figure~\ref{fig:core-reform-typing}. The \textsc{SubVal} and \textsc{SubComp} rules are used for both subtyping and instantiation. This is due to the $\le^\forall$ relation. 
+\section{Reformulated Typing Rules}\label{reformulated}
+Now, we can reformulate the typing rules from Figure~\ref{fig:core-typing}. The reformulated typing rules are given in Figure~\ref{fig:core-reform-typing}. The \textsc{SubVal} and \textsc{SubComp} rules are used for both subtyping and instantiation. This is due to the $\le^\forall$ relation. Most rules are straightforward extensions from the reformulated typing rules from algebraic subtyping. 
 
-Most rules are straightforward extensions from the reformulated typing rules from algebraic subtyping. The (polymorphic) typing context $\ctxp$ used for the reformulated rules assign typing schemes to let-bound variables. The reformulated typing rules are an alternative, but equivalent representation of the typing rules. The type inference algorithm described in Chapter~\ref{type-inference} uses the reformulated typing rules. 
+The (polymorphic) typing context $\ctxp$ used for the reformulated rules assign typing schemes to let-bound variables. The reformulated typing rules are an alternative, but equivalent representation of the typing rules. The type inference algorithm described in Chapter~\ref{type-inference} uses the reformulated typing rules. 
 
-\subsection{Equivalence of original and reformulated typing rules}
-\todo{explain proof reformulated typing judgements}
+The equivalence of the original and reformulated typing rules are shown in Appendix~\ref{equivalence-reform-rules}. The proof is made by creating a mapping between regular typing contexts and the monomorphic and polymorphic typing contexts. 
 
-\begin{figure}[!htb]
+\begin{figure}
   \begin{center}
   \begin{framed}
   \begin{minipage}[t]{0.95\columnwidth}
@@ -63,6 +58,11 @@ Most rules are straightforward extensions from the reformulated typing rules fro
       \inferrule[WeakeningPoly]{}{
         \ctxp_2 \le^\forall \ctxp_1 \leftrightarrow dom(\ctxp_2) \supseteq dom(\ctxp_1), \ctxp_2(\letvar) \le^\forall \ctxp_1(\letvar) \text{ | } \letvar \in dom(\ctxp_1)
       }
+
+      \inferrule[WeakeningType]{}{
+        \text{If } \ctxp_1 \ent v \T [\ctxm]A \text{ and } \ctxp_2 \le^\forall \ctxp_1 \text{ then } \ctxp_2 \ent v \T [\ctxm]A\\
+        \text{If } \ctxp_1 \ent c \T [\ctxm]\C \text{ and } \ctxp_2 \le^\forall \ctxp_1 \text{ then } \ctxp_2 \ent c \T [\ctxm]\C
+      }
   \end{mathpar}
   \end{minipage}
   \end{framed}
@@ -70,7 +70,7 @@ Most rules are straightforward extensions from the reformulated typing rules fro
 \caption{Definitions for typing schemes and reformulated typing rules}\label{fig:core-scheme}
 \end{figure}
 
-\begin{figure}[!htb]
+\begin{figure}[htb]
 \begin{center}
 \framebox{
 \begin{minipage}{0.95\columnwidth}
@@ -170,10 +170,10 @@ Most rules are straightforward extensions from the reformulated typing rules fro
       }
       
       \inferrule[Do]{
-        \ctxp \entt c_1 \T [\ctxm_1](A \E \dirt_1) \\
-        \ctxp, \letvar \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt_2)
+        \ctxp \entt c_1 \T [\ctxm_1](A \E \dirt) \\
+        \ctxp, \letvar \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt)
       }{
-        \ctx \entt \doin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2](B \E (\dirt_1 \union \dirt_2))
+        \ctx \entt \doin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
       }
       
       \inferrule[With]{

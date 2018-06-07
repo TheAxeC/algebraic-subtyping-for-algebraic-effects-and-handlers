@@ -1,15 +1,15 @@
-% \documentclass[master=cws, masteroption=ai]{kulemt} 
-\documentclass[master=ecws, masteroption=ai]{kulemt}
+\documentclass[master=cws, masteroption=ai]{kulemt} 
+% \documentclass[master=ecws, masteroption=ai]{kulemt}
 \setup{title={Algebraic Subtyping for Algebraic Effects and Handlers},
   author={Axel Faes},
   promotor={Prof.\,dr.\,ir.\ Tom Schrijvers},
-  assessor={Amr Hany Shehata Saleh, Prof.\,dr.\,ir.\ Bart Jacobs},
+  assessor={Amr Hany Shehata Saleh\\Prof.\,dr. Bart Jacobs},
   assistant={Amr Hany Shehata Saleh}}
 % The following \setup may be removed entirely if no filing card is wanted
 \setup{filingcard,
   translatedtitle=,
-  udc=,
-  shortabstract={Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. Recently, Stephen Dolan (University of Cambridge, UK) presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. In this work, a type-\&-effect system is derived that extends Dolan's elegant type system with effect information. This type-\&-effect system inherits Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserves all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types).}}
+  udc=681.3,
+  shortabstract={Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. Recently, Stephen Dolan (University of Cambridge, UK) presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. In this work, a type-\&-effect system is derived that extends Dolan's elegant type system with effect information. This type-\&-effect system inherits Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserves all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types). This type-\&-effect system has been implemented in the \eff programming language in order to provide a proof-of-concept.}}
 
 % Choose the main text font (e.g., Latin Modern)
 \setup{font=lm}
@@ -25,9 +25,14 @@
 \usepackage{xspace}
 \usepackage{stmaryrd}
 \usepackage{listings}
-\usepackage{newtxmath}
+% \usepackage{newtxmath}
 \usepackage{float}
 \usepackage{pdfpages}
+\usepackage{bm}
+
+\usepackage{amssymb,amsmath,amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Proposition}
 
 \usepackage{todonotes}
 
@@ -43,40 +48,64 @@
 
 \newcommand{\C}{\underline{C}}
 \input{tex/00-macros}
-% \newcommand{\todo}[1]{\textcolor{red}{\textsc{Todo:} #1}}
-
-% Needed to use the files from spec
-% \let\subparagraph\paragraph
-% \let\paragraph\subsubsection
-% \let\subsubsection\subsection
-% \let\subsection\section
-% \let\section\chapter
 
 \begin{document}
 
+\renewcommand{\prefacename}{Acknowledgements}
 \begin{preface}
-  I would like to thank everybody who kept me busy and supported me the last year,
-  especially my promoter and my assistants. I would also like to thank the
-  jury for reading the text.
+  This thesis has been quite a long journey. I was able to get invested into an interesting field of research and learn a lot of new things. Both about research, and about myself. \\ 
+\\
+  I would like to thank everybody who kept me busy and supported me the last year, especially my promoter, Tom Schrijvers and my daily advisor, Amr Hany Saleh. Without them, I wouldn't have been able to push myself forward as much as I did. I would also like to thank the jury for reading the text. 
 \end{preface}
 
 \tableofcontents*
 
 \begin{abstract}
-  Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. Recently, Stephen Dolan (University of Cambridge, UK) presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. In this work, a type-\&-effect system is derived that extends Dolan's elegant type system with effect information. This type-\&-effect system inherits Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserves all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types).
+  Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. Recently, Stephen Dolan (University of Cambridge, UK) presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. In this work, a type-\&-effect system is derived that extends Dolan's elegant type system with effect information. This type-\&-effect system inherits Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserves all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types). This type-\&-effect system has been implemented in the \eff programming language in order to provide a proof-of-concept.
 \end{abstract}
 
 \renewcommand{\abstractname}{Nederlandstalige Samenvatting}
 
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
 \begin{abstract}
-  Algebraische effecten en handlers ...
+Algebraische effecten en handlers zijn een nieuw formalisme om neveneffecten formeel te modelleren, ontworpen door Matija Pretnar (University of Ljubjana) en Gordon Plotkin (University of Edinburgh). Een voorbeeld van een neveneffect is non-determinisme of schrijven naar een bestand. Deze algebraische effect handlers kunnen vergelijkt worden met exception handlers uit Java. Echter, in Java heeft een exception handler enkel toegang tot de exception. Informatie over de besturingsstroom en de code-uitvoering op de plaats waar de exception gegooid is, is verloren.
+
+Een algebraische effect handler heeft hier explicit toegang toe. De algebraische effect handler kan de code-uitvoering laten hervatten. Dit maakt effecten sterker en expressiever dan exceptions. Plotkin, Pretnar en Power hebben de \eff programmeertaal ontwikkelt. Deze programmeertaal maakt van algebraische effecten en handlers eerste-klas burgers. 
+
+\eff is een getypeerde programmeertaal. Elke getypeerde taal vereist een type systeem. Een type systeem bestaat uit een aantal regels die types toekennen aan de verschillende termen in de programmeertaal. Voor het optimaal gebruik van algebraische effecten en handlers is een type-\&-effect systeem vereist. Dit systeem zorgt ervoor dat effect informatie (welke effecten gebruikt worden, alsook waar ze gebruikt worden) bijgehouden kan worden. \eff gebruikt een type-\&-effect systeem dat gebruik maakt van subtyping constraints. 
+
+In zijn PhD thesis stelt Stephen Dolan (University of Cambridge, UK) een nieuw type systeem voor dat subtyping en parametrisch polymorphisme combineert. Dit type systeem kan subtyping constraints encoderen in een elegante structuur in de types. Dit type systeem wordt algebraic subtyping genoemd. 
+
+Aan de ene kant is het niet gemakkelijk om huidige type-\&-effect systemen te gebruiken voor de optimalisatie van algebraische effecten en handlers. Dit komt door het zware gebruik van subtyping constraint. In recent onderzoek naar een geoptimaliseerde compiler voor \eff werd dit probleem ondervonden. 
+
+Aan de andere kant, Dolan's algebraic subtyping kan gezien worden als een mogelijke oplossing voor de keerzijde van subtyping constraints. Dolan vermeld algebraische effecten maar beknopt. Dolan's algebraic subtyping systeem uitbreiden met effecten kan een goed platform voorbrengen voor verder onderzoek richting algebraische effecten en handlers.  
+
+Het toevoegen van effect informatie is echter geen triviale taak. Om te zorgen dat het systeem correct blijft werken, moet de effect informatie zorgvuldig toegevoegd worden in een correcte representatie. Het is ook belangrijk om te zorgen dat de interne omgang met effecten in het systeem correct uitgevoerd wordt. Deze twee aspecten vormen de hoofdzakelijke vraagstelling van deze masterproef. 
+
+Om de vraagstelling zorgvuldig te kunnen benaderen, zijn we begonnen met een uitvoerige bestudering van de huidige literatuur. De theorie van programmeertalen vormt de ruggengraat van deze literatuur. Andere belangrijke componenten zijn de algebraische effecten en handlers alsook het algebraic subtyping systeem. Na de literatuurstudie is de integratie van de effect informatie in algebraic subtyping uitgevoerd. Verschillende eigenschappen zoals type instantiatie, type verzwakking, type substitutie, type soundness en principi\"ele typering zijn bewezen. Uiteindelijk is het type inferentie algoritme ontworpen en is er een implementatie, een proof-of-concept, gemaakt.
+
+De voornamelijkste contributie van deze thesis is the nieuwe type-\&-effect systeem, \core. Dit systeem is een uitbreiding van Dolan's algebraic subtyping met effect informatie. Een volledige specificatie voor dit systeem is gegeven, inclusief termen, types, typeringsregels en equivalentie met subtyping. \core is afgeleid van de calculus van de \eff programmeertaal om de compatibiliteit met algebraische effecten en handlers te verzekeren. Dit betekent dat algebraische effecten en handlers eerste-klas burgers zijn in \core.
+
+Het type inferentie algoritme van algebraic subtyping is uitgebreid om rekening te kunnen houden met de effect informatie. De nieuwheid van dit type inferentie algoritme bevindt zich in de inferentie van effect informatie en de inferentie van het handler type. 
+
+Algebraic subtyping bevat een type simplificatie algoritme dat ge\"inferreerde types naar een simpelere vorm herleidt. Dit algoritme is ook uitgebreid om te werken met effect informatie. Het simplificatie algoritme encodeerd types naar type automata en decodeerd ze achteraf. De type automata kunnen geconverteerd worden naar deterministische eindigetoestandsautomaat (DFA). Deze DFA kan versimpelt worden met standaard simplificatie algoritmes. Om het simplificatie algoritme uit te breiden met effect informatie, introduceren we het concept van type-\&-effect automata, een uitbreidig van type automata.
+
+De eigenschappen van \core zijn bewezen. Type instantiatie, type verzwakking, type substitutie en type soundness zijn eigenschappen van het type-\&-effect systeem. Voor de type inferentie zijn de herformulatie van de typeringsregels en de principialiteit van de ge\"inferreerde types bewezen. De correctheid van de encodering en decodering van types en effecten naar en van type-\&-effect automata zijn aangetoont. Deze bewijzen steunen op de bewijzen van Dolan in zijn thesis.
+
+De laatste contributie is de implementatie van \core in de \eff programmeertaal. Deze implementaite bevat alle hoofdzakelijke kenmerken van een programmeertaal waaronder tuples, records en matching. Deze implementatie is en kan gebruikt worden voor verdere empirische evaluatie. De implementatie is gebruikt om de performantie te testen in vergelijking met standaard subtyping. De implementatie bevat nog geen volledige implementatie van het simplificatie algoritme, hierdoor is evaluatie niet volledig accuraat. De resultaten tonen aan dat, mits het gebruik van het simplificatie algoritme, \core performanter is dan standaard subtyping. Dit moet echter uitgewezen worden door verder evaluatie. 
+
+Het idee van \core is dat het gebruikt kan worden als een verder platform voor onderzoek richting algebraische effecten en handlers. Hierdoor is er zeker de mogelijkheid naar verder onderzoek. Een eerste uitbreiding die mogelijk is, is de implementatie van het simplificatie algoritme en verder empirische evaluatie van het systeem. 
+
+Type-\&-effect automata worden momenteel enkel gebruikt in het simplificatie algoritme. Dolan stelt echter een manier voor om type automata te gebruiken direct in de type inferentie om het systeem nog performanter te maken. Type-\&-effect automata kunnen dus ook gebruikt worden in eenzelfde manier. Dit is echter niet verder uitgewerkt in deze masterproef.
+
+Uiteindelijk is er de geoptimaliseerde compiler voor \eff. In de motivatie werd gesteld dat het ontwikkelen van zo'n geoptimaliseerde compiler bemoeilijkt wordt door het zware gebruik van subtyping constraints. Aangezien \core een uitbreiding vormt van algebraic subtyping en deze constraints kan oplossen wordt dit probleem gedeeltelijk opgelost. \core opent enkele deuren voor verder onderzoek naar betere optimalisatie technieken voor algebraische effecten en handlers met \core.
+
+Ter conclusie kan er gestelt worden dat de doelstelling van de masterproef bereikt is. De uitkomst is een type-\&-effect systeem, \core, en een implementatie. Ik toon aan dat algebraic subtyping gecombineerd kan worden met algebraische effecten en handlers. Uiteindelijk, \core en de implementatie vormen een springplank voor verder onderzoek. 
 \end{abstract}
 
 \listoffigures
-\listoftodos
-
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{1em}
 
 % Now comes the main text
 \mainmatter
@@ -85,7 +114,7 @@
 \input{tex/01-introduction}
 
 \chapter{Background}\label{background}
-  \section{Simply Typed Lambda Calculus}
+  \section{Simply Typed Lambda Calculus}\label{lambda-calculus}
   \input{tex/02-background}
 
   \section{Algebraic Effects and Handlers}\label{eff-chapter}
@@ -124,7 +153,7 @@
 \appendixpage*
 \appendix
 
-\chapter{Proofs}\label{proofs}
+% \label{proofs}
 \input{tex/13-proofs}
 
 \chapter{Poster}\label{poster}

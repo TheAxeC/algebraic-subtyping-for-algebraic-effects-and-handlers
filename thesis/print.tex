@@ -1,0 +1,40 @@
+%
+% Sjabloon voor de Master of Science in de ingenieurswetenschappen: computerwetenschappen
+%
+%%%%%%%%%%% Wijzig niets boven deze regel %%%%%%%%%%
+% Wijzig hieronder eventueel de optie
+% ai -> hoofdoptie Artificiële intelligentie
+% ci -> hoofdoptie Computationele informatica
+% gs -> hoofdoptie Gedistribueerde systemen
+% mmc -> hoofdoptie Mens-machine communicatie
+% se -> hoofdoptie Software engineering
+% vs -> hoofdoptie Veilige software
+\documentclass[master=cws,masteroption=ai]{kulemt}
+%
+% Vul de titel van jouw masterproef hieronder in tussen { en }.
+\setup{title={Algebraic Subtyping for Algebraic Effects and Handlers},
+%
+% Vul hieronder namen in, steeds Voornaam Naam.
+% Indien meerdere auteurs, assessoren, assistenten, scheidt hun namen
+% met "\and".
+author={Axel Faes},
+promotor={Prof.\,dr.\,ir.\ Tom Schrijvers},
+assessor={Amr Hany Shehata Saleh\\Prof.\,dr. Bart Jacobs},
+assistant={Amr Hany Shehata Saleh}}
+%
+\setup{filingcard, % Deze regel niet wijzigen
+%
+% Vul de vertaalde titel van jouw masterproef hieronder in tussen { en }.
+translatedtitle={Algebraic Subtyping for Algebraic Effects and Handlers},
+%
+% UDC nummer is richtingafhankelijk. zie http://www.udcsummary.info/php/index.php voor het UDC nummer.
+udc=621.3,
+%
+% Hieronder, tussen { en } een korte samenvatting toevoegen.
+% Lege regels en het commando \par zijn niet toegelaten.
+% Wees voorzichtig met speciale TeX-tekens #$%&^_~{}\ !!
+shortabstract={Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. Recently, Stephen Dolan (University of Cambridge, UK) presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect. In this work, a type-\&-effect system is derived that extends Dolan's elegant type system with effect information. This type-\&-effect system inherits Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserves all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types). This type-\&-effect system has been implemented in the \eff programming language in order to provide a proof-of-concept.}}
+%%%%%%%%% Wijzig niets onder deze regel %%%%%%%%
+\setup{coverpageonly}
+\begin{document}
+\end{document}

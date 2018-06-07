@@ -1,23 +1,504 @@
-\section{Instantiation}
-\todo{proof instantiation}
+\chapter{Proof of Instantiation}
+\label{proof:instantiation}
 
-\section{Weakening}
-\todo{proof weakening}
+\begin{proof}[Proof of Theorem~\ref{thm:instantiation:pure}]
+We prove the theorem by induction on derivations, which is straightforward for most of the cases.
+\begin{itemize}
+\item \textsc{SubVal}\\\\
+    If
+    $\inferrule[SubVal]{
+      \ctx \ent v \T A \\
+      A \le B
+    }{
+      \ctx \ent v \T B
+    }$
+    then
+    $\inferrule[SubVal]{
+      \rho(\ctx) \ent v \T \rho(A) \\
+      \rho(A \le B)
+    }{
+      \rho(\ctx) \ent v \T \rho(B)
+    }$\\
+    This is straightforward since: $\rho(A \le B) \equiv \rho(A) \le \rho(B)$, in which case the statement is valid.
+\item \textsc{True}\\\\
+    If
+    $\inferrule[True]{
+    }{
+      \ctx \ent \tru \T bool
+    }$ then 
+    $\inferrule[True]{
+    }{
+      \rho(\ctx) \ent \tru \T \rho(bool)
+    }$\\
+    This is also a straightforward case. $\rho(bool) \equiv bool$, thus the case is trivially true. 
+\item \textsc{False}\\\\
+If
+$\inferrule[False]{
+}{
+  \ctx \ent \fls \T bool
+}$ then 
+$\inferrule[False]{
+}{
+  \rho(\ctx) \ent \fls \T \rho(bool)
+}$\\
+This is also a straightforward case. $\rho(bool) \equiv bool$, thus the case is trivially true. 
+\item \textsc{Var-$\lambda$}\\\\
+If
+$\inferrule[Var-$\lambda$]{
+    (x \T A) \in \ctx
+  }{
+    \ctx \ent x \T A
+  }$ then 
+$\inferrule[Var-$\lambda$]{
+    (x \T \rho(A)) \in \rho(\ctx)
+  }{
+    \ctx \ent x \T \rho(A)
+  }$\\
+This is another straightforward case. If $(x \T A) \in \ctx$ then $(x \T \rho(A)) \in \rho(\ctx)$ is trivially true since $\rho$ only substitutes type and dirt variables and does not change types.
+\item \textsc{Var-$\forall$}\\\\
+If
+$\inferrule[Var-$\forall$]{
+    (\letvar \T \polytype{A}) \in \ctx
+  }{
+    \ctx \ent \letvar \T A[\bar{A}/\bar{\alpha}]
+  }$ then 
+$\inferrule[Var-$\forall$]{
+    (\letvar \T \polytype{\rho'(A)}) \in \rho(\ctx)
+  }{
+    \rho(\ctx) \ent \letvar \T \rho'(A)[\rho(\bar{A})/\bar{\alpha}]
+  }$\\
+This case is nontrivial. This typing rule is not changed in \core compared to algebraic subtyping. Thus, the same reasoning for algebraic subtyping applies here \cite{dolan2017algebraic}. Since $\rho$ and $\rho'$ perform the same substitution, excluding $\bar{\alpha}$, $\rho'(A)[\rho(\bar{A})/\bar{\alpha}] \equiv \rho(A[\bar{A}/\bar{\alpha}])$. 
+\item \textsc{Fun}\\\\
+If
+$\inferrule[Fun]{
+    \ctx, x \T A \ent c \T \C
+  }{
+    \ctx \ent \fun{x}c \T A \to \C
+  }$ then
+$\inferrule[Fun]{
+    \rho(\ctx, x \T A) \ent c \T \rho(\C)
+  }{
+    \rho(\ctx) \ent \fun{x}c \T \rho(A \to \C)
+  }$\\
+This is another trivial case. $\rho(\ctx, x \T A) \equiv \rho(\ctx), x \T \rho(A)$ and $\rho(A \to \C) \equiv \rho(A) \to \rho(\C)$.
+\item \textsc{Hand}\\\\
+If
+$\inferrule[Hand]{
+    \ctx, x \T A \ent c_r \T B \E \dirt \\
+    \Big[
+      (\op \T A_\op \to B_\op) \in \sig \qquad \\
+      \ctx, y \T A_\op, k \T B_\op \to B \E \dirt \ent c_\op \T B \E \dirt
+    \Big]_{\op \in \ops}
+  }{
+    \ctx \ent \shorthand \T \\ A \E \dirt \intersection \ops \hto B \E \dirt
+  }$ then
+  $\inferrule[Hand]{
+    \rho(\ctx, x \T A) \ent c_r \T \rho(B \E \dirt) \\
+    \Big[
+      (\op \T \rho(A_\op \to B_\op)) \in \sig \qquad \\
+      \ctx, y \T \rho(A_\op), k \T \rho(B_\op) \to \rho(B \E \dirt) \ent c_\op \T \rho(B \E \dirt)
+    \Big]_{\op \in \ops}
+  }{
+    \rho(\ctx) \ent \shorthand \T \\ \rho(A \E \dirt \intersection \ops \hto B \E \dirt)
+  }$\\
+This case looks intimidating at first, due to the typing of the handler. However, it is another trivial case. This case plays out in exactly the same way as functions. $\rho(\ctx, x \T A) \equiv \rho(\ctx), x \T \rho(A)$ and $\rho(A \E \dirt \intersection \ops \hto B \E \dirt) \equiv \rho(A \E \dirt \intersection \ops) \hto \rho(B \E \dirt)$. 
+\end{itemize}
+\end{proof}
 
-\section{Substitution}
-\todo{proof substitution}
+\begin{proof}[Proof of Theorem~\ref{thm:instantiation:drty}]
+We prove the theorem by induction on derivations, which is straightforward for most of the cases.
+\begin{itemize}
+\item \textsc{SubComp}\\\\
+If
+$\inferrule[SubComp]{
+    \ctx \ent c \T \C \\
+    \C \le \D
+}{
+    \ctx \ent c \T \D
+}$
+then
+$\inferrule[SubVal]{
+    \rho(\ctx) \ent c \T \rho(\C) \\
+    \rho(\C \le \D)
+}{
+    \rho(\ctx) \ent c \T \rho(\D)
+}$\\
+This is straightforward since: $\rho(\C \le \D) \equiv \rho(\C) \le \rho(\D)$, in which case the statement is valid.
+\item \textsc{SubComp}\\\\
+If
+$\inferrule[App]{
+    \ctx \ent v_1 \T A \to \C \\
+    \ctx \ent v_2 \T A
+}{
+    \ctx \ent v_1 \, v_2 \T \C
+}$
+then
+$\inferrule[App]{
+    \rho(\ctx) \ent v_1 \T \rho(A \to \C) \\
+    \rho(\ctx) \ent v_2 \T \rho(A)
+}{
+    \rho(\ctx) \ent v_1 \, v_2 \T \rho(\C)
+}$\\
+This is straightforward since: $\rho(A \to \C) \equiv \rho(A) \to \rho(\C)$, in which case the statement is valid.
+\item \textsc{Cond}\\\\
+If
+$\inferrule[Cond]{
+    \ctx \ent v \T bool \\
+    \ctx \ent c_1 \T \C \\
+    \ctx \ent c_2 \T \C \\
+}{
+    \ctx \ent \conditional{v}{c_1}{c_2} \T \C
+}$
+then\\
+$\inferrule[Cond]{
+    \rho(\ctx) \ent v \T \rho(bool) \\
+    \rho(\ctx) \ent c_1 \T \rho(\C) \\
+    \rho(\ctx) \ent c_2 \T \rho(\C) \\
+}{
+    \rho(\ctx) \ent \conditional{v}{c_1}{c_2} \T \rho(\C)
+}$\\
+This case is trivially valid.
 
-\section{Soundness}
-\todo{proof soundness}
+\item \textsc{Ret}\\\\
+If
+$\inferrule[Ret]{
+    \ctx \ent v \T A \\
+}{
+    \ctx \ent \ret v \T A \E \emptyrow
+}$
+then
+$\inferrule[Ret]{
+    \rho(\ctx) \ent v \T \rho(A) \\
+}{
+    \rho(\ctx) \ent v \T \rho(A \E \emptyrow)
+}$\\
+This case is trivially valid. In this case, you can see the substition being applied to a dirty type. $\rho(A \E \emptyrow) \equiv \rho(A) \E \emptyrow$. 
 
-\section{Equivalence of Original and Reformulated Typing Rules}
-\todo{proof equivalence}
+\item \textsc{Op}\\\\
+If
+$\inferrule[Op]{
+    (\op \T A \to B) \in \sig \\
+    \ctx \ent v \T A
+}{
+    \ctx \ent \op \, v \T B \E \op
+}$
+then
+$\inferrule[Op]{
+    (\op \T \rho(A \to B)) \in \sig \\
+    \rho(\ctx) \ent v \T \rho(A)
+}{
+    \rho(\ctx) \ent \op \, v \T \rho(B \E \op)
+}$\\
+This case is trivially valid. It is very similar to the \textsc{Ret} case. 
 
-\section{Correctness of Biunification}
-\todo{proof correctness}
+\item \textsc{Let}\\\\
+If
+$\inferrule[Let]{
+  \ctx \ent v \T A \\
+  \ctx, \letvar \T \polytype{A} \ent c \T B \E \dirt \\
+  \alpha \not\in FTV(\ctx)
+}{
+  \ctx \ent \letin{\letvar = v} c \T B \E \dirt
+}$
+then\\
+$\inferrule[Let]{
+    \rho(\ctx) \ent v \T \rho_2(A) \\
+    \rho(\ctx), \letvar \T \rho_2(\polytype{A}) \ent c \T \rho(B \E \dirt) \\
+    \alpha \not\in FTV(\ctx)
+}{
+    \rho(\ctx) \ent \letin{\letvar = v} c \T \rho(B \E \dirt)
+}$\\
+This case is nontrivial. This typing rule is not changed in \core compared to algebraic subtyping. Thus, the same reasoning for algebraic subtyping applies here \cite{dolan2017algebraic}. The tricky part of this rule is $\alpha \not\in FTV(\ctx)$. In order to deal with this, we use $\rho_2$ which maps $\alpha$ to a $\beta$ which is not free in $\rho(\ctx)$ and behaves exactly like $\rho$ otherwise. Due to $\alpha \not\in FTV(\ctx)$, $\rho \equiv \rho_2$.  We can construct a $\rho'$ like in case \textsc{Var-$\forall$} so that $\rho(\letvar) = \polytype{\rho'(A)}$. $\polytype{\rho'(A)}$ is alpha-equivalent to $\forall \bar{\beta} . \rho_2(A)$, thus $\rho(\ctx), \letvar \T \rho_2(\polytype{A}) \equiv \rho(\ctx, \letvar \T \polytype{A})$ according to proposition~\ref{prop:equiv:env}.
 
-\section{Principality of Type Inference}
-\todo{proof principality}
+\item \textsc{Do}\\\\
+If
+$\inferrule[Do]{
+    \ctx \ent c_1 \T A \E \dirt \\
+    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
+  }{
+    \ctx \ent \doin{\letvar = c_1} c_2 \T B \E \dirt
+}$
+then\\
+$\inferrule[Do]{
+    \rho(\ctx) \ent v \T \rho_2(A \E \dirt) \\
+    \rho(\ctx), \letvar \T \rho_2(\polytype{A}) \ent c \T \rho(B \E \dirt) \\
+    \alpha \not\in FTV(\ctx)
+}{
+    \rho(\ctx) \ent \letin{\letvar = v} c \T \rho(B \E \dirt)
+}$\\
+This case is nontrivial. This typing rule is not changed in \core compared to algebraic subtyping. Thus, the same reasoning for algebraic subtyping applies here \cite{dolan2017algebraic}. The reasoning for this case is identical to the \textsc{Let} case.
 
-\section{Simplifying Type Automata}
-\todo{proof type automata}
+\item \textsc{With}\\\\
+If
+$\inferrule[With]{
+    \ctx \ent v \T \C \hto \D \\
+    \ctx \ent c \T \C
+  }{
+    \ctx \ent \withhandle{v}{c} \T \D
+  }$
+then
+$\inferrule[With]{
+    \rho(\ctx) \ent v \T \rho(\C \hto \D) \\
+    \rho(\ctx) \ent c \T \rho(\C)
+  }{
+    \rho(\ctx) \ent \withhandle{v}{c} \T \rho(\D)
+  }$\\
+This case is a straightforward case. $\rho(\C \hto \D) \equiv \rho(C) \hto \rho(\D)$, which makes the case trivial.
+\end{itemize}
+\end{proof}
+
+
+
+
+
+
+\chapter{Proof of Soundness}
+\label{proof:soundness}
+
+\begin{figure}[H]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+\begin{mathpar}    
+    \inferrule[App]{}{
+        (\fun{x}c) v \longrightarrow c[v/x]
+    }
+
+    \inferrule[Cond-True]{}{
+        \conditional{\tru}{c_1}{c_2} \longrightarrow c_1
+    }
+
+    \inferrule[Cond-False]{}{
+        \conditional{\fls}{c_1}{c_2} \longrightarrow c_2
+    }
+
+    \inferrule[Doin-C]{
+        c_1 \longrightarrow c_1'
+    }{
+        \doin{\letvar = c_1} c_2 \longrightarrow \doin{\letvar = c_1'} c_2
+    }
+
+    \inferrule[Doin-Ret]{}{
+        \doin{\letvar = \ret v} c_2 \longrightarrow c_2[(\ret v)/x]
+    }
+
+    \inferrule[Doin-Op]{}{
+        \doin{\letvar = \op v} c_2 \longrightarrow c_2[(\op v)/x]
+    }
+
+    \inferrule[Let]{}{
+        \letin{\letvar = v} c \longrightarrow c[v/\letvar]
+    }
+
+    \inferrule[With-C]{
+      c \longrightarrow c'
+    }{
+      \withhandle{h}{c} \longrightarrow \withhandle{h}{c'}
+    }
+
+    \inferrule[With-Ret]{}{
+      \withhandle{h}{\ret v} \longrightarrow c_r[v/x]
+    }
+
+    \inferrule[With-Op-Handled]{
+      h \text{ handles } \op
+    }{
+      \withhandle{h}{\op v. \fun{y}c} \longrightarrow c_\op[v/x, (\fun{y}(\withhandle{h}{c}))/k]
+    }
+
+    \inferrule[With-Op-Not-Handled]{
+      h \text{ does not handle } \op
+    }{
+      \withhandle{h}{\op v. \fun{y}c} \longrightarrow \op v. \fun{y}(\withhandle{h}{c})
+    }
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Small-step transition relation}\label{fig:small:step:2}
+\end{figure}
+
+\begin{theorem}
+\label{thm:value}
+(Value inversion) \\
+If $\ent v \T A \to \C$ then $v = \fun{x}$ \\
+If $\ent v \T \C \hto \D$ then $v = \{\ret x \mapsto c_r, \shortcases\}$ \\
+If $\ent v \T bool$ then $v \in \{\tru, \fls\}$
+\end{theorem}
+
+The proof for this can be fully extended from the proof giving in Dolan's thesis. Values can only be typed with specific rules. More specifically, only \textsc{False}, \textsc{True}, \textsc{Fun} and \textsc{Hand} type values. If none of these can be used, the \textsc{SubVal} rule needs to be called. This means that a subtyping relationship between a function and a boolean, handler and boolean or function and handler needs to exist. This is prohibited according to Chapter~\ref{typesystem}. Thus, the rules give in the theorem are the only possible options.
+
+\begin{theorem}
+\label{thm:progress:2}
+(Progress) If $\ent c \T A$ then $c$ is either a $\ret v$, a $\op v$ or $c \longrightarrow c'$ for some $c'$
+\end{theorem}
+
+We start with proving Theorem~\ref{thm:progress}. This is done by induction on the typing derivation of $c$. The proof explicitly uses computations. This means that several trivial cases, the values, are already handled. Every value case returns a value. This means we only need to look at \textsc{App}, \textsc{Cond}, \textsc{Ret}, \textsc{Op}, \textsc{Let}, \textsc{Do} and \textsc{With}.   
+
+The proof for the \textsc{App}, \textsc{Cond} and \textsc{Let} are similar to the proof made by Dolan, the others are novel proofs.
+
+$
+  \inferrule[App]{
+    \ctx \ent v_1 \T A \to \C \\
+    \ctx \ent v_2 \T A
+  }{
+    \ctx \ent v_1 \, v_2 \T \C
+  }
+$
+
+The application states that $v_1$ and $v_2$ are already values. $v_1$ also need to have the function type and thus $v_1$ is a function (or a variable pointing to a function) by the value inversion Theorem~\ref{thm:value}. This means that we can progress $v_1\, v_2$ using the small-step transition relation $(\fun{x}c) v \longrightarrow c[v/x]$. 
+
+$
+  \inferrule[Cond]{
+    \ctx \ent v \T bool \\
+    \ctx \ent c_1 \T \C \\
+    \ctx \ent c_2 \T \C \\
+  }{
+    \ctx \ent \conditional{v}{c_1}{c_2} \T \C
+  }
+$
+
+$v$ is already a value. By the value inversion Theorem~\ref{thm:value}, $v$ is either $\tru$ or $\fls$. This means that we can progress the conditional using one of the small-step transition relations.
+
+$
+  \inferrule[Ret]{
+    \ctx \ent v \T A
+  }{
+    \ctx \ent \ret v \T A \E \emptyrow
+  }
+$
+
+$\ret v$ is a trivial case, since it means the evaluation has ended.
+
+$
+  \inferrule[Op]{
+    (\op \T A \to B) \in \sig \\
+    \ctx \ent v \T A
+  }{
+    \ctx \ent \op \, v \T B \E \op
+  }
+$
+
+$\op \, v$ is a trivial case, since it means the evaluation has ended.
+
+$
+  \inferrule[Let]{
+    \ctx \ent v \T A \\
+    \ctx, \letvar \T \polytype{A} \ent c \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
+  }{
+    \ctx \ent \letin{\letvar = v} c \T B \E \dirt
+  }
+$
+
+$v$ is already a value. Thus we can progress using the small-step transition relation $ \letin{\letvar = v} c \longrightarrow c[v/\letvar]$.
+
+$
+  \inferrule[Do]{
+    \ctx \ent c_1 \T A \E \dirt \\
+    \ctx, \letvar \T \polytype{A} \ent c_2 \T B \E \dirt \\
+    \alpha \not\in FTV(\ctx)
+  }{
+    \ctx \ent \doin{\letvar = c_1} c_2 \T B \E \dirt
+  }
+$
+
+$c_1$ is not a value, unlike in the previous case. By the induction hypothesis, there are three possibilities. Either $c_1$ is a $\ret v$ or $\op v$, in which case we can progress. Otherwise, we need to be able to progress $c_1$ in order to progress the $\doin{\letvar = c_1} c_2$.
+
+$
+  \inferrule[With]{
+    \ctx \ent v \T \C \hto \D \\
+    \ctx \ent c \T \C
+  }{
+    \ctx \ent \withhandle{v}{c} \T \D
+  }
+$
+
+Finally, there is the $handle$. $v$ is already a value and is, by value inversion, a handler. There are four possibilities by the induction hypothesis in order to progress. If $c$ is a $\ret v$, we can progress by stepping into the value case. If $c$ is a $\op v$, then we need to check whether $v$ handles $\op$ or not. In either case we can progress. If $\op$ is handled, we can call the matching effect clause. A hidden function $\fun{y}c$ is used to denote the continuation. This is expanded into $\fun{y}(\withhandle{h}{c})$ such that other operations within $c$ can be handled. If $\op$ is not handled, we return the operation and change the continuation into $\fun{y}(\withhandle{h}{c})$ in order to ensure that, should the operation be handled later, the value case of the handler is still called. If $c$ is not $\ret v$ and $\op v$, then in order to progress, we need to be able to progress $c$.
+
+\begin{theorem}
+\label{thm:preservation:2}
+(Preservation) If $\ent c \T \C$ and $c \longrightarrow c'$ then $\ent c' \T \C$
+\end{theorem}
+
+In order to proof Theorem~\ref{thm:preservation}, induction on the small-step relation $c \longrightarrow c'$ is required. These proofs are made using derivation trees. The proof for the \textsc{App}, \textsc{Cond-True} and \textsc{Cond-False} and \textsc{Let} are equivalent to the proof made by Dolan. The other rules are equivalent to the operational semantics from \eff \cite{inferring}. Since these rules are inherited from \eff and algebraic subtyping, and no other changes have occured, the proof still holds.
+
+
+
+\chapter{Equivalence of original and reformulated typing rules}\label{equivalence-reform-rules}
+In order to show the equivalence between the original and reforumulated typing rules, we require a means of converting standard typing contexts into polymorphic typing contexts. This is done using two functions $p$ and $m$ as seen in Figure~\ref{fig:conversion}. These two functions are equivalent to their algebraic subtyping counterparts.
+
+\begin{figure}[!htb]
+  \begin{center}
+  \begin{framed}
+  \begin{minipage}[t]{0.475\columnwidth}
+  \begin{mathpar}
+      \inferrule[]{}{
+          m(\epsilon) = \epsilon
+      }\\
+
+      \inferrule[]{}{
+          m(\ctx, x \T A) = m(\ctx), x \T A
+      }\\
+
+      \inferrule[]{}{
+          m(\ctx, \letvar \T \polytype{A}) = m(\ctx)
+      }
+  \end{mathpar}
+  \end{minipage}
+  \begin{minipage}[t]{0.475\columnwidth}
+  \begin{mathpar}
+    \inferrule[]{}{
+      p(\epsilon) = \epsilon
+    }\\
+
+    \inferrule[]{}{
+        p(\ctx, x \T A) = p(\ctx)
+    }\\
+
+    \inferrule[]{}{
+        p(\ctx, \letvar \T \polytype{A}) = p(\ctx), \letvar \T [m(\ctx)]A \\
+          (\alpha \text{ not free in } \ctx)
+    }
+  \end{mathpar}
+  \end{minipage}
+
+  \begin{minipage}[t]{0.95\columnwidth}
+  \begin{mathpar}    
+      \inferrule[]{}{
+          r(\epsilon) = \epsilon
+      }\\
+      \inferrule[]{}{
+          r(\ctxp, \letvar \T [\ctxm]A) = (r(\ctxp) \intersection \ctxm), \letvar \T \polytype{A}
+      }
+
+  \end{mathpar}
+  \end{minipage}
+
+  \end{framed}
+  \end{center}
+\caption{Conversion function for typing contexts}\label{fig:conversion}
+\end{figure}
+
+\begin{theorem}
+\label{thm:context:split}
+If $\ctx \ent v \T A$ then $p(\ctx) \ent v \T [m(\ctx)]A$ \\
+If $\ctx \ent c \T \C$ then $p(\ctx) \ent c \T [m(\ctx)]\C$ 
+\end{theorem}
+The proof for this case is a straighforward derivation on the typing rules. Most cases are trivial since they do not change the typing context. The exceptions are \textsc{Var-$\forall$}, \textsc{Var-$\lambda$}, \textsc{Fun}, \textsc{Hand}, \textsc{SubVal}, \textsc{SubComp}, \textsc{Let}, and \textsc{Do}. Most of these proofs remain unchanged from Dolan's proof. \textsc{SubVal} and \textsc{SubComp} are similar rules operating on pure and dirty types, thus the proof for a regular \textsc{Sub} rule applies. The only new rule is \textsc{Hand}. The same reasoning for the \textsc{Fun} rule applies to the handler. Since $p(\ctx, x \T A) = p(\ctx)$ and $m(\ctx, x \T A) = m(\ctx), x \T A$ and analogous for the variables $y$ and $k$ in the effect clauses. 
+
+% In \textsc{Var-$\forall$}, this rule applies since $[m(\ctx)]A \le^\forall [m(\ctx)]A[\bar{A}/\bar{\alpha}]$ and $p(\ctx)(\letvar) \le [m(\ctx)]A$. With \textsc{Var-$\lambda$}, if $\ctx
+\begin{theorem}
+\label{thm:context:concat}
+If $\ctxp \ent v \T [\ctxm]A$ then $r(\ctxp) \intersection \ctxm \ent v \T A$ \\
+If $\ctxp \ent c \T [\ctxm]\C$ then $r(\ctxp) \intersection \ctxm \ent c \T \C$ 
+\end{theorem}
+The proof for this case is a straighforward derivation on the typing rules. Most cases are trivial since they do not change the typing context. The exceptions are \textsc{Var-$\ctxm$}, \textsc{Var-$\ctxp$}, \textsc{Fun}, \textsc{Hand}, \textsc{SubVal}, \textsc{SubComp}, \textsc{Let}, and \textsc{Do}. Most of these proofs remain unchanged from Dolan's proof. Again, we can apply the reasoning from \textsc{Fun} to \textsc{Hand}. By the induction hypothesis, $r(\ctxp) \intersection (\ctxm, x : A) \ent c_r \T B \E \dirt$ which is the result. An analogous reasoning can be used for the effect clauses.
+
+\begin{theorem}
+\label{thm:context:empty}
+If $\ent v \T A$ then $\ent v \T []A$ \\
+If $\ent c \T \C$ then $\ent c \T []\C$ 
+\end{theorem}
+Using Theorem~\ref{thm:context:split} and Theorem~\ref{thm:context:concat}, for the two directions, this theorem holds.

@@ -8,11 +8,15 @@ If we ever have a program in which we have to choose to produce an output of typ
 
 In other words, input types only use intersections and output types only use unions. Polar types do not allow this convention to be broken. Making this restriction simplifies the problem of solving subtyping constraints greatly and allow them to be solved. \cite{dolan2017algebraic, pottier1998type} 
 
-\section{Polar types}\label{polarity}
+To operate on polar type terms, we generalise from Hindley-Milner unification to biunification. Biunification is a subtyping-aware analogue for unification in \core. Unification is the process used to eliminate constraints. 
+
+We extend the biunification algorithm with support for algebraic effects and handlers. A unification algorithm uses substitutions in order to substitute type variables. Biunification uses bisubstitutions, an analogue for substitutions. Once we have the bisubstitutions, we build the constraint solving algorithm. This algorithm eliminates basic constraints by introducing a bisubstitution. 
+
+Not all constraints that are generated in a program are simple constraints. A constraint decomposition algorithm is needed for this purpose. Once we have the ability to decompose and solve constraints, we can build a biunification algorithm.
+
+\section{Polar Types}\label{polarity}
 
 Figure~\ref{fig:types:core:polar} shows the polar type of \core. The separation of the union $\union$ and the intersection $\intersection$ types can be clearly seen. With the exception of the handler type, all types are equivalent to the system of algebraic subtyping. 
-
-\todo{explain recursive types?}
 
 Polarity also extends to typing schemes as seen in the typing context $\ctxp$. A polar typing scheme $[\ctxm^-]A^+$ has a positive type $A^+$ and a monomorphic environment consisting of $\lambda$-bound variables with negative types. 
 

@@ -1,0 +1,71 @@
+\documentclass[notitlepage]{article}
+
+%\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
+\usepackage{titling}
+
+\pretitle{\begin{center}\huge\bfseries}
+\posttitle{\par\end{center}\vskip 0.5em}
+\preauthor{\begin{center}\Large}
+\postauthor{\end{center}}
+\predate{\par\large\centering}
+\postdate{\par}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage[backend=bibtex, sorting=none]{biblatex}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+
+\usepackage{geometry}
+
+\geometry{
+	paper=a4paper, % Change to letterpaper for US letter
+	margin=3cm
+}
+
+\bibliography{proposal.bib} 
+
+\title{\vspace{-2cm}Algebraic Subtyping for Algebraic Effects and Handlers}
+\author{Student: Axel Faes\\{Promotor: Prof. dr. ir. Tom Schrijvers}\\{Daily supervisor: Prof. dr. ir. Tom Schrijvers}\\{Research group: Declarative Languages and Artificial Intelligence}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Summary}
+This topic is situated in the area of Programming Language Theory, the formal study of programming language features and their properties. Specifically, you will design a novel type system and study its formal properties. This type system will be focused on algebraic effects and handlers. 
+
+\section{Background}
+This thesis builds on two very recent developments in the area of programming language theory:
+\begin{enumerate}
+\item In his December 2016 PhD thesis, Stephen Dolan (University of Cambridge, UK), has presented a novel type system that combines subtyping and parametric polymorphism in a particulary attractive and elegant fashion. A cornerstone of his design are the algebraic properties that the subtyping relation should respect.
+\item "Algebraic effects and handlers" are a new formalism for formally modelling side-effects (e.g. mutable state or non-determinism) in programming languages, developed by Matija Pretnar (University of Ljubjana) and Gordon Plotkin (University of Edinburgh). This approach is gaining a lot of traction, not only as a formalism but also as a practical feature in actual programming languages (e.g. the Koka language developed by Microsoft Research). We are collaborating with Matija Pretnar on the efficient implementation of one such language, called Eff. Axel Faes has contributed to this collaboration during a project he did for the Honoursprogramme of the Faculty of Engineering Science.
+\end{enumerate}
+Algebraic effects and handlers benefit from a custom type-\&-effect system, a type system that also tracks which effects can happen in a program. Several such type-\&-effect systems have been proposed in the literature, but all are unsatisfactory. We attribute this to the lack of the elegant properties of Dolan's type system. Indeed the existing type-\&-effect systems are not only theoretically unsatisfactory, but they are also akward to implement and use in practice.
+
+\section{Research questions}
+\begin{itemize}
+\item How can Dolan's elegant type system be extended with effect information?
+\item Which properties are preserved and which aren't preserved?
+\item What advantages are there to an type-\&-effect system based on Dolan's elegant type system?
+\end{itemize}
+
+\section{Goal}
+The goal of this thesis is to derive a type-\&-effect system that extends Dolan's elegant type system with effect information. This type-\&-effect system should inherit Dolan's harmonious combination of subtyping (in our case induced by a lattice structure on the effect information) with parametric polymorphism and preserve all of its desirable properties (both low-level algebraic properties and high-level meta-theoretical properties like type soundness and the existence of principal types). Afterwards this type-\&-effect system
+
+\section{Approach}
+\begin{enumerate}
+\item Study of the relevant literature and theoretical background.
+\item Design of a type-\&-effect system derived from Dolan's, that integrates effects.
+\item Proving the desirable properties of the proposed type-\&-effect system: type soundness, principal typing, ...
+\item Time permitting: Design of a type inference algorithm that derives the principal types of programs without type annotations and proving its correctness.
+\item Time permitting: Implementation of the algorithm and comparing it to other algorithms (such as row polymorphism based type-\&-effect systems).
+\end{enumerate}
+
+\nocite{*}
+\printbibliography
+
+\end{document}

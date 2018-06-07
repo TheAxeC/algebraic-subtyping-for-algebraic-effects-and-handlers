@@ -1,9 +1,7 @@
 #!/bin/bash
 
 declare -a TESTS=("interp.eff" "loop.eff" "parser.eff" "queens.eff" "range.eff")
-# declare -a TESTS=("interp.eff" "loop.eff" "queens.eff" "range.eff")
-# declare -a BRANCHES=("../eff-benchmarks/eff-algebraic-subtyping/" "../eff-benchmarks/eff-row-based/" "../eff-benchmarks/eff-subtyping/")
-declare -a BRANCHES=("../eff-benchmarks/eff-algebraic-subtyping/" "../eff-benchmarks/eff-subtyping/")
+declare -a BRANCHES=("../eff-benchmarks/eff-algebraic-subtyping/" "../eff-benchmarks/eff-subtyping/" "../eff-benchmarks/eff-untyped/")
 TEST_FOLDER="../../algebraic-subtyping-for-algebraic-effects-and-handlers/src/"
 
 QUALITY=100
@@ -41,6 +39,3 @@ function eval_all {
 }
 
 eval_all
-
-
-

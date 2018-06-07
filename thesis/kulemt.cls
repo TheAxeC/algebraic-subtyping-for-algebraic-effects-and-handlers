@@ -633,7 +633,7 @@
     \expandafter\let\expandafter\@tempa
       \csname kulemt@copyright@\kulemt@master@language\endcsname
     \expandafter\let\expandafter\@tempb
-      \csname kulemt@copyright@\kulemt@language\endcsname
+      \csname kulemt@copyright@english\endcsname
     \ifx\@tempa\@tempb \@tempa \else
       \ifx\@tempb\kulemt@copyright@english
         \let\@tempb\@tempa \let\@tempa\kulemt@copyright@english \fi

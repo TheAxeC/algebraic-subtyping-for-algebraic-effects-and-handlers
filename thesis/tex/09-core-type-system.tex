@@ -8,7 +8,9 @@ Figure~\ref{fig:core-equations-other-types} shows equivalence rules for function
 
 The final two rules for dirty types $(\C_1 \union \C_2) \equiv (A_1 \E \dirt_1 \union A_2 \E \dirt_2) \equiv (A_1 \union A_2) \E (\dirt_1 \union \dirt_2)$ and $(\C_1 \intersection \C_2) \equiv (A_1 \E \dirt_1 \intersection A_2 \E \dirt_2) \equiv (A_1 \intersection A_2) \E (\dirt_1 \intersection \dirt_2)$ show the decomposition of dirty types into its two components, a type and a dirt. The union of two dirty types is equivalent to the union of its types and its dirts, and analogue for the intersection. 
 
-\begin{figure}[H]
+Finally, algebraic subtyping makes one restriction. Subtyping relationships between a function and a boolean, handler and boolean, and function and handler are not allowed. \cite{dolan2017algebraic}
+
+\begin{figure}[!htb]
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
@@ -44,7 +46,7 @@ The final two rules for dirty types $(\C_1 \union \C_2) \equiv (A_1 \E \dirt_1 \
 \end{figure}
 
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \begin{center}
 \begin{framed}
 % \framebox{
@@ -120,7 +122,7 @@ The final two rules for dirty types $(\C_1 \union \C_2) \equiv (A_1 \E \dirt_1 \
 \caption{Equations of distributive lattices for types}\label{fig:core-equations-types}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \begin{center}
 \begin{framed}
 % \framebox{
@@ -195,7 +197,7 @@ The final two rules for dirty types $(\C_1 \union \C_2) \equiv (A_1 \E \dirt_1 \
 \caption{Equations of distributive lattices for dirts}\label{fig:core-equations-dirts}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}

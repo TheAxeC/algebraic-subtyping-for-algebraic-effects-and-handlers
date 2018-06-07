@@ -5,18 +5,15 @@ Secondly, \core represents types in a smaller and cleaner format compared to sub
 
 All benchmarks were run on a MacBook Pro with an 2.5 GHz Intel Core I7 processor and 16 GB 1600 MHz DDR3 RAM running Mac OS 10.13.4.
 
-\subsection{Performance Comparison}
-
-Our first evaluation, in figure~\ref{fig:loops}, considers five different testing programs:
-\todo{explanation interp, loop, parser, queens, range}
+\subsection{Performance Comparison}\label{performance}
+Our first evaluation, in figure~\ref{fig:test}, considers five different testing programs:
 \begin{enumerate}
-\item \texttt{Interp}, 
-\item \texttt{Loop}, 
-\item \texttt{Parser}, 
-\item \texttt{Queens}, 
-\item \texttt{Range},
+\item \texttt{Interp}, an arithmetic interpreter that uses algebraic effects to handle division by zero cases.
+\item \texttt{Loop}, contains 5 different looping programs that executes a loop n times. It is the same program as explained in Chapter~\ref{loop}.
+\item \texttt{Parser}, an arithmetic parser that parser and evaluates a list of characters representing an arithmetic equation. Based on modular interpreters from \cite{Liang:1995:MTM:199448.199528}.
+\item \texttt{Queens}, a solver for the n-queens problem. N queens need to be placed on an n by n chessboard in such a way that no queen can attack another queen. 
+\item \texttt{Range}, an implementation of the range function that takes as input a number and returns a list containing numbers ranging from 1 to the input.
 \end{enumerate}
-
 These programs are compiled with three different type systems:
 \begin{enumerate}
 \item Subtyping type system, the "old" type system from the Eff programming language. 
@@ -27,79 +24,36 @@ These programs are compiled with three different type systems:
 The different systems are all implemented in the \eff programming language. Thus, they share many different aspects of the implementation, including parsing, lexing and the runtime. The Untyped system does not compute any types, while the other two systems do use type inference engines. 
 
 Figure~\ref{fig:test} shows the time relative to the Untyped version for running each of
-the programs for 10,000 iterations. Overall, the performance of \core is superior to the performance of standard subtyping. There is an exception for the \texttt{Queens} program. The implementation of \core is very slow compared to the other implementations. This is a very strange anomaly as it was completely unexpected. I hypothezise that the lack of a simplification algorithm causes the huge slowdown. Because the simplification of the types never occurs, the types keep growing in size. Due to this, any constraints that are introduced during type inference are also very large in size, which causes the slowdown. 
+the programs for 10,000 iterations. The numbers are given in percentages. For example, for the \texttt{Interp} example, \core took just a bit over 2 times as long (222.74\%) in order to run compared to the Untyped version.
+ 
+Overall, the performance of \core is superior to the performance of standard subtyping. There is an exception for the \texttt{Parser} and \texttt{Queens} programs. The implementation of \core is very slow compared to the other implementations for these two programs. This is a very strange anomaly as it was completely unexpected. I hypothezise that the lack of a simplification algorithm causes the huge slowdown. Because the simplification of the types never occurs, the types keep growing in size. Due to this, any constraints that are introduced during type inference are also very large in size, which causes the slowdown. 
 
-\todo{give and explain the results}
+Some advantages of algebraic subtyping can be seen with the \texttt{Loop} and \texttt{Range} programs. Subtyping took considerably more time compared to algebraic subtyping. Overall, I would say that algebraic subtyping is faster than subtyping, if the simplification algorithm is implemented.
+
+% #        | EffSub  | Subtyping | Untyped
+% # Interp | 2.301   | 2.701     | 1.033
+% # Loop   | 2.884   | 4.805     | 1.020
+% # Parser | 350.015 | 15.045    | 1.278
+% # Queens | 74.591  | 8.778     | 1.165
+% # Range  | 1.144   | 1.624     | 1.047
 
 \begin{figure}[H]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
 \centering
-\begin{tikzpicture}
-    \centering
-    \begin{axis}[
-        ybar, axis on top,
-        height=5cm, width=16cm,
-        ymajorgrids, tick align=inside,
-        bar width=0.4cm,
-        major grid style={draw=white},
-        enlarge y limits={value=.1,upper},
-        ymin=0, ymax=100,
-        axis x line*=bottom,
-        axis y line*=left,
-        y axis line style={opacity=1},
-        tickwidth=0pt,
-        xtick = data,
-        x tick label style={font=\small,text width=1.4cm,align=center},
-            enlarge x limits=true,
-        legend image code/.code={%
-        \draw[#1] (0cm,-0.1cm) rectangle (0.2cm,0.1cm);
-    },
-            legend style={
-            at={(0.46,1.01)},
-            anchor=north,
-            % legend columns=-1,
-            % /tikz/every even column/.append style={column sep=0.4cm},
-            font = \footnotesize
-        },
-        ylabel={Percentage},
-        xlabel={Loop program variations},
-            symbolic x coords={
-            Interp,
-            Loop,
-            Parser,
-            Queens,
-            Range,
-            },
-            nodes near coords={
-            \footnotesize \pgfmathprintnumber{\pgfplotspointmeta}
-        }
-    ]
-    \addplot [draw=none,fill=brown] coordinates {
-        (Interp,100)
-        (Loop,100)
-        (Parser,100)
-        (Queens,100)
-        (Range,100)
-    };
-
-    \addplot [draw=none,fill=blue] coordinates {
-        (Interp,100)
-        (Loop,100)
-        (Parser,100)
-        (Queens,100)
-        (Range,100)
-    };
-
-    \addplot [draw=none,fill=yellow] coordinates {
-        (Interp,100)
-        (Loop,100)
-        (Parser,100)
-        (Queens,100)
-        (Range,100)
-    };
-    
-    \legend{Subtyping, \core, No Typing}
-    \end{axis}
-    \end{tikzpicture}
+\begin{tabular}{c|l|l|l}
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{\core} & \multicolumn{1}{c}{Subtyping} & \multicolumn{1}{c}{Untyped} \\
+\hline
+Interp   & 222.74   & 261.47    & 100 \\
+Loop     & 282.74   & 471.07    & 100 \\
+Parser   & 27387.71 & 1177.23   & 100 \\
+Queens   & 6402.66  & 753.47    & 100 \\
+Range    & 109.26   & 155.10    & 100
+\end{tabular}
+\end{minipage}
+\end{framed}
+\end{center}
 \caption{Relative run-times of testing programs}
 \label{fig:test}
 \end{figure}
@@ -108,100 +62,120 @@ the programs for 10,000 iterations. Overall, the performance of \core is superio
 
 The main contribution of this thesis is to extend the algebraic subtyping algorithm with algebraic effects and handlers. The goal is to be able to infer types which are shorter, simpler and more human-readable than types inferred by standard subtyping systems. In this evaluation, several small programs were made and its types inferred by the subtyping and the algebraic subtyping system in order to compare both types. 
 
-Considering that the implementation does not yet support the simplification of types, the results are inaccurate. In order to provide a proper evaluation, the types have been manually simplified using the simplification algorithm. All three types are given in order to the current state of the implementation and to be able to evaluate the algebraic subtyping system.
+Considering that the implementation does not yet support the simplification of types, the results are expected to perform worse without the simplification. In order to provide a proper evaluation, the types have been manually simplified using the simplification algorithm. All three types are given in order to the current state of the implementation and to be able to evaluate the algebraic subtyping system.
 
+The small programs that were used to compare the inferred types are the \texttt{Loop} program from the previous section (Chapter~\ref{performance}). The code from the \texttt{Loop} program that is being inferred is given in Figure~\ref{lst:range}. The inferred types for the Looping program can be seen in Figure~\ref{fig:inferred:sub}, Figure~\ref{fig:inferred:core} and Figure~\ref{fig:inferred:manual}. It can clearly be seen that, without simplification, inferred types can be huge. When solving the subtyping constraints, bisubstitutions do not remove type or dirt variables, since that variable might still be important. This is a big difference in comparison to regular unification and substitutions within the Hindley-Milner type systems. Due to the equality relation, they can completely remove type and dirt variables. 
 
-\todo{give the evaluation results}
+After simplification, the types become much smaller and much more readable. For \textsc{loop} and \textsc{test\_state}, the inferred types for subtyping and for the manually simplified \core are very similar. The main difference can be seen for \textsc{state\_handler}, where constraints are not present in the inferred types for manually, simplified \core. Looking at the manually, simplified \core types, the difference between intersections and unions is visible. Intersections occur in input types (with negative polarity), while unions occur in output types (with positive polarity).
 
-\begin{figure}[H]
-\begin{center}
-\begin{framed}
-\begin{minipage}[t]{0.95\columnwidth}
-    \begin{mathpar}
-    \inferrule[Interp]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
+A second example has been constructed in Figure~\ref{lst:simple}. This is a simple example that uses an if-statement to decide between two branches. Both branches return a tuple. In \core, the inferred (simplified) type is $(\alpha_2 -(\delta_2)\to bool) -(\bot)\to
+\alpha_2 -(\bot)\to
+\alpha_1 -(\delta_2)\to
+(\alpha_1 \union \alpha_2 \times (unit -(Op2 \union Op)\to unit \union int))$. In this type, $(\alpha_1 \union \alpha_2 \times (unit -(Op2 \union Op)\to unit \union int))$ is equivalent to $(\alpha_1 \times (unit -(Op2)\to unit)) \union (\alpha_2 \times (unit -(Op)\to int))$. This code is not typable in standard \eff. This is due to the operations. The first branch returns a tuple containing a function that calls effect $Op$ which returns an int, the other branch returns a tuple containing a function that calls effect $Op2$ which returns an unit. In \core, the causes the return type of the function to be $unit \union int$. This type does not "exist" in the current type system, but for extensibility reasons, we want to keep it. We might add a type later that is a $unit \union int$. Standard \eff simply rejects this function.
 
-    \inferrule[Loop]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
+\begin{figure}[!htb]
+\caption{Loop code type inference program}
+\label{lst:range}
+\begin{lstlisting}[language=Caml]
+effect Get: unit -> int
+effect Put: int -> unit
 
-    \inferrule[Parser]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
+let rec loop n =
+    if n = 0 then ()
+    else (#Put ((#Get ()) + 1); loop (n - 1))
 
-    \inferrule[Queens]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
+let state_handler = handler
+    | val y -> (fun x -> x)
+    | #Get () k -> (fun s -> k s s)
+    | #Put s' k -> (fun _ -> k () s')
 
-    \inferrule[Range]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-\end{mathpar}
-\end{minipage}
-\end{framed}
-\end{center}
-\caption{Produced types for Subtyping}\label{fig:inferred:sub}
+let test_state n = (with state_handler handle loop n) 0
+\end{lstlisting}
 \end{figure}
 
-\begin{figure}[H]
-\begin{center}
-\begin{framed}
-\begin{minipage}[t]{0.95\columnwidth}
-    \begin{mathpar}
-    \inferrule[Interp]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
+\begin{figure}[!htb]
+\caption{Simple code type inference program}
+\label{lst:simple}
+\begin{lstlisting}[language=Caml]
+effect Op: unit -> int
+effect Op2: int -> unit
 
-    \inferrule[Loop]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-
-    \inferrule[Parser]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-
-    \inferrule[Queens]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-
-    \inferrule[Range]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-\end{mathpar}
-\end{minipage}
-\end{framed}
-\end{center}
-\caption{Produced types for \core}\label{fig:inferred:core}
+let select p v d = 
+  if (p v) then 
+    (v, (fun () -> #Op ()))
+  else 
+    (d, (fun () -> #Op2 ()))
+\end{lstlisting}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htb]
 \begin{center}
 \begin{framed}
 \begin{minipage}[t]{0.95\columnwidth}
     \begin{mathpar}
-    \inferrule[Interp]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
+    \inferrule[loop]{}{
+        int -\{Get, Put\}\to unit
     }
 
-    \inferrule[Loop]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
+    \inferrule[state\_handler]{}{
+        \alpha \E \{Get, Put | \delta_1\} \hto (int -\{Get, Put | \delta_2\}\to int) \E \{Get,
+Put | \delta_3\}\\ | \delta_1 \le \delta_3, \delta_1 \le \delta_2, \delta_1 = \top, \delta_2 = \top, \delta_3 = \top
     }
 
-    \inferrule[Parser]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-
-    \inferrule[Queens]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
-    }
-
-    \inferrule[Range]{}{
-        \ctxp \prinent x \T [x : \alpha]\alpha
+    \inferrule[test\_state]{}{
+       int -\{Get, Put\}\to int
     }
 \end{mathpar}
 \end{minipage}
 \end{framed}
 \end{center}
-\caption{Produced types for Algebraic Subtyping}\label{fig:inferred:manual}
+\caption{Produced types for Subtyping in the Loop program}\label{fig:inferred:sub}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+    \begin{mathpar}
+    \inferrule[loop]{}{
+        (\alpha_1 \intersection \alpha_2 \intersection \alpha_3 \intersection \alpha_4 \intersection \alpha_5 \intersection \alpha_6 \intersection \alpha_7 \intersection int) -(\delta_1 \union \delta_2 \union \delta_3 \union Get \union Put)\to\\ \alpha_8 \union unit
+    }
+
+    \inferrule[state\_handler]{}{
+        (\alpha_1 \intersection \alpha_2) \E (\delta_1 \intersection \delta_2 \intersection Get \intersection Put) \hto (\alpha_3 \union \alpha_4 -(\bot)\to \alpha_4) \union\\ (\alpha_5 -(\delta_4 \union \delta_3)\to \alpha_6) \union
+         (\alpha_7 \intersection \alpha_8 \intersection int \intersection int \intersection \alpha_8 \intersection int -(\delta_6 \union \delta_5)\to
+         \alpha_9) \E (\delta_1)
+    }
+
+    \inferrule[test\_state]{}{
+        (\alpha_{1} \intersection \alpha_{2} \intersection \alpha_{3} \intersection \alpha_{4} \intersection \alpha_{5} \intersection \alpha_{6} \intersection \alpha_{7} \intersection \alpha_{8} \intersection \alpha_{9} \intersection \alpha_{10} \intersection \alpha_{11}\\ \intersection \alpha_{12} \intersection \alpha_{13} \intersection \alpha_{14} \intersection \alpha_{15} \intersection \alpha_{16} \intersection int) -(\delta_2 \union Get \union Put \union \delta_1)\to \alpha_{17} \union int)
+    }
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Produced types for \core in the Loop program}\label{fig:inferred:core}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{framed}
+\begin{minipage}[t]{0.95\columnwidth}
+    \begin{mathpar}
+    \inferrule[loop]{}{
+        int -(Get \union Put)\to unit
+    }
+
+    \inferrule[state\_handler]{}{
+        \alpha_1 \E (Get \intersection Put) \hto (int \to int \E (Get \union Put)) \E (\delta_1)
+    }
+
+    \inferrule[test\_state]{}{
+        int -(Get \union Put)\to int
+    }
+\end{mathpar}
+\end{minipage}
+\end{framed}
+\end{center}
+\caption{Produced types for \core with manual simplification in the Loop program}\label{fig:inferred:manual}
 \end{figure}

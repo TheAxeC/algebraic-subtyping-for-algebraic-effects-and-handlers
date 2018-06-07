@@ -1,7 +1,64 @@
-\todo{related work (hypothesis dolan effect system + explicit effect + row-based)}
+As explained in Chapter~\ref{problems-eff}, we were initially looking for solutions to the implicit typing of \eff. Several possible solutions were brievely mentioned. There is row-based typing with an explicitly typed calculus with Hindley-Milner based type inference. The other solution is explicit effect subtyping which uses coercion proofs. In this chapter, we take a closer look at those possible solutions. 
 
-\section{Algebraic Subtyping}
-
-\section{Explicit Effect Subtyping}
+Additionally, in his PhD thesis, Stephen Dolan hypothesises how an effect system can be integrated within algebraic subtyping. This chapter compares Dolan's hypothesis with \core. This will show that there are differences between the two systems.
 
 \section{Row-Based Effect Typing}
+Row-based effect typing is an explicitly typed language with row-based effects. \cite{row-optimised} Rather than using subtyping, polymorphism is utilised. Aside from this, the type system for row-based effect typing remains quite similar to the calculus of \eff. There are some small changes, two additional terms are introduced, a type abstraction and a type application, which are used to make the typing explicit. Additionally, a different representation for dirts is used. This can be seen in Figure~\ref{fig:explicit}.
+
+instead of representing the dirt as a simply set of operations, the dirt is represented as a record. Records look similar to sets, it can contain operations and ends with either a row variable or a closing dot. Type inference is implemented with Hindley-Milner based type inference. Type inference on dirts is implemented like type inference on records. 
+
+\begin{figure}[h]
+\begin{center}
+\framebox{
+\begin{minipage}{0.98\columnwidth}
+\textbf{Terms}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+  \text{value}~v & \bnfis {} & \Lambda \alpha . c & \text{type abstraction} \\
+  \text{comp}~c & \bnfis {} & v \, A & \text{type application} \\
+\end{array}\]
+\textbf{Types}
+\[\begin{array}{r@{~}c@{~}l@{\quad}l}
+\text{dirt}~\dirt & \bnfis {} & \{\text{R}\} \\
+  \text{R} & \bnfis {}
+    & \op \row & \text{row} \\
+    & \bnfor & \delta & \text{row variable} \\
+    & \bnfor & . & \text{end of row}
+\end{array}\]
+\end{minipage}
+}
+\end{center}
+\caption{Row-based effect typing}\label{fig:explicit}
+\end{figure}
+
+\section{Explicit Effect Subtyping}
+Explicit effect subtyping is an explicitly-typed polymorphic core calculus with support for algebraic effect handlers using a subtyping-based type-\&-effect system. It uses coercion proofs in order to make the subtyping constraints explicit in the terms of the calculus. \cite{saleh2018explicit}
+
+There are 3 different calculi used in explicit effect subtyping. The first calculus \textsc{ImpEff} is implicitly typed and uses implicit effecting. This is elaborated into a second calculus \textsc{ExEff} which is explicitly typed and has explicit effecting. Explicit typing and explicit effecting is accomplished by using coercion proofs. For example, in the \textsc{SubVal} rule a proof $\gamma$ is explicitly added in order to make typing and effecting explicit, the \textsc{SubVal} rule is written as:
+
+$\inferrule[SubVal]{
+    \ctx \ent v \T A \\
+    \ctx \ent \gamma \T A \le B
+  }{
+    \ctx \ent v \prinent \gamma \T B
+  }$
+
+The program \lstinline{let f = fun g -> g ()} has type $\forall \alpha_1, \alpha_2, \delta_1, \delta_2. \alpha_1 \le \alpha_2 => \delta_1 \le \delta_2 => (unit \to \alpha_1 \E \delta_1) \to \alpha_2 \E \delta_2$. This program has the following elaboration in \textsc{ExEff}: \lstinline[mathescape=true]{let f = $\Lambda\alpha_1. \Lambda\alpha_2. \Lambda\delta_1. \Lambda\delta_2. \Lambda(\omega_1:\alpha_1 \le \alpha_2). (\omega_2:\delta_1 \le \delta_2).$ fun (g : $unit \to \alpha_1 \E \delta_1$ -> g () |> $\omega_1 \E \omega_2$}. This shows how subtyping constraints of both types and effects are made explicit.
+
+The third calculus is an explicitly typed calculus with no effecting called \textsc{SkelEff}. This calculus is used as an intermediate platform to elaborate into languages which do not support algebraic effects and handlers.
+
+\section{Algebraic Subtyping}
+In his PhD thesis, Dolan brievely discusses effect systems for algebraic subtyping. He mentions that the algorithms developed in his PhD thesis can also be used for effect systems. \cite{dolan2017algebraic}
+
+By introducing a new kind $\xi$ of effects and adding them to the definition of function types, an effect system can be implemented. Function types change from their original algebraic notation $\mathcal{T}^{op} \times \mathcal{T}$ into $\mathcal{T}^{op} \times \xi \times \mathcal{T}$.
+
+Adding a new kind has several consequences. Instead of using a single algebra of types $\mathcal{T}$, two algebras are used. One for types $\mathcal{T}$ and one for $\xi$. This change does not change the theory that is used for algebraic subtyping. The algebra of $\xi$ has a bottom and top element, as well as a union and intersection. The only point that is still open for interpretation is the basic element of the algebra. 
+
+Dolan states that one possible definition for the basic element of $\xi$ is as a set of labels. Other possibilities include defining the basic element of $\xi$ to be a sum type which can refer to other types.
+
+With this information, Dolan gives a plan about how effect systems can be integrated within algebraic subtyping. In contrast to Dolan, rather than starting from an algebraic perspective, I started from a syntactic perspective. I implemented dirts $\dirt$ to follow the same syntactic structure as the types. In the end, I ended up with the same algebraic structure for effects as $\xi$. 
+
+The main difference is my choice of the basic element of $\xi$. I made the choice to have each possible operation be a basic element of $\xi$. The were several reasons for this choice. From the typing rules, shown in Figure~\ref{fig:core-typing}, only the \textsc{Op} rule introduces effects. Sequencing and handlers utilise the union and intersection types, and the type inference algorithm takes care of the rest. This means that there is no need to use a set of labels as the basic element. 
+
+The other big difference between the system introduced in this thesis, \core and Dolan's plan, is that this thesis also mapped the algebraic subtyping system onto the calculus of \eff, using the distinction between expressions and computations.
+
+The work in this thesis should be seen as complementary to Dolan's PhD thesis, as the results from both theses do not contradict eachother. A specific effect system that utilises Dolan's algebraic subtyping is fully described and formalised in this thesis. 

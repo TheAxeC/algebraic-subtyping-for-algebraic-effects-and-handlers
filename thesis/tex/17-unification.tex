@@ -1,14 +1,9 @@
-\section{Unification}
+\section{Bisubstitutions}
+The bisubstitution algorithm is given in Figure~\ref{fig:bisubstitution}. A bisubstitution\\ $\xi = [A^+ / \alpha^+, A^- / \alpha^-, \dirt^+/ \delta^+, \dirt^- / \delta^-]$ maps positive occurrences of $\alpha$ to $A^+$, negative occurrences of $\alpha$ to $A^-$, positive occurrences of $\delta$ to $\dirt^+$ and negative occurrences of $\delta$ to $\dirt^-$. 
 
-To operate on polar type terms, we generalise from substitutions to bisubstitutions, which map type variables to a pair of a positive and a negative type term. The definitions for bisubstitions are given in Figure~\ref{fig:bisubstitution}.
+The different rules in Figure~\ref{fig:bisubstitution} show how a bisubstitution moves through a type based on polarity. Most rules, except for the handler and the dirt related rules are standard for algebraic subtyping.
 
-\todo{explain bisubstitions}
-
-\todo{explain constraint solving}
-
-\todo{explain constraint decomposition}
-
-\todo{explain biunification algorithm}
+Bisubstitutions can be applied to typing schemes. $\xi([\ctxm^-]A^+)$ applies the bisubstitution to $A^+$ and to every typ of the lambda-bound typing context $\ctxm^-$.  
 
 \begin{figure}[!htb]
     \begin{center}
@@ -122,54 +117,10 @@ To operate on polar type terms, we generalise from substitutions to bisubstituti
 \caption{Bisubstitutions}\label{fig:bisubstitution}
 \end{figure}
 
-% The presence of explicit type application in F, F$_\omega$ and CoC makes the exact parameterisation of a polymorphic type relevant. Conversely, in ML, the parameterisation is irrelevant and all that matters is the set of possible instances.
+\section{Constraint Solving}
+Atomic constraints can be solved immediately. Atomic type constraints are constraints between type variables and constructed types. Atomic dirt constraints are constraints between dirt variables and the basic operation. 
 
-% \begin{figure}[!htb]
-% \begin{center}
-% \begin{framed}
-% \begin{minipage}[t]{0.95\columnwidth}
-% \begin{mathpar}    
-%     \inferrule[]{}{
-%         \forall \alpha \forall \beta . \alpha \to \beta \to \alpha \\
-%         \forall \beta \forall \alpha . \alpha \to \beta \to \alpha
-%     }\\
-
-%     \inferrule[]{}{
-%         \{ \alpha \to \beta \to \alpha \bnfor{} \alpha, \beta \text{types}\} \\ 
-%         \{ \alpha \to \beta \to \alpha \bnfor{} \beta, \alpha \text{types}\}
-%     }
-% \end{mathpar}
-% \end{minipage}
-% \end{framed}
-% \end{center}
-% \caption{Parameterisation and typing}\label{fig:parameterisation}
-% \end{figure}
-
-% \todo{rewrite, in essence explain why equivalence of the parameterisation is important}
-% ``
-% Thus, when manipulating constraints, an ML type checker need only preserve equivalence of the set of instances, and not equivalence of the parameterisation. This freedom is not much used in plain ML, since unification happens to preserve equivalence of the parameterisation. However, this freedom is what allows MLsub to eliminate subtyping constraints.
-
-% For all positive type terms $A+$ and variables, there exist positive type terms $A^+_\alpha$ and $A^+_g$ such that $A^+_\alpha \in {\bot, \alpha}$, $\alpha$ is guarded in $A^+_g$, and $A^+$ is equivalent to $A^+_\alpha \union A^+_g$.
-
-% For all negative type terms $A-$ and variables, there exist negative type terms $A^-_\alpha$ and $A^-_g$ such that $A^-_\alpha \in {\top, \alpha}$, $\alpha$ is guarded in $A^-_g$, and $A^-$ is equivalent to $A^-_\alpha \intersection A^-_g$.
-% ''
-
-% \begin{figure}[!htb]
-% \begin{center}
-% \begin{framed}
-% \begin{minipage}[t]{0.95\columnwidth}
-% \begin{mathpar} 
-%     \inferrule[]{}{
-%         \rectypep{A^+} = \rectype{A^+_g} \\
-%         \rectypen{A^-} = \rectype{A^-_g}
-%     }
-    
-% \end{mathpar}
-% \end{minipage}
-% \end{framed}
-% \end{center}
-% \caption{Polar recursive type}\label{fig:recursive}
-% \end{figure}
+Constructed types are given in Figure~\ref{fig:constructed}. Functions, handlers and bools are constructed types. Constructed types from \core consists of the constructed types from algebraic subtyping suplemented with handlers. 
 
 \begin{figure}[!htb]
 \begin{center}
@@ -192,6 +143,8 @@ To operate on polar type terms, we generalise from substitutions to bisubstituti
 \end{center}
 \caption{Constructed types}\label{fig:constructed}
 \end{figure}
+
+Figure~\ref{fig:constraints} shows the bisubstitutions that need to be used in order to solve each atomic constraint. Only the dirt related constraint solver rules are novel, the others remain equivalent to the rules from algebraic subtyping. Constraints of the form $\beta \le A^-$ and $A^+ \le \beta$ have two different solvers that can be used, depending on whether $\beta$ is a free variable. This is necessary due to recursion. If $\beta$ is not free, then no recursion needs to be introduced. These bisubstitutions introduce the union and intersection types into an inferred type. 
 
 \begin{figure}[!htb]
 \begin{center}
@@ -242,6 +195,31 @@ To operate on polar type terms, we generalise from substitutions to bisubstituti
 \end{center}
 \caption{Constraint solving}\label{fig:constraints}
 \end{figure}
+
+\section{Constraint Decomposition}
+When presented with a non-atomic constraint, the biunification algorithm needs to decompose the constraint into subconstraints. It needs to do this until only atomic constraints remain. Figure~\ref{fig:constraints-decompose} shows the constraint decomposition algorithm $subi$. $subi$ is a partial function meaning that any constraint which does not occur in this list will not decompose. Later we will see that any non-atomic constraint that cannot be decomposed, cannot be solved.
+
+There are three inputs to $subi$. It accepts constraints between pure types, dirty types and dirts. The rules not relating to dirty types, handlers and dirts are equivalent to decomposition rules from algebraic subtyping.
+
+Compared to the standard algebraic subtyping, the dirts have some peculiarities. For types, there is only one way to decompose $A^+ \le A^-_1 \intersection A^-_2$. For dirts, there are multiple ways to decompose. 
+
+In the reformulated typing rules in Figure~\ref{fig:core-reform-typing}, handlers are given the type $A \E \dirt \intersection \ops \hto B \E \dirt$. It is unusual to introduce intersections or unions directly. Here it is necessary since we want to explicitly state that the handler can handle certain operations. 
+
+Another reason why multiple rules are needed is due to the nature of dirts. A constraint $\op \le \op \intersection \dirt^-$ and $\op \le \dirt^- \intersection \op$ are immediately satisfied. This can be related to the fact that dirts represent an over-approximation of possible side-effects.  While constraints such as $\op_1 \le \dirt^- \intersection \op_2$ and $\op_1 \le \op_2 \intersection \dirt^-$, we do not actually care about $\op_2$ and are more interested in the $\op_1 \le \dirt^-$ aspect. 
+
+Another way to explain why these rules are needed is that dirts act different from types. When we have a typing constraint such as $unit \le int$, we have a typing error in our program. Such an atomic constraint can be decomposed from $unit \le A^- \intersection int$. However, for dirts, $\op_1 \le \dirt^- \intersection \op_2$ can be interpreted as: can $\op_1$ be handled by a handler which handles the effects $\dirt^- \intersection \op_2$. 
+
+\begin{prop}
+\label{prop:constraint}
+$\forall A^+, A^-, \dirt^+, \dirt^-: $\\
+$A^+ \le A^-$ is an atomic constraint, 
+$A^+ \le A^-$ is unsatisfiable,
+$subi(A^+ \le A^-)$ succeeds\\
+$\dirt^+ \le \dirt^-$ is an atomic constraint, 
+$\dirt^+ \le \dirt^-$ is unsatisfiable, 
+$subi(\dirt^+ \le \dirt^-)$ succeeds
+\end{prop}
+$subi$ is defined in such a way that any valid constraint can either be decomposed or is atomic. This means that, otherwise, the constraint has to be unsatisfiable. This can be trivially proven by case analysis over all possible instances of $A^+$ and $A^-$. All cases are trivial in nature (due to polar types) and the full formal proof has therefor been omitted. Constraint $A_1 \intersection A_2 \le A_3$ cannot be simply decomposed, but this constraint cannot exist due to the nature of polar types.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -312,6 +290,25 @@ To operate on polar type terms, we generalise from substitutions to bisubstituti
 \end{center}
 \caption{Constraint decomposition}\label{fig:constraints-decompose}
 \end{figure}
+
+\section{Biunification}
+The biunification algorithm solves a set of constraints and produces a bisubstitution that needs to be applied in order to solve for the constraints. The algorithm is shown in Figure~\ref{fig:biunification}. An additional argument $H$ is used to act as a history so constraints that have already been seen can be skipped. The biunification algorithm is equivalent to the standard biunification algorithm from algebraic subtyping \cite{dolan2017algebraic}.
+
+\textsc{Start} is used to introduce the history argument. The \textsc{Empty} rule is matched when all constraints have been solved. \textsc{Redundant} skips constraints that have already been seen. \textsc{Atomic} is used to solve atomic constraints. After solving the atomic constraint, a bisubstitution $\theta_c$ is obtained. This bisubstitution is applied to the constraint set that still needs to be solved, as well as to the history. In a recursive call, the other constraints are solved. The bisubstitution $\theta_c$ is concatenated to the bisubstitutions that will be obtained later, until it is concatenated to the neutral element $1$. Concatenated bisubstitutions are, during the type inference, applied one by one. \textsc{Decompose} decomposes constraints, this is also the only rule that can fail in the case that it needs to decompose an unsatisfiable constraint.
+
+\begin{theorem}
+\label{thm:unify:fail}
+If $\mathit{biunify}(C)$ fails, then $C$ is unsatisfiable. 
+\end{theorem}
+This can be proven by induction on the rules of $\mathit{biunify}(C)$. The only way that a constraint can fail to be solved is that: the constraint has not yet been seen, is not atomic and cannot be decomposed. 
+
+\begin{theorem}
+\label{thm:unify:suc}
+If $\mathit{biunify}(C) = \xi$, then $\xi$ solves $C$ 
+\end{theorem}
+There are three kinds of constraints, constraints between pure types, between dirty types and between dirts. The types of \core are equivalent to the types of algebraic subtyping in combination with a handler type. Since the handler type behaves exactly like the function type, the original proof of this theorem (for pure types) cannot be invalidated. The structure for dirts is a subset of the structure of types (no functions, or handlers). Thus the proof also has to hold.
+
+The original proof works by induction. \textsc{Empty} is trivial: if there are no constraints, an empty substitution solves them. The inductive hypothesis applies to \textsc{Decompose} since $c :: C$ and $subi(c) \concat C$ have the same atomic subconstraints and are thus equivalent. Dolan shows that bisubstitutions can be concatenated and uses that to proof that the inductive hypothesis also applied to the \textsc{Atomic} rule. The \textsc{Redundant} rule is also trivial, since by definition of that rule, the constraint has already been solved before.
 
 \begin{figure}[!htb]
 \begin{center}

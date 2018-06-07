@@ -1,8 +1,201 @@
 \section{Principal Type Inference}\label{principality}
 
-We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating that $[\ctxm^-]A^+$  is the principal typing scheme of $e$ under the polar typing context $\ctxp$. 
+We introduce a judgement form $\ctxp \prinent v : [\ctxm^-]A^+$ , stating that $[\ctxm^-]A^+$ is the principal typing scheme of $v$ under the polar typing context $\ctxp$. Similarly, $\ctxp \prinent c : [\ctxm^-]\C^+$ states that $[\ctxm^-]\C^+$ is the principal typing scheme of $v$ under the polar typing context $\ctxp$.
 
-\todo{explain type inference}
+Principality for most syntactic elements are equivalent to the principality from algebraic subtyping \cite{dolan2017algebraic}. The novelty in presented in Chapter~\ref{novel-infer}, this is the principality of the algebraic effects and handler related syntactic elements. The other cases for principality are included in order to provide the complete type inference algorithm. 
+
+The following subsections discuss the principality for all different constructs. The final type inference rules can be found in Figure~\ref{fig:inference:expressions} for expressions and Figure~\ref{fig:inference:computations} for computations.
+
+\subsection{Principality for Functions}
+We begin with the principality of $\lambda$-bound variables, functions and applications. In Figure~\ref{fig:inference:expressions} and Figure~\ref{fig:inference:computations}, these are represented by the inference rules \textsc{Var-$\ctxm$}, \textsc{Fun} and \textsc{App}.
+
+\paragraph{$\lambda$-bound variables} $\lambda$-bound variables $x$ are typed with the \textsc{Var-$\ctxm$} from Figure~\ref{fig:core-reform-typing}. in this rule, a $\lambda$-bound variable $x$ can be given the typing scheme $[x : A]A$. The principal typing scheme is the scheme that subsumes any typing scheme of the form $[x : A]A$, this is the typing scheme $[x : \alpha]\alpha$.
+
+\paragraph{Functions} Functions $\fun{x}c$ are typed with the \textsc{Fun} rule from Figure~\ref{fig:core-reform-typing}. This requires that $c$ can be typed. Otherwise, if $c$ cannot be typed, then $\fun{x}c$ cannot be typed. In that case, there is no principal type. If $c$ can be typed, it has the principal polar typing scheme $[\ctxm^-]\C^+$.
+
+The general form of a typing derivation for $\fun{x}c$ is:
+
+$\inferrule*[left=Fun]{
+    \inferrule*[left=SubComp]{
+        \ctxp \entt c \T [\ctxm_1^-]\C^+
+      }{
+        \ctxp \entt c \T [\ctxm_2, x:A]\C
+      }
+}{
+    \ctxp \entt \fun{x}c \T [\ctxm_2](A \to \C)
+}$
+
+\textsc{SubComp} can only be applied if $[\ctxm_1^-]\C^+ \le^\forall [\ctxm_2, x:A]\C$. We can write this as: $[\ctxm_1^-\setminus x, x : \ctxm_1^-(x)]\C^+ \le^\forall [\ctxm_2, x:A]\C$. By function subtyping, this has to be equivalent to: $[\ctxm_1^-\setminus x](\ctxm_1^-(x) \to \C^+) \le^\forall [\ctxm_2](A \to \C)$. From this, we can conclude that $[\ctxm_1^-\setminus x](\ctxm_1^-(x) \to \C^+)$ is the principal type of a function.
+
+\paragraph{Applications} Applications $v_1 \, v_2$ are typed with the \textsc{App} rule from Figure~\ref{fig:core-reform-typing}. Both $v_1$ and $v_2$ need to be typable in order to be able to type $v_1 \, v_2$. Let the principal types of $v_1$ and $v_2$ be $[\ctxm_1^-]A^+_1$ and $[\ctxm_2^-]A^+_2$.
+
+The general form of a typing derivation for $v_1 \, v_2$ is:
+
+$\inferrule*[left=Fun]{
+    \inferrule*[left=SubVal]{
+        \ctxp \entt v_1 \T [\ctxm_1^-]A^+_1
+      }{
+        \ctxp \entt v_1 \T [\ctxm](B \to \D)
+      }\\
+      \inferrule*[left=SubVal]{
+        \ctxp \entt v_2 \T [\ctxm_2^-]A^+_2
+      }{
+        \ctxp \entt v_2 \T [\ctxm]B
+      }
+}{
+    \ctxp \entt v_1 \, v_2 \T [\ctxm]\D
+}$
+
+\textsc{SubVal} can only be applied if $[\ctxm_1^-]A^+_1 \le^\forall [\ctxm](B \to \D)$ and $[\ctxm_2^-]A^+_2 \le^\forall [\ctxm]B$. Since typing schemes are closed, $[\ctxm_1^-]A^+_1$ and $[\ctxm_2^-]A^+_2$ do not share typing variables. Therefor, we can use a (bi)substitution to find the most principal scheme. We get $\rho(A^+_1) \le B \to \D$, $\rho(A^+_2) \le B$, $\ctxm \le \rho(\ctxm_1^-)$ and $\ctxm \le \rho(\ctxm_2^-)$.
+
+By introducing type variables $\alpha$ and $\beta$ and a dirt variable $\delta$ and taking $B = \rho(\alpha)$ and $\D = \rho(\beta \E \delta)$, we get other constraints $\rho(A^+_1) \le \rho(\alpha \to (\beta \E \delta))$, $\rho(A^+_2) \le \alpha$ and  $\rho([\ctxm_1^- \intersection \ctxm_2^-](\beta \E \delta)) \le [\ctxm]\D$. Any type that solves these constraints, types the application using the principal types for $v_1$ and $v_2$. The reason we see $[\ctxm_1^- \intersection \ctxm_2^-]$ is that that set of variables is the least set that is needed. 
+
+In similar reason to the principality for $\lambda$-bound variables, we know that $\rho([\ctxm_1^- \intersection \ctxm_2^-](\beta \E \delta)$ is the most principal type for the application. The bisubstitution $\rho$ does need to be chosen correctly for this. The correct choice is any bisubstitution $\xi$ that solves the constraints $\{A^+_1 \le (\alpha \to (\beta \E \delta)), A^+_2 \le \alpha\}$. 
+
+The bisubstitution $\xi$ can be computed using the biunification algorithm. We can make one final optimization. We can use the following simplified constraint set $\{A^+_1 \le  (A^+_2 \to (\beta \E \delta))\}$. $\alpha$ is only used twice. When $A^+_2 \le \alpha$ is being solved, $A^+_2$ will be substituted into $A^+_1 \le (\alpha \to (\beta \E \delta))$, which becomes $A^+_1 \le  (A^+_2 \to (\beta \E \delta))$.
+
+\subsection{Principality for Handlers}\label{novel-infer}
+We continue with the principality of handlers, handling, return and operations. In Figure~\ref{fig:inference:expressions} and Figure~\ref{fig:inference:computations}, these are represented by the inference rules \textsc{Hand}, \textsc{With}, \textsc{Ret} and \textsc{Op}.
+
+\paragraph{Handlers} A handler $\shorthand$ is typed with the \textsc{Hand} rule from Figure~\ref{fig:core-reform-typing}. A handler has a value case $\ret x \mapsto c_r$ and some effect cases $\call{\op}{y}{k} \mapsto c_\op$ for each operation that the handler handles. If $c_r$ or any of $c_\op$ isn't typeable, then the handler isn't typeable either. Otherwise, $c_r$ has principal type $[\ctxm^-_r](B^+ \E \dirt^+)$. Every $c_\op$ has principal type $[\ctxm^-_\op](\C^+_\op)$. 
+
+The general form of a typing derivation for $\shorthand$ is:
+
+$\inferrule*[left=Hand]{
+    \inferrule*[left=SubComp]{
+        \ctxp \entt c_r \T [\ctxm^-_r](B^+ \E \dirt^+)
+      }{
+        \ctxp \entt c_r \T [\ctxm, x \T A](B \E \dirt)
+      }\\
+    \Big[
+      (\op \T A_\op \to B_\op) \in \sig \qquad
+    %   \ctxp \entt c_\op \T [\ctxm, y \T A_\op, k \T B_\op \to B \E \dirt](B \E \dirt)
+      \inferrule*[left=SubComp]{
+        \ctxp \entt c_\op \T [\ctxm^-_\op](\C^+_\op)
+      }{
+        \ctxp \entt c_\op \T [\ctxm, y \T A_\op, k \T B_\op \to B \E \dirt](B \E \dirt)
+      }
+    \Big]_{\op \in \ops}
+  }{
+    \ctxp \entt \shorthand \T [\ctxm](A \E \dirt \intersection \ops \hto B \E \dirt)
+  }$
+
+%   \scriptsize
+% \begin{mathpar}
+% \inferrule* [left = \scriptsize \textsc{TyHand}]
+%     { \inferrule*[left = \scriptsize \textsc{TyReturn}]
+%                 {\{y:int\}\ent y:\intty }
+%                 {\{y:int\}\ent \\\\ \ret y:\intty \E \emptyset}
+%       \quad
+%       \inferrule*[left = \scriptsize \textsc{TyApp}]
+%                 {\{i:\intty,\; k:\intty \to \intty \E \emptyset\}  \ent k \T \intty \E \emptyset \\\\
+%                  \{i:\intty,\; k:\intty \to \intty \E \emptyset\}  \ent (i+1) \T \intty}
+%                 {\{i:\intty,\; k:\intty \to \intty \E \emptyset\} \ent \\\\ k\; (i+1) \T \intty \E \emptyset }
+%     }
+%     {\emptyset \ent h \T \intty \E {\{\textit{inc}\}} \hto \intty \E \emptyset}
+% \end{mathpar}
+% \normalsize
+
+\textsc{SubComp} can only be applied if $[\ctxm^-_r](B^+ \E \dirt^+) \le^\forall [\ctxm, x \T A](B \E \dirt)$ and $[\ctxm^-_\op](\C^+_\op) \le^\forall [\ctxm, y \T A_\op, k \T B_\op \to B \E \dirt](B \E \dirt)$. We can write the first subtyping constraint as: $[\ctxm_r^-\setminus x, x : \ctxm_1^-(x)](B^+ \E \dirt^+) \le^\forall [\ctxm, x:A]\C$. By function subtyping, this has to be equivalent to: $[\ctxm_r^-\setminus x](\ctxm_r^-(x) \to (B^+ \E \dirt^+)) \le^\forall [\ctxm](A \to \C)$. From this, we can conclude that $[\ctxm_r^-\setminus x](\ctxm_r^-(x) \to (B^+ \E \dirt^+))$ is the principal type of the value case.
+
+Going to the operation cases, the subtyping constraint is $[\ctxm^-_\op](\C^+_\op) \le^\forall [\ctxm, y \T A_\op, k \T B_\op \to B \E \dirt](B \E \dirt)$. By reasoning in the same way, we can get the following: $[\ctxm^-_\op \setminus y \setminus k](\ctxm_\op^-(y) \to \ctxm_\op^-(k) \to \C^+_\op) \le^\forall [\ctxm](A_\op \to (B_\op \to B \E \dirt) \to B \E \dirt)$. 
+
+In order to know the principal type of our handler, a few more steps are required. One aspect that we ignored up till now is that, for the operation cases, the right-hand side refers to the type of the handler. $\ctxm$, $B \E \dirt$ and $A$ occur in $[\ctxm](A \E \dirt \intersection \ops \hto B \E \dirt)$. In order to find the type of the handler, we need to use a similar reasoning as for the application. When this is done, we find that $\xi([\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\ctxm_r^-(x) \E \delta \intersection \ops \hto \alpha \E \delta))$ with $\xi$ solving the constraint set $\{B^+ \E \dirt^+ \le (\alpha \E \delta), [A^+_\op \le \ctxm_\op^-(y), (B^+_\op \to (\alpha \E \delta)) \le \ctxm_\op^-(k), \C^+_\op \le (\alpha \E \delta)]_{\op \in \ops}\}$ is the typing scheme of the handler.
+
+We want the handler to explicitly contain the information that the input of the handler may contain the handled effects, hence the occurence of $\intersection \ops$. However, we can give a more formal explanation.
+
+For this, we need to slightly change the typing rule \textsc{Hand} into:
+
+$\inferrule*[left=Hand]{
+    \Psi_{\dirt_1} \\
+  \ctxp \entt c_r \T [\ctxm, x \T A](B \E \dirt_2) \\
+  \Big[
+    \Psi_{\op} \qquad
+    (\op \T A_\op \to B_\op) \in \sig \qquad 
+    \ctxp \entt c_\op \T [\ctxm, y \T A_\op, k \T B_\op \to B \E \dirt_2](B \E \dirt_2)
+  \Big]_{\op \in \ops}
+}{
+  \ctxp \entt \shorthand \T [\ctxm](A \E \dirt_1 \hto B \E \dirt_2)
+}$
+
+$\Psi_{\dirt_1}$ is used to make sure that any operation in the input dirt $\dirt_1$ that is not handled, is also present in the output $\dirt_2$. We can define $\Psi_{\dirt_1}$ as $\dirt_1 \le \dirt_2$ since that subtyping relation encodes that necessary information. 
+
+$\Psi_{\op}$ gives us information about the structure of the handler. When a handler can handle effect $\op$, we expect the handler type to convey that information. More specifically, we expect the handler type to be $A \E \op \hto B \E \dirt_2$.  When deriving the principal type, $\Psi_{\op}$ will turn into a constraint. After the type and dirt variables have been introduced, the constraint takes the form $\ctxm_r^-(x) \E \op \hto (\alpha \E \delta) \le \ctxm_r^-(x) \E \delta_1 \hto (\alpha \E \delta)$. 
+
+This is still a rather complicated constraint which we can manually simplify. By handler subtyping, this constraint decomposes into $(\alpha \E \delta) \le (\alpha \E \delta)$ and $\ctxm_r^-(x) \E \delta_1 \le \ctxm_r^-(x) \E \op$. The first constraint is trivial and can be removed. The second constraint can be decomposed further into $\ctxm_r^-(x) \le \ctxm_r^-(x)$ and $\delta_1 \le \op$. Again, the first constraint is trivial. In the end, each $\Psi_{\op}$ creates $\delta_1 \le \op$. 
+
+Both $\dirt_1 \le \dirt_2$ and $\delta_1 \le \op$ are atomic. We can handle them using the following constraint solving equations (from Figure~\ref{fig:constraints}).
+
+$atomic(\delta_1 \le \delta_2) = [\delta_1 \union \delta_2 / \delta_2^+] \equiv [\delta_1 \intersection \delta_2 / \delta_1^-]$
+
+$atomic(\delta \le \op) = [\delta \intersection \op / \delta^-]$
+
+Solving these constraints gives us:
+
+$\xi([\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\ctxm_r^-(x) \E (\bm{\delta_2 \intersection (\bigsqcap \op | \op \in \ops)}) \hto \alpha \E \delta_2))$ with $\xi$ solving the constraint set $\{B^+ \E \dirt^+ \le (\alpha \E \delta_2), [A^+_\op \le \ctxm_\op^-(y), (B^+_\op \to (\alpha \E \delta_2)) \le \ctxm_\op^-(k), \C^+_\op \le (\alpha \E \delta_2)]_{\op \in \ops}\}$.
+
+$\delta_2 \intersection (\bigsqcap \op | \op \in \ops)$ is the same as $\delta_2 \intersection \ops$. As an additional note, the constraint set allows the occurence of $\delta_2$ in the output (the positive polarity occurence) to grow to account for effects introduced in the effect clauses themselves.
+
+\paragraph{Handling} A with $\withhandle{v}{c}$ is typed with the \textsc{With} rule from Figure~\ref{fig:core-reform-typing}. If any of $v$ and $c$ are untypeable, then so is the with. If they are all typeable, they respectively have principal types $[\ctxm^-_1]A^+$ and $[\ctxm^-_2]\C^+$. By reasoning in the same way as the principal type for the application was found, we find that $\xi([\ctxm^-_1 \intersection \ctxm^-_2](\alpha \E \delta))$ with $\xi$ solving the constraint set $\{A^+_1 \le  (\C^+ \hto (\alpha \E \delta))\}$ is the typing scheme of the with.
+
+\paragraph{Return} A return $\ret v$ is typed with the \textsc{Ret} rule from Figure~\ref{fig:core-reform-typing}. If $v$ cannot be typed, then $\ret v$ is not typeable either. Otherwise, $v$ has principal typing scheme $[\ctxm^-]A^+$. The return takes $v$ and adds an empty dirt. This means that $\ret v$ has typing scheme $[\ctxm^-](A^+ \E \emptyrow)$. Considering $\emptyrow$ is also principal in nature, $[\ctxm^-](A^+ \E \emptyrow)$ is the principal typing scheme of $\ret v$.
+
+\paragraph{Operation} An operation $\op \, v$ is typed with the \textsc{Do} rule from Figure~\ref{fig:core-reform-typing}. If $v$ cannot be typed, or the operation $\op$ does not exist, $\op \, v$ is untypeable. If $v$ is typeable, it has the principal typing scheme $[\ctxm^-]A^+$ while an operation $\op$ has type $A^+ \to B^-$. An operation \textbf{always has a principal type}. $\op \, v$ is typed with the resulting type of the operation, with the dirt being the operation. This yields the typing scheme $[\ctxm^-](B^+ \E \op)$. All components of this typing scheme are principal.
+
+\subsection{Principality for Booleans}
+Here we discuss principality of booleans and conditionals. In Figure~\ref{fig:inference:expressions} and Figure~\ref{fig:inference:computations}, these are represented by the inference rules \textsc{True}, \textsc{False} and \textsc{Cond}.
+
+\paragraph{Booleans} The booleans, $\tru$ and $\fls$ are typed with the \textsc{True} and \textsc{False} rules from Figure~\ref{fig:core-reform-typing}. These rules are facts and give the type $bool$ to the values. considering $bool$ is already principal, no additional work is required.
+
+\paragraph{Conditionals} A conditional $\conditional{v}{c_1}{c_2}$ is typed with the \textsc{Cond} rule from Figure~\ref{fig:core-reform-typing}. If any of $v$, $c_1$, $c_2$ are untypeable, then so is the conditional. If they are all typeable, they respectively have principal types $[\ctxm^-_1]A^+$, $[\ctxm^-_2]\C^+_1$ and $[\ctxm^-_3]\C^+_2$.
+
+By reasoning in the same way as the principal type for the application was found, we find that $\xi([\ctxm^-_1 \intersection \ctxm^-_2 \intersection \ctxm^-_3](\alpha \E \delta))$ with $\xi$ solving the constraint set $\{A^+ \le bool, \C^+_1 \le (\alpha \E \delta), \C^+_2 \le (\alpha \E \delta)\}$ is the typing scheme of the conditional.
+
+\subsection{Principality of Let-Binding}
+Finally, we discuss principality of let-bound variables, let-bindings and do-bindings. In Figure~\ref{fig:inference:expressions} and Figure~\ref{fig:inference:computations}, these are represented by the inference rules \textsc{Var-$\ctxp$}, \textsc{Let} and \textsc{Do}.
+
+\paragraph{Let-bound variables} A let-bound variable $\letvar$ is typed with the \textsc{Var-$\ctxp$} rule from Figure~\ref{fig:core-reform-typing}. If $\letvar$ is not part of $\ctxp$, then $\letvar$ is not typeable. Otherwise, $\letvar$ is typeable with the principal typing scheme $\ctxp(\letvar)$
+
+\paragraph{Let-bindings} A conditional $\letin{\letvar = v} c$ is typed with the \textsc{Let} rule from Figure~\ref{fig:core-reform-typing}. If $v$ is not typeable, then $\letin{\letvar = v} c$ is not typeable either. Otherwise, $v$ has principal type $[\ctxm^-_1]A^+$. 
+
+The general form of a typing derivation for $\letin{\letvar = v} c$ is:
+
+$\inferrule*[left=Let]{
+    \inferrule*[left=SubVal]{
+        \ctxp \entt v \T [\ctxm_1^-]A^+
+      }{
+        \ctxp \entt v \T [\ctxm_1]A
+      }\\
+      \ctxp, \letvar \T [\ctxm_1]A \entt c \T [\ctxm_2](B \E \dirt)
+}{
+    \ctx \entt \letin{\letvar = v} c \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
+}$
+
+\textsc{SubVal} can only be applied if $[\ctxm_1^-]A^+ \le^\forall [\ctxm_1]A$. With the weakening (\textsc{WeakeningType} from Figure~\ref{fig:core-scheme}), we get $\ctxp, \letvar \T [\ctxm_1^-]A^+ \entt c \T [\ctxm_2](B \E \dirt)$. With this, we can apply the inductive hypothesis to this case. The principal type of $c$ is $[\ctxm^-_2](B^+ \E \dirt^+)$. Thus, the principal type of $\letin{\letvar = v} c$ is straightforward: $[\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \dirt^+)$.
+
+\paragraph{Do-bindings} A do-binding $\doin{\letvar = c_1} c_2$ is typed with the \textsc{Do} rule from Figure~\ref{fig:core-reform-typing}. The do-binding is rather interesting. The reasoning behind finding the principal type is a combination of the conditional and the let-binding. If $c_1$ is not typeable, then $\doin{\letvar = c_1} c_2$ is not typeable either. Otherwise, $c_1$ has principal type $[\ctxm^-_1](A^+ \E \dirt^+_1)$.
+
+The general form of a typing derivation for $\doin{\letvar = c_1} c_2$ is:
+
+$\inferrule*[left=Let]{
+    \inferrule*[left=SubComp]{
+        \ctxp \entt c_1 \T [\ctxm_1^-](A^+ \E \dirt^+_1)
+      }{
+        \ctxp \entt c_1 \T [\ctxm_1](A \E \dirt)
+      }\\
+      \inferrule*[left=SubComp]{
+        \ctxp, \letvar \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt_2)
+      }{
+        \ctxp, \letvar \T [\ctxm_1]A \entt c_2 \T [\ctxm_2](B \E \dirt)
+      }
+}{
+    \ctx \entt \doin{\letvar = c_1} c_2 \T [\ctxm_1 \intersection \ctxm_2](B \E \dirt)
+}$
+
+\textsc{SubComp} can only be applied if $[\ctxm_1^-](A^+ \E \dirt^+_1) \le^\forall [\ctxm_1](A \E \dirt)$. With the weakening (\textsc{WeakeningType} from Figure~\ref{fig:core-scheme}), we get $\ctxp, \letvar \T [\ctxm_1^-](A^+ \E \dirt^+_1) \entt c \T [\ctxm_2](B \E \dirt_2)$. With this, we can apply the inductive hypothesis to this case. The principal type of $c_2$ is $[\ctxm^-_2](B^+ \E \dirt^+_2)$.
+
+For the let-binding, we could now find the principal type. However, we still have an issue with the $\dirt$. By reasoning in the same way as the principal type for the application and conditional was found, we find that $\xi([\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \delta))$ with $\xi$ solving the constraint set $\{\dirt^+_1 \le \delta, \dirt^+_2 \le \delta\}$ is the typing scheme of the do-binding.
+
 
 \begin{figure}[!htb]
 \begin{center}
@@ -42,24 +235,24 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
     }
     
     \inferrule[Hand]{
-        \ctxp \entt c_r \T [\ctxm^-_r](B^+ \E \dirt^+) \\
+        \ctxp \prinent c_r \T [\ctxm^-_r](B^+ \E \dirt^+) \\
         \Big[
         (\op \T A^+_\op \to B^-_\op) \in \sig \qquad
-        \ctxp \entt c_\op \T [\ctxm^-_\op](\C^+_\op)
+        \ctxp \prinent c_\op \T [\ctxm^-_\op](\C^+_\op)
         \Big]_{\op \in \ops}
     }{
-        \ctxp \entt \shorthand \T \\
-        [\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\alpha_1 \E \delta_1 \intersection \ops \hto \alpha_2 \E \delta_2)
+        \ctxp \prinent \shorthand \T \\
+        [\ctxm^-_r \intersection (\bigsqcap \ctxm^-_\op | \op \in \ops)](\ctxm^-_r(x) \E \delta \intersection \ops \hto \alpha \E \delta)
     }\\ \xi = biunify\left(
         \begin{array}{ll}
-            B^+ \E \dirt^+ \le \alpha_2 \E \delta_2 \\
-            \alpha_1 \le \ctxm^-_r(x) \\
-            \delta_1 \le \delta_2 \\
+            B^+ \E \dirt^+ \le \alpha \E \delta \\
+            % \alpha_1 \le \ctxm^-_r(x) \\
+            % \delta_1 \le \delta_2 \\
             \left[
             \begin{array}{ll}
                 A^+_\op \le \ctxm^-_\op(y) \\
-                B^-_\op \to \C^+_\op \le \ctxm^-_\op(k) \\
-                \C^+_\op \le \alpha_2 \E \delta_2
+                B^-_\op \to (\alpha \E \delta) \le \ctxm^-_\op(k) \\
+                \C^+_\op \le \alpha \E \delta
             \end{array}
             \right]_{\op \in \ops}
         \end{array}
@@ -126,15 +319,20 @@ We introduce a judgement form $\ctxp \triangleright e : [\ctxm^-]A^+$ , stating 
         \ctxp \prinent c_1 \T [\ctxm^-_1](A^+ \E \dirt^+_1) \\
         \ctxp, \letvar \T [\ctxm^-_1]A^+ \prinent c_2 \T [\ctxm^-_2](B^+ \E \dirt^+_2)
     }{
-        \ctx \prinent \doin{\letvar = c_1} c_2 \T [\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E (\dirt^+_1 \union \dirt^+_2))
-    }
+        \ctx \prinent \doin{\letvar = c_1} c_2 \T \xi([\ctxm^-_1 \intersection \ctxm^-_2](B^+ \E \delta))
+    } \xi = biunify\left(
+        \begin{array}{ll}
+            \dirt^+_1 \le \delta\\
+            \dirt^+_2 \le \delta
+        \end{array}
+    \right)
     
     \inferrule[With]{
-        \ctxp \prinent v \T [\ctxm^-_1]\C^+_1 \\
-        \ctxp \prinent c \T [\ctxm^-_2]\C^+_2
+        \ctxp \prinent v \T [\ctxm^-_1]A^+ \\
+        \ctxp \prinent c \T [\ctxm^-_2]\C^+
     }{
         \ctxp \prinent \withhandle{v}{c} \T \xi([\ctxm^-_1 \intersection \ctxm^-_2](\alpha \E \delta))
-    } \xi = biunify(\C^+_1 \le \C^+_2 \hto (\alpha \E \delta))
+    } \xi = biunify(A^+ \le \C^+ \hto (\alpha \E \delta))
     
 \end{mathpar}
 \end{minipage}
